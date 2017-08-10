@@ -57,9 +57,6 @@ exports.resetDb = function() {
 }
 
 
-
-
-
 exports.addActorReferences = function(documents) {
 	console.log('sending actor references ', documents.length);
 
@@ -127,23 +124,68 @@ exports.addTreeLevel = function(documents, number) {
 exports.getActorReference = function(name) {
 	
 	return connectToDb(db => {
-
+		return new Promise((resolve, reject) => {
+			db.collection('actorReference')
+			.findOne({ name })
+			.then(result => resolve(result))
+			.catch(error => {
+				console.log('error finding ', name);
+				console.log(error.message);
+				reject(error.message);
+			});
+		});
 	}); 
 }
 
 
 exports.getActorNames = function(nconsts) {
-
+	
+	return connectToDb(db => {
+		return new Promise((resolve, reject) => {
+			db.collection('actorReference')
+			.find({ nconst: { $in: nconsts }})
+			.toArray()
+			.then(result => resolve(result))
+			.catch(error => {
+				console.log('error finding ', name);
+				console.log(error.message);
+				reject(error.message);
+			});
+		});
+	});
 }
 
 
 exports.getMovieNames = function(tconsts) {
-
+	return connectToDb(db => {
+		return new Promise((resolve, reject) => {
+			db.collection('movieReference')
+			.find({ tconst: { $in: tconsts }})
+			.toArray()
+			.then(result => resolve(result))
+			.catch(error => {
+				console.log('error finding ', name);
+				console.log(error.message);
+				reject(error.message);
+			});
+		});
+	});
 }
 
 
 exports.getActorParent = function(nconst, table) {
-
+	return connectToDb(db => {
+		return new Promise((resolve, reject) => {
+			db.collection(table)
+			.findOne({ nconst })
+			.then(result => resolve(result))
+			.catch(error => {
+				console.log('error finding ', name);
+				console.log(error.message);
+				reject(error.message);
+			});
+		});
+	});
 }
 
 
