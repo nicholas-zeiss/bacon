@@ -31,8 +31,6 @@ exports.traverseTSV = function(input, output) {
 		});
 
 		inStream.on('end', () => {
-			console.log('end of search');
-
 			if (output) {
 				outStream.end();
 			}
@@ -127,6 +125,7 @@ exports.getCostars = function(parents, alreadyIndexed, movies) {
 	
 	return exports.traverseTSV(input);
 }
+
 
 //Set(tconst) => Map(tconst, title)
 exports.getMoviesByTconsts = function(tconsts) {
