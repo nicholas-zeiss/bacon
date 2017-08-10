@@ -108,7 +108,7 @@ function expand(parents, alreadyIndexed, baconNumber) {
 let parents = new Set(['nm0000102']);
 let alreadyIndexed = new Set(['nm0000102']);
 
-expand(parents, alreadyIndexed, 1);
+db.resetDb().then(() => expand(parents, alreadyIndexed, 1));
 
 
 

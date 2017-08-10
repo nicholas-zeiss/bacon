@@ -43,10 +43,10 @@ function cleanPrincipals(tconsts) {
 		file: 'movie.principals.tsv',
 		tconsts: tconsts,
 		cb: function(row, stream) {
-			let tconst = row.match(/^(tt\d{7})\t/);
+			let tconst = row.match(/^(tt\d{7})\t([^\t\n]+)/);
 
 			if (tconst && this.tconsts.has(tconst[1])) {
-				stream.write(row);
+				stream.write(`${tconst[1]}\t${tconst[2]}\n`);
 			}
 		}
 	};

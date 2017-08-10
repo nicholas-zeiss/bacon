@@ -9,7 +9,7 @@ module.exports = {
 	module: {
 		loaders: [{
 	      test: /\.js$/,
-	      loaders: ['babel?presets[]=es2015'],
+	      loaders: ['babel-loader?presets[]=es2015'],
 	      include: path.join(__dirname, 'app/client')
 	  }]
 	}

@@ -50,7 +50,7 @@ exports.getActorsNconsts = function(names) {
 		names: names,
 		matches: new Map(),
 		cb: function(row) {
-			let actor = row.match(/^([^\t]+)\t([^\t\n]+)/);
+			let actor = row.match(/^(nm\d{7})\t([^\t\n]+)/);
 		
 			if (actor && this.names.has(actor[2]) && !this.matches.has(actor[2])) {
 				this.matches.set(actor[2], actor[1]);
@@ -71,7 +71,7 @@ exports.getActorNames = function(nconsts) {
 		nconsts: nconsts,
 		matches: new Map(),
 		cb: function(row) {
-			let actor = row.match(/^([^\t]+)\t([^\t\n]+)/);
+			let actor = row.match(/^(nm\d{7})\t([^\t\n]+)/);
 
 			if (actor && this.nconsts.has(actor[1])) {
 				this.matches.set(actor[1], actor[2]);
@@ -98,10 +98,17 @@ exports.getCostars = function(parents, alreadyIndexed) {
 			movieSet: new Set()
 		},
 		cb: function(row) {
-			let movie = row.match(/^([^\t]+)\t([^\t\n]+)/);
+			let movie = row.match(/^(tt\d{7})\t([^\t\n]+)/);
 
 			if (movie) { 
 				let actors = movie[2].split(','), parentActors = [], childActors = [];
+
+				if (Number(movie[1].slice(2)) === 0) {
+					console.log('++++++++++++++++');
+					console.log('found zero w/ tconst: ', movie[1]);
+					console.log(row);
+					console.log('++++++++++++++++');
+				}
 				
 				actors.forEach(actor => {	
 					if (this.parents.has(actor)) {
@@ -140,7 +147,7 @@ exports.getMoviesByTconsts = function(tconsts) {
 		tconsts: tconsts,
 		matches: new Map(),
 		cb: function(row) {
-			let movie = row.match(/^([^\t]+)\t([^\t\n]+)/);
+			let movie = row.match(/^(tt\d{7})\t([^\t\n]+)/);
 
 			if (movie && this.tconsts.has(movie[1])) { 
 				this.matches.set(movie[1], movie[2]);
