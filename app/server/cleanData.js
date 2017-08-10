@@ -67,7 +67,7 @@ function cleanNames() {
 		file: 'names.tsv',
 		cb: function(row, stream) {
 			let clipped = row.match(/^nm\d{7}\t[^\t\n]+/);
-			if (clipped) {
+			if (clipped && (row.includes('actor') || row.includes('actress'))) {
 				stream.write(clipped[0] + '\n');
 			}
 		}
@@ -76,16 +76,16 @@ function cleanNames() {
 	return tsv.traverseTSV(namesInput, namesOutput);
 }
 
-cleanBasics().then(tconsts => {
-	console.log('cleaned basics');
-	return cleanPrincipals(tconsts);
-}).then(() => {
-	console.log('cleaned principals');
-	return cleanNames();
-}).then(() => {
-	console.log('cleaned names');
-})
+// cleanBasics().then(tconsts => {
+// 	console.log('cleaned basics');
+// 	return cleanPrincipals(tconsts);
+// }).then(() => {
+// 	console.log('cleaned principals');
+// 	return cleanNames();
+// }).then(() => {
+// 	console.log('cleaned names');
+// })
 
-
+cleanNames().then(() => console.log('cleaned names'))
 
 
