@@ -63,7 +63,7 @@ exports.getActorsNconsts = function(names) {
 
 
 //Set(nconst) => Map(nconst, name)
-exports.getActorsNames = function(nconsts) {
+exports.getActorNames = function(nconsts) {
 	console.log('getting actor names');
 
 	let input = {
@@ -85,15 +85,18 @@ exports.getActorsNames = function(nconsts) {
 
 //parents Set(nconst), alreadyIndexed Set(nconst), movies Set(tconst) => Map(nconst, { parent: nconst, tconst: tconst })	key is child of someone in parents
 //children guaranteed not to be already be in the bacon tree
-exports.getCostars = function(parents, alreadyIndexed, movies) {
+exports.getCostars = function(parents, alreadyIndexed) {
 	console.log('getting costars');
 
 	let input = {
 		file: 'movie.principals.tsv',
 		parents: parents,
 		alreadyIndexed: alreadyIndexed,
-		movies: movies,
-		matches: new Map(),
+		matches: {
+			actorMap: new Map(),
+			actorSet: new Set(),
+			movieSet: new Set()
+		},
 		cb: function(row) {
 			let movie = row.match(/^([^\t]+)\t([^\t\n]+)/);
 
@@ -114,9 +117,9 @@ exports.getCostars = function(parents, alreadyIndexed, movies) {
 					childActors.forEach(child => {
 						this.alreadyIndexed.add(child);
 
-						this.movies.add(movie[1]);
-
-						this.matches.set(child, [ parentActors[0], movie[1] ]);
+						this.matches.actorMap.set(child, [ parentActors[0], movie[1] ]);
+						this.matches.actorSet.add(child);
+						this.matches.movieSet.add(movie[1]);
 					});
 				}
 			} 

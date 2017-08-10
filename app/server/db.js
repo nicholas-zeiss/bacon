@@ -24,6 +24,7 @@ MongoClient.connect(url, (err, db) => {
   })
   .catch(rej => {
   	console.log('database already exists');
+  	console.log(rej.message);
   	db.close();
   });
 });
@@ -43,8 +44,9 @@ exports.addActorReferences = function(documents) {
 		  	db.close(false, resolve);
 		  })
 		  .catch(rej => {
-		  	console.log('failed to send actor references');
-		  	db.close(false,resolve);
+		  	console.log('~~~~~~~~~~~~~\nfailed to send actor references\n~~~~~~~~~~~~~');
+		  	console.log(rej.message);
+		  	db.close(false, resolve);
 		  });
 		});
 	});
@@ -64,8 +66,9 @@ exports.addMovieReferences = function(documents) {
 		  	console.log('sent movie references');
 		  	db.close(false, resolve);
 		  })
-		  .catch(reject => {
-		  	console.log('failed to send movie references');
+		  .catch(rej => {
+		  	console.log('~~~~~~~~~~~~~\nfailed to send movie references\n~~~~~~~~~~~~~');
+		  	console.log(rej.message);
 		  	db.close(false, resolve);
 		  })
 		});
@@ -73,7 +76,7 @@ exports.addMovieReferences = function(documents) {
 };
 
 
-exports.addTreeTable = function(documents, number) {
+exports.addTreeLevel = function(documents, number) {
 	let collection = [ 'first', 'second', 'third', 'fourth', 'fifth', 'sixth' ][number];
 	console.log('sending actor tree ', documents.length);
 
@@ -88,8 +91,9 @@ exports.addTreeTable = function(documents, number) {
 		  	db.close(false, resolve);
 		  })
 		  .catch(rej => {
-		  	console.log('failed to send actor tree');
-		  	db.close(false,resolve);
+		  	console.log('~~~~~~~~~~~~~\nfailed to send actor tree\n~~~~~~~~~~~~~');
+		  	console.log(rej.message);
+		  	db.close(false, resolve);
 		  });
 		});
 	});

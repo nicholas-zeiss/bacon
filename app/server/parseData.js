@@ -2,66 +2,44 @@ const tsv = require('./tsvUtils');
 const db = require('./db');
 
 
-function getCostars(parents, alreadyIndexed, tconsts, nextParents) {
-	return tsv.getCostars(parents, alreadyIndexed, tconsts).then(children => {
-		console.log('got costars');
-		
-		parents = null;
-		
-		for (let child of children.keys()) {
-			nextParents.add(child);
-		}
+function prepData(actorTree, names, movies, baconNumber) {
+	// nconst => [nconst, tconst]
+	// nconst => name
+	// tconst => title
+	let dbTree = [];
+	let dbNames = [];
+	let dbMovies = [];
 
-		return children;
-	});
-}
+	let validMovies = new Set();
+	let nextParents = new Set();
 
+	for (let [childNconst, [ rootNconst, tconst]] of actorTree.entries()) {
+		if (names.has(childNconst) && movies.has(tconst)) {
+			nextParents.add(childNconst);
+			validMovies.add(tconst);
 
-function getMovies(tconsts) {
-	return tsv.getMoviesByTconsts(tconsts).then(titles => {
-		console.log('got titles');
-		
-		tconsts = null;
-		let movies = [];
-
-		for (let [tconst, title] of titles.entries()) {
-			movies.push({
-				tconst: Number(tconst.slice(2)),
-				title: title
-			});
-		}
-
-		return movies;
-	});
-}
-
-
-function getNames(parents, costars, number) {
-	return tsv.getActorsNames(parents).then(names => {
-		console.log('got names');
-		
-		let actors = [];
-		let tree = [];
-
-		for (let [nconst, name] of names.entries()) {
-
-			actors.push({
-				nconst: Number(nconst.slice(2)),
-				name: name,
-				number: number
+			dbTree.push({
+				nconst: Number(childNconst.slice(2)),
+				parent: Number(rootNconst.slice(2)),
+				tconst: Number(tconst.slice(2))
 			});
 
-			if (costars.has(nconst)) {
-				tree.push({ 
-					nconst: Number(nconst.slice(2)),
-					parent: Number(costars.get(nconst)[0].slice(2)),
-					tconst: Number(costars.get(nconst)[1].slice(2))
-				});
-			}
+			dbNames.push({
+				nconst: Number(childNconst.slice(2)),
+				name: names.get(childNconst),
+				number: baconNumber
+			});
 		}
+	}
 
-		return [ actors, tree ];
-	});
+	for (let tconst of validMovies) {
+		dbMovies.push({
+			tconst: Number(tconst.slice(2)),
+			title: movies.get(tconst)
+		});
+	}
+
+	return [dbTree, dbNames, dbMovies, nextParents];
 }
 
 
@@ -70,53 +48,57 @@ function expand(parents, alreadyIndexed, baconNumber) {
 
 	if (baconNumber == 7) {
 		return;
-	}
+	}	
 
-	let tconsts = new Set();
-	let nextParents = new Set();
-	let childActors;
-	
-	let actorTree;
-	let movieReference;
-	let actorReference;
+	let actorTree;				//nconst => [nconst, tconst]
+	let movies;		//tconst => title
 
+	let actorSet;
 
-	getCostars(parents, alreadyIndexed, tconsts, nextParents).then(costars => {
+	let dbNames;
+	let dbMovies;
+	let nextParents;
+
+	tsv.getCostars(parents, alreadyIndexed).then(costars => {
+		console.log('got costars');
 		
-		childActors = costars;
-
-		let n = 0;
-		for (let t of tconsts) n++;
-		console.log('found ', n, ' different tconsts at this level');
-
-		return getMovies(tconsts);
+		parents = null;
+		actorTree = costars.actorMap;
+		actorSet = costars.actorSet;
+		return tsv.getMoviesByTconsts(costars.movieSet);
 	
 	}).then(titles => {
+		console.log('got titles');
 
-		movieReference = titles;
-		return getNames(nextParents, childActors, baconNumber);
+		movies = titles;
+		return tsv.getActorNames(actorSet);
 
-	}).then(actorData => {
+	}).then(names => {
+		console.log('got games');
 
-		[ actorReference, actorTree ] = actorData;
-		return db.addMovieReferences(movieReference);
+		return prepData(actorTree, names, movies, baconNumber);
 
-	}).then(() => {
-		
-		console.log('sent titles');
-		movieReference = null;
-		return db.addActorReferences(actorReference);
+	}).then(dbData => {
 
-	}).then(() => {
-		
-		console.log('sent actor names');
-		actorReference = null;
-		return db.addTreeTable(actorTree, baconNumber - 1);
+		dbNames = dbData[1];
+		dbMovies = dbData[2];
+		nextParents = dbData[3];
+
+		return db.addTreeLevel(dbData[0], baconNumber - 1);
 
 	}).then(() => {
 		
 		console.log('sent actor tree');
-		actorTree = null;
+		return db.addActorReferences(dbNames);
+
+	}).then(() => {
+		
+		console.log('sent actor names');
+		return db.addMovieReferences(dbMovies);
+
+	}).then(() => {
+		
+		console.log('sent movie names');
 		expand(nextParents, alreadyIndexed, baconNumber + 1);
 	
 	});
