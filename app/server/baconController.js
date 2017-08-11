@@ -12,99 +12,98 @@ function getNamesTitles(path) {
 			tconsts.push(node.tconst);
 		});
 
-		Promise.all([ db.getActorNames(nconsts), db.getMovieNames(tconsts) ])
+		Promise.all([
+			db.getActorNames(nconsts),
+			db.getMovieNames(tconsts)
+		])
 		.then(([names, titles]) => {
 			let nameMap = new Map();
 			let titleMap = new Map();
 
 			names.forEach(actor => {
-				nameMap.set(actor.nconst, [ actor.name, actor.dob ]);
+				
+				nameMap.set(actor.nconst, {
+					name: actor.name,
+					dob: actor.dob,
+					dod: actor.dod,
+					jobs: actor.jobs
+				});
+			
 			});
 
 			titles.forEach(title => {
-				titleMap.set(title.tconst, [ title.title, title.year ]);
+				
+				titleMap.set(title.tconst, {
+					title: title.title,
+					year: title.year
+				});
+			
 			});
 
-			// console.log(titles);
-
-
-			resolve(path.map(node => {
-				// console.log(node.nconst, node.tconst);
-				return [ nameMap.get(node.nconst), titleMap.get(node.tconst) ]
-			}));
-
-
-
-			// resolve(path.map(node => [ nameMap.get(node.nconst), titleMap.get(node.tconst) ]));
+			resolve(path.map(node => 
+				[ nameMap.get(node.nconst), titleMap.get(node.tconst) ]
+			));
 		})
 		.catch(error => {
-			console.log('error generating tree in getNamesTitles');
+			console.log('error getting actor names or movie names from db');
 			reject(error);
 		});
 	});
 }
 
 
-function traverseTree(nconst, number, path) {
+function getBaconPath(nconst, number, path) {
 	let collection = [ 'first', 'second', 'third', 'fourth', 'fifth', 'sixth' ];
 
 	return new Promise((resolve, reject) => {
 		
-		if (number == 0) {
+		if (number > 6) {
+			reject('invalid bacon number');
+
+		} else if (number == 0) {			
 			getNamesTitles(path)
-			.then(path => resolve(path))
+			.then(path => {
+				resolve(path)		
+			})
 			.catch(error => {
-				console.log('error generating tree in traverseTree');
+				console.log('error generating tree in getNamesTitles');
 				reject(error);
 			});
 
 		} else {
 			db.getActorParent(nconst, collection[number - 1])
 			.then(result => {
+				
+				if (!result) {
+					reject('no such nconst exists');
+					return;
+				}
+
 				path.push({ 
 					nconst: nconst, 
 					tconst: result.tconst
 				});
-				
-				traverseTree(result.parent, number - 1, path)
-				.then(path => resolve(path));
+
+				getBaconPath(result.parent, number - 1, path).then(path => resolve(path));
+			
 			})
-			.catch(error => {
-				console.log('error generating tree in traverseTree');
+			.catch(error => {	
+				console.log('error getting actor parent');
+				console.log(error);
 				reject(error);
 			});
 		}
 	});
 }
 
+// db.getActorReferences('Fernandaddddd Negri Pouget').then(res => {
+	// console.log(res)
+	// getBaconPath(res[0].nconst, res[0].number, []).then(res => console.log(res));
+// });
 
 
-function getBaconPath(name) {
+getBaconPath(11111111111, 7, []).then(res => console.log(res)).catch(err => console.log(err));
 
-	return new Promise((resolve, reject) => {		
-		db.getActorReference(name)
-		.then(result => {
-			
-			if (result) {
-				traverseTree(result.nconst, result.number, [])
-				.then(path => resolve(path));
-			
-			} else {
-				console.log('couldn\'t find ', name);
-				reject(null);
-			}
-		})
-		.catch(err => {
-			console.log('error generating tree in getBaconPath');
-			
-			reject(null);
-		});
-	});
-}
-
-getBaconPath('Paul asdfRudd').then(res => console.log(res));
-
-// db.getActorReference('asdf').then(res => console.log(res));
 
 module.exports = getBaconPath;
 

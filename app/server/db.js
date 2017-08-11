@@ -5,6 +5,7 @@ let url = 'mongodb://kevinbacon:kevinbacon@ds135382.mlab.com:35382/bacon';
 
 
 function connectToDb(cb) {
+	
 	return new Promise((resolve, reject) => {
 		MongoClient.connect(url, (err, db) => {
  			assert.equal(null, err);
@@ -22,12 +23,12 @@ function connectToDb(cb) {
 	});
 }
 
+
 exports.resetDb = function() {
+	
 	return connectToDb(db => {
 		return new Promise((resolve, reject) => {
-			
 			db.dropDatabase().then(() => {
-			  
 			  db.collection('movieReference').createIndex({ tconst: 1 }, { unique: true });
 			  db.collection('actorReference').createIndex({ nconst: 1 }, { unique: true });
 			  db.collection('actorReference').createIndex({name: 'text'});
