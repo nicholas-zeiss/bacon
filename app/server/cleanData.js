@@ -7,7 +7,7 @@ function cleanBasics() {
 		file: 'title.basics.tsv',
 		matches: new Set(),
 		cb: function(row) {
-			let movie = row.match(/^(tt\d{7})\t([^\t]+)\t([^\t\n]+)/);
+			let movie = row.match(/^(tt\d{7})\t([^\t]+)\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t\n]+\n$/);
 
 			if (movie && movie[2] == 'movie') {
 				this.matches.add(movie[1]);
@@ -18,10 +18,10 @@ function cleanBasics() {
 	let basicsOutput = {
 		file: 'movie.basics.tsv',
 		cb: function(row, stream) {
-			let movie = row.match(/^(tt\d{7})\t([^\t]+)\t([^\t\n]+)/);
+			let movie = row.match(/^(tt\d{7})\t([^\t]+)\t([^\t]+)\t[^\t]+\t[^\t]+\t([^\t]+)\t[^\t]+\t[^\t]+\t[^\t\n]+\n$/);
 
 			if (movie && movie[2] == 'movie') {
-				stream.write(`${movie[1]}\t${movie[3]}\n`);
+				stream.write(`${movie[1]}\t${movie[3]}\t${movie[4]}\n`);
 			}
 		}
 	};
@@ -43,10 +43,10 @@ function cleanPrincipals(tconsts) {
 		file: 'movie.principals.tsv',
 		tconsts: tconsts,
 		cb: function(row, stream) {
-			let tconst = row.match(/^(tt\d{7})\t([^\t\n]+)/);
+			let tconst = row.match(/^(tt\d{7})\t[^\t\n]+\n$/);
 
 			if (tconst && this.tconsts.has(tconst[1])) {
-				stream.write(`${tconst[1]}\t${tconst[2]}\n`);
+				stream.write(row);
 			}
 		}
 	};
@@ -66,9 +66,9 @@ function cleanNames() {
 	let namesOutput = {
 		file: 'names.tsv',
 		cb: function(row, stream) {
-			let clipped = row.match(/^nm\d{7}\t[^\t\n]+/);
+			let clipped = row.match(/^(nm\d{7}\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+)\t[^\t\n]+\n$/);
 			if (clipped && (row.includes('actor') || row.includes('actress'))) {
-				stream.write(clipped[0] + '\n');
+				stream.write(clipped[1] + '\n');
 			}
 		}
 	};
@@ -76,16 +76,17 @@ function cleanNames() {
 	return tsv.traverseTSV(namesInput, namesOutput);
 }
 
-// cleanBasics().then(tconsts => {
-// 	console.log('cleaned basics');
-// 	return cleanPrincipals(tconsts);
-// }).then(() => {
-// 	console.log('cleaned principals');
-// 	return cleanNames();
-// }).then(() => {
-// 	console.log('cleaned names');
-// })
+cleanBasics().then(tconsts => {
+	console.log('cleaned basics');
+	return cleanPrincipals(tconsts);
+}).then(() => {
+	console.log('cleaned principals');
+});
 
-cleanNames().then(() => console.log('cleaned names'))
+cleanNames().then(() => {
+	console.log('cleaned names');
+})
+
+// cleanBasics().then(() => cleanNames()).then(() => console.log('cleaned names'))
 
 

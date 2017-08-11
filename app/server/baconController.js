@@ -18,18 +18,18 @@ function getNamesTitles(path) {
 			let titleMap = new Map();
 
 			names.forEach(actor => {
-				nameMap.set(actor.nconst, actor.name);
+				nameMap.set(actor.nconst, [ actor.name, actor.dob ]);
 			});
 
 			titles.forEach(title => {
-				titleMap.set(title.tconst, title.title);
+				titleMap.set(title.tconst, [ title.title, title.year ]);
 			});
 
-			console.log(titles);
+			// console.log(titles);
 
 
 			resolve(path.map(node => {
-				console.log(node.nconst, node.tconst);
+				// console.log(node.nconst, node.tconst);
 				return [ nameMap.get(node.nconst), titleMap.get(node.tconst) ]
 			}));
 
@@ -102,7 +102,7 @@ function getBaconPath(name) {
 	});
 }
 
-getBaconPath('Blanche Bayliss').then(res => console.log(res));
+getBaconPath('Paul asdfRudd').then(res => console.log(res));
 
 // db.getActorReference('asdf').then(res => console.log(res));
 

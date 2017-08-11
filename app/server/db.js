@@ -26,32 +26,32 @@ exports.resetDb = function() {
 	return connectToDb(db => {
 		return new Promise((resolve, reject) => {
 			
-			db.dropCollection('movieReference');
-		  db.dropCollection('actorReference');
-		  db.dropCollection('first');
-		  db.dropCollection('second');
-		  db.dropCollection('third');
-		  db.dropCollection('fourth');
-		  db.dropCollection('fifth');
-		  db.dropCollection('sixth');
+			db.dropDatabase().then(() => {
+			  
+			  db.collection('movieReference').createIndex({ tconst: 1 }, { unique: true });
+			  db.collection('actorReference').createIndex({ nconst: 1 }, { unique: true });
+			  db.collection('actorReference').createIndex({name: 'text'});
+			  db.collection('first').createIndex({ nconst: 1 }, { unique: true });
+			  db.collection('second').createIndex({ nconst: 1 }, { unique: true });
+			  db.collection('third').createIndex({ nconst: 1 }, { unique: true });
+			  db.collection('fourth').createIndex({ nconst: 1 }, { unique: true });
+			  db.collection('fifth').createIndex({ nconst: 1 }, { unique: true });
+			  db.collection('sixth').createIndex({ nconst: 1 }, { unique: true });
 
-
-		  db.collection('movieReference').createIndex({ tconst: 1 }, { unique: true });
-		  db.collection('actorReference').createIndex({ nconst: 1 }, { unique: true });
-		  db.collection('actorReference').createIndex({name: 'text'});
-		  db.collection('first').createIndex({ nconst: 1 }, { unique: true });
-		  db.collection('second').createIndex({ nconst: 1 }, { unique: true });
-		  db.collection('third').createIndex({ nconst: 1 }, { unique: true });
-		  db.collection('fourth').createIndex({ nconst: 1 }, { unique: true });
-		  db.collection('fifth').createIndex({ nconst: 1 }, { unique: true });
-		  db.collection('sixth').createIndex({ nconst: 1 }, { unique: true });
-
-
-		  db.collection('actorReference').insertOne({name:'Kevin Bacon', nconst: 102, number: 0})
-		  .then(res => {
-		  	resolve();
-		  	console.log('database created');
-		  });
+			  db.collection('actorReference')
+			  .insertOne({
+			  	name:'Kevin Bacon',
+			  	nconst: 102,
+			  	number: 0,
+			  	dob: 1958,
+			  	dod: 0,
+			  	jobs: 'actor,producer,soundtrack'
+			  })
+			  .then(res => {
+			  	resolve();
+			  	console.log('database created');
+			  });
+			});
 		});
 	});
 }
@@ -121,12 +121,13 @@ exports.addTreeLevel = function(documents, number) {
 };
 
 
-exports.getActorReference = function(name) {
+exports.getActorReferences = function(name) {
 	
 	return connectToDb(db => {
 		return new Promise((resolve, reject) => {
 			db.collection('actorReference')
-			.findOne({ name })
+			.find({ name })
+			.toArray()
 			.then(result => resolve(result))
 			.catch(error => {
 				console.log('error finding ', name);
@@ -157,6 +158,7 @@ exports.getActorNames = function(nconsts) {
 
 
 exports.getMovieNames = function(tconsts) {
+	
 	return connectToDb(db => {
 		return new Promise((resolve, reject) => {
 			db.collection('movieReference')
@@ -174,6 +176,7 @@ exports.getMovieNames = function(tconsts) {
 
 
 exports.getActorParent = function(nconst, table) {
+	
 	return connectToDb(db => {
 		return new Promise((resolve, reject) => {
 			db.collection(table)

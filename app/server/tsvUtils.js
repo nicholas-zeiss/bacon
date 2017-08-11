@@ -4,7 +4,9 @@ const path = require('path');
 
 exports.traverseTSV = function(input, output) {
 
-	return new Promise((resolve, reject) => {		
+	return new Promise((resolve, reject) => {
+		console.log('beggining of search for ', input.file);
+
 		let inStream, outStream;
 		inStream = fs.createReadStream(path.join(__dirname, 'data/' + input.file), 'utf8');
 		
@@ -34,7 +36,7 @@ exports.traverseTSV = function(input, output) {
 			if (output) {
 				outStream.end();
 			}
-
+			console.log('end of search for ', input.file);
 			resolve(input.matches);
 		});
 	});
@@ -50,10 +52,10 @@ exports.getActorsNconsts = function(names) {
 		names: names,
 		matches: new Map(),
 		cb: function(row) {
-			let actor = row.match(/^(nm\d{7})\t([^\t\n]+)/);
+			let actor = row.match(/^(nm\d{7})\t([^\t]+)\t([^\t]+)\t([^\t]+)\t([^\t\n]+)\n$/);
 		
-			if (actor && this.names.has(actor[2]) && !this.matches.has(actor[2])) {
-				this.matches.set(actor[2], actor[1]);
+			if (actor && this.names.has(actor[2])) {
+				this.matches.set(actor[1], actor[2]);
 			} 
 		}
 	};
@@ -71,11 +73,19 @@ exports.getActorNames = function(nconsts) {
 		nconsts: nconsts,
 		matches: new Map(),
 		cb: function(row) {
-			let actor = row.match(/^(nm\d{7})\t([^\t\n]+)/);
+			let actor = row.match(/^(nm\d{7})\t([^\t]+)\t([^\t]+)\t([^\t]+)\t([^\t\n]+)\n$/);
 
 			if (actor && this.nconsts.has(actor[1])) {
-				this.matches.set(actor[1], actor[2]);
-			} 
+				let dob = actor[3] == '\\N' ? 0 : actor[3];
+				let dod = actor[4] == '\\N' ? 0 : actor[4];
+
+				this.matches.set(actor[1], { 
+					name: actor[2],
+					dob: dob,
+					dod: dod,
+					jobs: actor[5]
+				});
+			}
 		}
 	};
 	
@@ -98,17 +108,10 @@ exports.getCostars = function(parents, alreadyIndexed) {
 			movieSet: new Set()
 		},
 		cb: function(row) {
-			let movie = row.match(/^(tt\d{7})\t([^\t\n]+)/);
+			let movie = row.match(/^(tt\d{7})\t([^\t\n]+)\n$/);
 
 			if (movie) { 
 				let actors = movie[2].split(','), parentActors = [], childActors = [];
-
-				if (Number(movie[1].slice(2)) === 0) {
-					console.log('++++++++++++++++');
-					console.log('found zero w/ tconst: ', movie[1]);
-					console.log(row);
-					console.log('++++++++++++++++');
-				}
 				
 				actors.forEach(actor => {	
 					if (this.parents.has(actor)) {
@@ -147,10 +150,13 @@ exports.getMoviesByTconsts = function(tconsts) {
 		tconsts: tconsts,
 		matches: new Map(),
 		cb: function(row) {
-			let movie = row.match(/^(tt\d{7})\t([^\t\n]+)/);
+			let movie = row.match(/^(tt\d{7})\t([^\t]+)\t([^\t\n]+)\n$/);
 
 			if (movie && this.tconsts.has(movie[1])) { 
-				this.matches.set(movie[1], movie[2]);
+				this.matches.set(movie[1], {
+					title: movie[2],
+					year: movie[3]
+				});
 			} 
 		}
 	};
@@ -158,8 +164,32 @@ exports.getMoviesByTconsts = function(tconsts) {
 	return exports.traverseTSV(input);
 }
 
+function readRows(consts, file) {
 
+	let input = {
+		file: file,
+		matches: 0,
+		cb: function(row) {
+			this.matches++;
+			// let parsed = row.match(/^([nmt]{2}\d{7})\t([^\t\n]+)/);
 
+			// if (parsed && parsed[2].includes(this.consts)) {
+			// 	console.log(row); 
+			// 	this.matches.add(row);
+			// } 
+		}
+	};
+
+	return exports.traverseTSV(input);
+}
+
+// readRows('nm0000102', 'names.tsv')
+// .then(res => {
+// // 	let n = 0;
+// // 	for (let foo of res) n++;
+// 	console.log(res);
+// });
+// exports.getActorsNconsts(new Set(['Tom Holland'])).then(res => console.log(res));
 
 
 
