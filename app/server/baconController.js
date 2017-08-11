@@ -24,6 +24,7 @@ function getNamesTitles(path) {
 				
 				nameMap.set(actor.nconst, {
 					name: actor.name,
+					number: actor.number,
 					dob: actor.dob,
 					dod: actor.dod,
 					jobs: actor.jobs
@@ -102,7 +103,7 @@ function getBaconPath(nconst, number, path) {
 // });
 
 
-getBaconPath(11111111111, 7, []).then(res => console.log(res)).catch(err => console.log(err));
+// getBaconPath(11111111111, 7, []).then(res => console.log(res)).catch(err => console.log(err));
 
 
 module.exports = getBaconPath;

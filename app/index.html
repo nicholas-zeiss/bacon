@@ -1,9 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
-	<head></head>
-	<body ng-app="root">
-		<p>foo</p>
-		<p>Information courtesy of IMDb (http://www.imdb.com). Used with permission.</p>
+<html lang="en" ng-app="app">
+	<head>
+		<title>Six Degrees of Bacon</title>
+		<link rel="stylesheet" href="/client/styles/styles.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700">
+		<script src="/dist/bundle.js"></script>
+	</head>
+	<body ng-controller="appController as app">
+		<div id="header">
+			<h1>Six Degrees of Kevin Bacon</h1>
+		</div>
+		
+		<div id="input" ng-controller="inputController as input">
+			<input type="text" ng-model="input.name">
+			<button type="button" ng-click="input.submit()">Get Path</button>
+		</div>
+
+		<div id="loading" ng-if="app.loading">
+			Loading...
+		</div>
+
+
+		<div id="display" ng-controller="displayController as display">
+			<div ng-if="app.path">
+				<div ng-repeat="actorTitle in app.path track by $index">
+					<p>{{ actorTitle[0].name }}</p>
+					<p>{{ actorTitle[1].title }}</p>
+				</div>
+				<div>
+					<p>Kevin Bacon</p>
+				</div>
+			</div>
+		</div>
+
+		<div id="imdb-footer">
+			<p>Information courtesy of</p>
+			<p>IMDb</p>
+			<p>(http://www.imdb.com).</p>
+			<p>Used with permission.</p>
+		</div>
 	</body>
-	<footer></footer>
 </html>

@@ -1,0 +1,22 @@
+
+
+body {
+	width: 100vw;
+	height: 100vh;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	font-family: 'Open Sans', sans-serif;
+}
+
+footer {
+	display: none;
+}
+
+
+
+#imdb-footer {
+	text-align: center;
+}

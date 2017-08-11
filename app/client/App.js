@@ -1,11 +1,18 @@
+
 import angular from 'angular';
 
-let app = angular.module('root', []);
+import appController from './controllers/appController';
+import displayController from './controllers/displayController';
+import inputController from './controllers/inputController';
 
-app.factory('dataFetcher', ['$http', function($http) {
+import './filters/actorFilter';
 
-	this.getPath = function(name) {
-		$http.post('/path')
-	}
+import './services/serverCalls';
 
-}]);
+angular.module('app', [
+	'app.actorFilter',
+	'app.serverCalls'
+])
+.controller('appController', [ '$scope', appController ])
+.controller('displayController', displayController)
+.controller('inputController', [ '$scope', 'serverCalls', inputController ])

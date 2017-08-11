@@ -7,9 +7,9 @@ const db = require('./db');
 
 
 const app = express();
-
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '../../app')));
+
 
 
 app.get('/', (req, res) => {
@@ -17,7 +17,7 @@ app.get('/', (req, res) => {
 });
 
 
-app.post('/name' (req, res) => {
+app.post('/name', (req, res) => {
 	db.getActorReferences(req.body.name)
 	.then(actors => {
 		if (actors.length == 0) {
@@ -25,16 +25,15 @@ app.post('/name' (req, res) => {
 		
 		} else if (actors.length == 1) {
 			baconPath(actors[0].nconst, actors[0].number, [])
-			.then(path => 
+			.then(path => {
 				res.status(200).json(path);
-			)
-			.catch(error => 
+			})
+			.catch(error => {
 				res.sendStatus(500)
-			);
+			});
 		
 		} else {
 			res.status(300).json(actors);	
-		
 		}
 	})
 	.catch(error => 
@@ -43,15 +42,16 @@ app.post('/name' (req, res) => {
 });
 
 
-app.post('/nconst' (req, res) => {
+app.post('/nconst', (req, res) => {
 	baconPath(req.body.nconst, req.body.number, [])
-	.then(path => 
+	.then(path => {
 		res.status(200).json(path)
-	);
-	.catch(error => 
+	})
+	.catch(error => {
 		res.sendStatus(500)
-	);
+	});
 });
+
 
 
 const port = process.env.PORT || 4000;
