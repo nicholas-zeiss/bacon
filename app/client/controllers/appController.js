@@ -1,28 +1,41 @@
 
 
-function appController($scope) {
+function AppController($scope, $location) {
 	let vm = this;
 
 	vm.path = null;
-	vm.loading = false;
+	vm.choices = null;
+	vm.error = null;
+
+	if ($location.path() !== '/' && (!vm.path || !vm.choices || !vm.error)) {
+		$location.path('/');
+	}
 
 
 	$scope.$on('reqStarted', () => {
 		vm.path = null;
-		vm.loading = true;
+		$location.path('/loading');
 	});
 
 
 	$scope.$on('reqSuccess', (event, path) => {
-		vm.loading = false;
-		vm.path = path;	
+		vm.path = path;
+		$location.path('/display/' + path[0][0].nconst);
 	});
 
 
-	$scope.$on('reqError', (event, choices) => {
-		console.log(choices);
-		vm.loading = false;
+	$scope.$on('reqError', (event, res) => {
+		if (res.status === 300) {
+			vm.choices = response.data;
+			$location.path('/choose');
+		} else if (res.status === 404) {
+			vm.error = 'actor not found'
+			$location.path('/');
+		} else {
+			vm.error = 'internal server error'
+			$location.path('/');
+		}
 	});
 }
 
-export default appController;
+export default AppController;

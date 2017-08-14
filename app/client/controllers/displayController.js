@@ -1,9 +1,7 @@
 
 
-function displayController() {
+function DisplayController() {
 	
-
-
 }
 
-export default displayController;
+export default DisplayController;

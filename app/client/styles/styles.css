@@ -1,8 +1,9 @@
 
 
 body {
-	width: 100vw;
-	height: 100vh;
+	min-height: 100vh;
+	min-width: 100vw;
+	margin: 0;
 
 	display: flex;
 	flex-direction: column;
@@ -11,12 +12,119 @@ body {
 	font-family: 'Open Sans', sans-serif;
 }
 
-footer {
-	display: none;
-}
+	#header {
+		width: 100%;
+
+		background-color: red;
+		text-align: center;
+	}
+
+		#input {
+			padding-bottom: 10px;
+
+			display: flex;
+			justify-content: center;
+
+			background-color: red;
+		}
+
+		#input > input {
+
+			padding: .1em .5em;
+			margin-right: .5em;
+			border: none;
+			outline: none;
+			
+			font-size: 20px;
+		}
+
+		#input > button {
+			outline: none;
+			border: none;
+
+			background-color: blue;
+			color: white;
+			font-size: 20px;
+		}
+
+	#content {
+		width: 100%;
+
+		display: flex;
+		justify-content: center;
+
+		background-color: blue;
+	}
+
+		#choose {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+
+			background-color: red;	
+		}
+
+		#display {
+			margin: 0 auto;
+
+			display: flex;
+			flex-direction: row;
+			justify-content: space-around;
+			align-items: center;
+
+			background-color: orange;	
+		}
+
+			#display > div {
+				margin: 0 10px;		
+
+				display: flex;
+				flex-direction: row;
+
+				background-color: green;		
+			}
+
+				.actor-node, .movie-node {
+					margin: 10px;
+
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+
+					background-color: red;
+				}
 
 
+		#home {
+			margin: 0 auto;
 
-#imdb-footer {
-	text-align: center;
-}
+			background-color: red;
+		}
+
+			#bacon-home {
+				width: 33vw;
+				height: 33vw;
+
+				margin: 0 auto;
+
+				border-radius: 16.5vw;
+				border: 10px solid orange;
+
+				background-size: contain;
+				background-image: url("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Kevinbacongfdl.PNG/428px-Kevinbacongfdl.PNG");
+			}
+
+		#loading {
+			background-color: red;	
+		}	
+
+
+	#imdb-footer {
+		width: 100%;
+
+		background-color: red;
+		text-align: center;
+		font-size: 12px;
+		line-height: .5;
+	}

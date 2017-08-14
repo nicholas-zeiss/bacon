@@ -21,29 +21,35 @@ function getNamesTitles(path) {
 			let titleMap = new Map();
 
 			names.forEach(actor => {
-				
 				nameMap.set(actor.nconst, {
+					nconst: actor.nconst,
 					name: actor.name,
 					number: actor.number,
 					dob: actor.dob,
 					dod: actor.dod,
 					jobs: actor.jobs
 				});
-			
 			});
 
 			titles.forEach(title => {
-				
 				titleMap.set(title.tconst, {
 					title: title.title,
 					year: title.year
 				});
-			
 			});
 
-			resolve(path.map(node => 
-				[ nameMap.get(node.nconst), titleMap.get(node.tconst) ]
-			));
+			path = path.map(node => [ nameMap.get(node.nconst), titleMap.get(node.tconst) ]);
+
+			path.push([{
+				nconst: 102,
+				name: "Kevin Bacon",
+				number: 0,
+				dob: 1958,
+				dod: 0,
+				jobs: 'actor,producer,soundtrack'
+			}, null ]);
+
+			resolve(path);
 		})
 		.catch(error => {
 			console.log('error getting actor names or movie names from db');
@@ -61,10 +67,10 @@ function getBaconPath(nconst, number, path) {
 		if (number > 6) {
 			reject('invalid bacon number');
 
-		} else if (number == 0) {			
+		} else if (number == 0) {
 			getNamesTitles(path)
 			.then(path => {
-				resolve(path)		
+				resolve(path);
 			})
 			.catch(error => {
 				console.log('error generating tree in getNamesTitles');

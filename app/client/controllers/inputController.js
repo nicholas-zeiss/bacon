@@ -1,37 +1,30 @@
 
 
-function inputController($scope, serverCalls) {
+function InputController($scope, serverCalls) {
 	let vm = this;
 
 	vm.name = '';
 	vm.submit = submitName;
 
+	//TODO special case for kevin bacon
+	function submitName() {
+		loadingStart();
+		serverCalls.getPathByName(vm.name, loadingComplete, loadingFailed);
+		// vm.name = '';
+	}
 
 	function loadingStart() {
 		$scope.$emit('reqStarted');
 	}
-
 
 	function loadingComplete(response) {
 		console.log(response.data);
 		$scope.$emit('reqSuccess', response.data);
 	}
 
-
 	function loadingFailed(response) {
-		if (response.status === 300) {
-			$scope.$emit('reqError', response.data)
-		} else {
-			$scope.$emit('reqError');
-		}
-	}
-
-
-	function submitName() {
-		loadingStart();
-		serverCalls.getPathByName(vm.name, loadingComplete, loadingFailed);
-		vm.name = '';
+		$scope.$emit('reqError', response)
 	}
 }
 
-export default inputController;
+export default InputController;

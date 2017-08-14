@@ -81,8 +81,8 @@ exports.getActorNames = function(nconsts) {
 
 				this.matches.set(actor[1], { 
 					name: actor[2],
-					dob: dob,
-					dod: dod,
+					dob: Number(dob),
+					dod: Number(dod),
 					jobs: actor[5]
 				});
 			}
@@ -153,9 +153,11 @@ exports.getMoviesByTconsts = function(tconsts) {
 			let movie = row.match(/^(tt\d{7})\t([^\t]+)\t([^\t\n]+)\n$/);
 
 			if (movie && this.tconsts.has(movie[1])) { 
+				let year = movie[3] == '\\N' ? '0' : movie[3];
+				
 				this.matches.set(movie[1], {
 					title: movie[2],
-					year: movie[3]
+					year: Number(movie[3])
 				});
 			} 
 		}

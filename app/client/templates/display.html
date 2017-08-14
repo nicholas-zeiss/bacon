@@ -1,0 +1,7 @@
+
+<div id="display">
+	<div ng-repeat="actorMovie in app.path track by $index">
+		<actor-details actor="actorMovie[0]"></actor-details>
+		<movie-details ng-if="actorMovie[1]" movie="actorMovie[1]"></movie-details>
+	</div>
+</div>

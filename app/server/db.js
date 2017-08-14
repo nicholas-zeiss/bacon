@@ -127,7 +127,7 @@ exports.getActorReferences = function(name) {
 	return connectToDb(db => {
 		return new Promise((resolve, reject) => {
 			db.collection('actorReference')
-			.find({ name })
+			.find({ name: { $regex: "^" + name + "$", $options: "i" }})
 			.toArray()
 			.then(result => resolve(result))
 			.catch(error => {
@@ -191,5 +191,4 @@ exports.getActorParent = function(nconst, table) {
 		});
 	});
 }
-
 

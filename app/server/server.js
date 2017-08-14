@@ -33,6 +33,10 @@ app.post('/name', (req, res) => {
 			});
 		
 		} else {
+			actors.forEach(actor => {
+				delete actor._id;
+			});
+
 			res.status(300).json(actors);	
 		}
 	})
