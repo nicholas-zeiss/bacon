@@ -26,7 +26,7 @@ function searchImagesUrl(files) {
 }
 
 
-function findImageTitles(names) {
+function findImageTitles(actors) {
 	return axios({
 		method: 'get',
 		url: searchNamesUrl(names)
@@ -107,8 +107,8 @@ function findImageUrls(images) {
 }
 
 
-module.exports = function(names) {
-	return findImageTitles(names).then(imageTitles => {
+function getImages(actors) {
+	return findImageTitles(actors).then(imageTitles => {
 		return findImageUrls(imageTitles);
 	})
 	.catch(error => {
@@ -116,3 +116,5 @@ module.exports = function(names) {
 		return error;
 	});
 }
+
+module.exports = getImages;

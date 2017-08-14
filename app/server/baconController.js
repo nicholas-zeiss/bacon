@@ -27,7 +27,8 @@ function getNamesTitles(path) {
 					number: actor.number,
 					dob: actor.dob,
 					dod: actor.dod,
-					jobs: actor.jobs
+					jobs: actor.jobs,
+					url: actor.url
 				});
 			});
 

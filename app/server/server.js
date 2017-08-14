@@ -4,6 +4,7 @@ const path = require('path');
 
 const baconPath = require('./baconController');
 const db = require('./db');
+const getImages = require('./imageFinder');
 
 
 const app = express();
@@ -54,6 +55,31 @@ app.post('/nconst', (req, res) => {
 	.catch(error => {
 		res.sendStatus(500)
 	});
+});
+
+
+app.post('/images', (req, res) => {
+	let names = [];
+	let nameToNconst = {};
+
+	req.body.actors.forEach(actor => {
+		names.push(actor.name);
+		nameToNconst[actor.name] = actor.nconst;
+	});
+
+	getImages(names).then(imageUrls => {
+		for (let name in imageUrls) {
+			if (imageUrls[name]) {
+				db.addActorImageUrl(nameToNconst[name], imageUrls[name])
+			}
+		}
+
+		res.status(200).json(imageUrls);
+	})
+	.catch(error => {
+		res.sendStatus(500);
+	})
+
 });
 
 

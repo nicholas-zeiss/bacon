@@ -46,7 +46,8 @@ exports.resetDb = function() {
 			  	number: 0,
 			  	dob: 1958,
 			  	dod: 0,
-			  	jobs: 'actor,producer,soundtrack'
+			  	jobs: 'actor,producer,soundtrack',
+			  	url: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Kevinbacongfdl.PNG/428px-Kevinbacongfdl.PNG"
 			  })
 			  .then(res => {
 			  	resolve();
@@ -122,6 +123,28 @@ exports.addTreeLevel = function(documents, number) {
 };
 
 
+exports.addActorImageUrls = function(nconst, url) {
+
+	return connectToDb(db => {
+		return new Promise((resolve, reject) => {
+			db.collection('actorReference')
+			.updateOne(
+				{ nconst },
+				{ $set: { url: url }}
+			)
+			.then(res => {
+				console.log('success', res);
+				db.close(false, resolve);
+			})
+			.catch(rej => {
+				console.log('error', rej);
+				db.close(false, reject);
+			})
+		});
+	});
+}
+
+
 exports.getActorReferences = function(name) {
 	
 	return connectToDb(db => {
@@ -191,4 +214,6 @@ exports.getActorParent = function(nconst, table) {
 		});
 	});
 }
+//129
+exports.addActorImageUrls(620, '').then(res => console.log(res)).catch(err => console.log(err));
 

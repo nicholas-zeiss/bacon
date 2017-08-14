@@ -24,7 +24,8 @@ function prepData(actorTree, names, movies, baconNumber) {
 
 			dbNames.push(Object.assign({
 				nconst: Number(childNconst.slice(2)),
-				number: baconNumber
+				number: baconNumber,
+				url: '',
 			}, names.get(childNconst)));
 		}
 	}
