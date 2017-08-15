@@ -13,11 +13,10 @@ const db = require('./db');
 
 /**
  * Formats data collected in the expand function for the database. actorTree holds the links between a parent and child actor
- * and ends up in one of the cardinal collections ("first", "second", etc). names maps nconsts to actor information and 
- * ends up in collection actorReference. movies maps tconsts to movie information and ends up in collection movieReference.
+ * and ends up in one of the cardinal collections ("first", "second", etc). names and movies map nconsts/tconst to actor/movie
+ * information and actorReference/movieReference.
  * 
- * Besides simply formatting all this information it ensures that each nconst has corresponding actor and movie information.
- * IMDb's public dataset can be a bit spotty and this is not always the case. Nconsts that satisfy this requirement are added to the
+ * Also ensures each nconst has corresponding actor/movie info; this is not always the case. Valid nconsts are added to the
  * set nextParents which is also returned and used as the parent set for the next round of expanding the Bacon Tree.
  *
  * inputs:
