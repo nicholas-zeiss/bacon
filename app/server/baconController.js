@@ -104,7 +104,7 @@ module.exports = function(nconst, number, path) {
 			getNamesTitles(path)
 			.then(path => resolve(path))
 			.catch(error => {
-				console.log('error generating tree in getNamesTitles:\n', error);
+				console.log('error decorating path in getNamesTitles:\n', error);
 				reject(error);
 			});
 
