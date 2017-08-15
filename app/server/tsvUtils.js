@@ -1,21 +1,38 @@
+/**
+ * This module provides us utilities for reading and writing tsv files. IMDb's dataset comes in such files and we use these utilities
+ * to format that dataset into a more useable form as well as use said form to generate our Bacon tree.
+ */
+
+
 const fs = require('fs');
 const path = require('path');
 
 
-exports.traverseTSV = function(input, output) {
-
+/**
+ * This function lets us read a tsv file as well as optionally write an output file. It takes an input and optional output object.
+ * It reads a tsv file line by line and supplies that line to input's callback. If output exists that row is also
+ * supplied to output's callback, as well as a reference to the WriteStream of the output file.
+ *
+ * inputs:
+ * input: { file: str fileToTraverse, matches: no restriction, cb: function(str row) }
+ * output: { file: str fileToWriteTo, cb: function(str row, Object WriteStream) }
+ *
+ * return: a Promise resolving to input.matches
+ */
+function traverseTSV(input, output) {
 	return new Promise((resolve, reject) => {
-		console.log('beggining of search for ', input.file);
+		console.log('beggining of search for:\n', path.join(__dirname, 'data/' + input.file), '\n');
 
-		let inStream, outStream;
-		inStream = fs.createReadStream(path.join(__dirname, 'data/' + input.file), 'utf8');
+		let inStream = fs.createReadStream(path.join(__dirname, 'data/' + input.file), 'utf8');
+		let outStream = null;
 		
 		if (output) {
 			outStream = fs.createWriteStream(path.join(__dirname, 'data/' + output.file), 'utf8');
 		}
 
 		inStream.on('readable', () => {
-			let row = '', char = '';
+			let row = '';
+			let char = '';
 
 			while (null != (char = inStream.read(1))) {
 				row += char;
@@ -36,163 +53,139 @@ exports.traverseTSV = function(input, output) {
 			if (output) {
 				outStream.end();
 			}
-			console.log('end of search for ', input.file);
+			console.log('end of search for:\n', path.join(__dirname, 'data/' + input.file), '\n');
 			resolve(input.matches);
 		});
 	});
 }
 
 
-//Set(name) => Map(name, nconst)
-//first found match of name wins
-exports.getActorsNconsts = function(names) {
+//regex for the rows in names.tsv, parentheses correspond to nconst, name, birth year, death year, professions
+const nameRow = /^(nm\d{7})\t([^\t]+)\t([^\t]+)\t([^\t]+)\t([^\t\n]+)\n$/;
 
-	let input = {
-		file: 'names.tsv',
-		names: names,
-		matches: new Map(),
-		cb: function(row) {
-			let actor = row.match(/^(nm\d{7})\t([^\t]+)\t([^\t]+)\t([^\t]+)\t([^\t\n]+)\n$/);
+
+//given a set of names to search for (exact match), return a map of str nconst => str name
+exports.getActorsNconsts = function(names) {
+	function cb(row) {
+		let actor = row.match(nameRow);
 		
-			if (actor && this.names.has(actor[2])) {
-				this.matches.set(actor[1], actor[2]);
-			} 
+		if (actor && names.has(actor[2])) {
+			this.matches.set(actor[1], actor[2]);
 		}
-	};
-	
-	return exports.traverseTSV(input);
+	}
+
+	return traverseTSV({
+		file: 'names.tsv',
+		matches: new Map(),
+		cb: cb
+	});
 }
 
 
-//Set(nconst) => Map(nconst, name)
+//given a set of nconsts to search for, return a map of str nconst => { name: str, dob: number, dod: number, jobs: str}
 exports.getActorNames = function(nconsts) {
 	console.log('getting actor names');
 
-	let input = {
-		file: 'names.tsv',
-		nconsts: nconsts,
-		matches: new Map(),
-		cb: function(row) {
-			let actor = row.match(/^(nm\d{7})\t([^\t]+)\t([^\t]+)\t([^\t]+)\t([^\t\n]+)\n$/);
+	function cb(row) {
+		let actor = row.match(nameRow);
 
-			if (actor && this.nconsts.has(actor[1])) {
-				let dob = actor[3] == '\\N' ? 0 : actor[3];
-				let dod = actor[4] == '\\N' ? 0 : actor[4];
+		if (actor && nconsts.has(actor[1])) {
+			let dob = actor[3] == '\\N' ? 0 : actor[3];
+			let dod = actor[4] == '\\N' ? 0 : actor[4];
 
-				this.matches.set(actor[1], { 
-					name: actor[2],
-					dob: Number(dob),
-					dod: Number(dod),
-					jobs: actor[5]
-				});
-			}
+			this.matches.set(actor[1], { 
+				name: actor[2],
+				dob: Number(dob),
+				dod: Number(dod),
+				jobs: actor[5]
+			});
 		}
-	};
+	}
 	
-	return exports.traverseTSV(input);
+	return traverseTSV({
+		file: 'names.tsv',
+		matches: new Map(),
+		cb: cb
+	});
 }
 
 
-//parents Set(nconst), alreadyIndexed Set(nconst), movies Set(tconst) => Map(nconst, { parent: nconst, tconst: tconst })	key is child of someone in parents
-//children guaranteed not to be already be in the bacon tree
+/**
+ * This function is used by baconTree.js to get the costars of the parents set of nconsts, so long as they are not in alreadyIndexed.
+ * It searches movie.principals.tsv where each row has a tconst and corresponding CSV list of the nconsts for principal actors.
+ *
+ * inputs:
+ * parents: Set( str nconst)
+ * alreadyIndexed: Set( str nconst )
+ *
+ * return: a Promise resolving to matches, where
+ * matches: { actorMap: Map(str costarNconst => [ str parentNconst, str tconst]), actorSet: Set(str costarNconst), movieSet: Set(str tconst)}
+ */
 exports.getCostars = function(parents, alreadyIndexed) {
 	console.log('getting costars');
 
-	let input = {
+	function cb(row) {
+		let movie = row.match(/^(tt\d{7})\t([^\t\n]+)\n$/);
+
+		if (movie) { 
+			let parentActors = [];
+			let childActors = [];
+			let actors = movie[2].split(',');
+			
+			actors.forEach(actor => {	
+				if (parents.has(actor)) {
+					parentActors.push(actor);
+				
+				} else if (!alreadyIndexed.has(actor)) {
+					childActors.push(actor);
+				}
+			});
+
+			if (parentActors.length && childActors.length) {
+				childActors.forEach(child => {
+					alreadyIndexed.add(child);
+
+					this.matches.actorSet.add(child);
+					this.matches.movieSet.add(movie[1]);
+					this.matches.actorMap.set(child, [ parentActors[0], movie[1] ]);
+				});
+			}
+		}
+	}
+
+	return traverseTSV({
 		file: 'movie.principals.tsv',
-		parents: parents,
-		alreadyIndexed: alreadyIndexed,
 		matches: {
 			actorMap: new Map(),
 			actorSet: new Set(),
 			movieSet: new Set()
 		},
-		cb: function(row) {
-			let movie = row.match(/^(tt\d{7})\t([^\t\n]+)\n$/);
-
-			if (movie) { 
-				let actors = movie[2].split(','), parentActors = [], childActors = [];
-				
-				actors.forEach(actor => {	
-					if (this.parents.has(actor)) {
-						parentActors.push(actor);
-					
-					} else if (!this.alreadyIndexed.has(actor)) {
-						childActors.push(actor);
-					}
-				});
-
-				if (parentActors.length && childActors.length) {
-
-					childActors.forEach(child => {
-						this.alreadyIndexed.add(child);
-
-						this.matches.actorMap.set(child, [ parentActors[0], movie[1] ]);
-						this.matches.actorSet.add(child);
-						this.matches.movieSet.add(movie[1]);
-					});
-				}
-			} 
-		}
-	};
-	
-	return exports.traverseTSV(input);
+		cb: cb
+	});
 }
 
 
-//Set(tconst) => Map(tconst, title)
+//given a set of tconsts to search for, return a map of str tconst => { title: str, year: number }
 exports.getMoviesByTconsts = function(tconsts) {
-// function getMoviesByTconsts(tconsts) {
 	console.log('getting movie titles');
 
-	let input = {
+	function cb(row) {
+		let movie = row.match(/^(tt\d{7})\t([^\t]+)\t([^\t\n]+)\n$/);
+
+		if (movie && tconsts.has(movie[1])) { 
+			let year = movie[3] == '\\N' ? '0' : movie[3];
+			
+			this.matches.set(movie[1], {
+				title: movie[2],
+				year: Number(year)
+			});
+		} 
+	}
+
+	return traverseTSV({
 		file: 'movie.basics.tsv',
-		tconsts: tconsts,
 		matches: new Map(),
-		cb: function(row) {
-			let movie = row.match(/^(tt\d{7})\t([^\t]+)\t([^\t\n]+)\n$/);
-
-			if (movie && this.tconsts.has(movie[1])) { 
-				let year = movie[3] == '\\N' ? '0' : movie[3];
-				
-				this.matches.set(movie[1], {
-					title: movie[2],
-					year: Number(year)
-				});
-			} 
-		}
-	};
-
-	return exports.traverseTSV(input);
+		cb: cb
+	});
 }
-
-function readRows(consts, file) {
-
-	let input = {
-		file: file,
-		matches: 0,
-		cb: function(row) {
-			this.matches++;
-			// let parsed = row.match(/^([nmt]{2}\d{7})\t([^\t\n]+)/);
-
-			// if (parsed && parsed[2].includes(this.consts)) {
-			// 	console.log(row); 
-			// 	this.matches.add(row);
-			// } 
-		}
-	};
-
-	return exports.traverseTSV(input);
-}
-
-// readRows('nm0000102', 'names.tsv')
-// .then(res => {
-// // 	let n = 0;
-// // 	for (let foo of res) n++;
-// 	console.log(res);
-// });
-// exports.getActorsNconsts(new Set(['Tom Holland'])).then(res => console.log(res));
-
-
-
 

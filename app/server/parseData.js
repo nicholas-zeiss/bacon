@@ -26,7 +26,7 @@ const db = require('./db');
  * movies: Map(str tconst => { title: str title, year: number year })
  * baconNumber: number
  *
- * output: [dbTree, dbNames, dbMovies, nextParents]
+ * return: [dbTree, dbNames, dbMovies, nextParents]
  * dbTree: [ { nconst: number nconst, parent: number nconst, tconst: number tconst}, ... ]
  * dbNames: [ { nconst: number nconst, number: number degreeOfSeparation, imgOrientation: 1, imgUrl: '', name: str name, dob: number birthYear, dod: number deathYear, jobs: str professions }, ... ]
  * (imgUrl and imgOrientation are default values at this point, these are created by actually using the app)
@@ -80,7 +80,7 @@ function prepData(actorTree, names, movies, baconNumber) {
  * alreadyIndexed: Set( str nconst1, ... )
  * baconNumber: number
  *
- * output: none
+ * return: none
  */
 function expand(parents, alreadyIndexed, baconNumber) {
 	//base case

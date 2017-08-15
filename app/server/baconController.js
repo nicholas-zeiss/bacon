@@ -3,6 +3,7 @@
  * It does not handle cases where it is supplied an actor outside of the database, this is verified elsewhere.
  */
 
+
 const db = require('./db');
 
 
@@ -12,7 +13,7 @@ const db = require('./db');
  * inputs:
  * path: [ { nconst: nconst1, tconst: tconst1 }, ... ]		(nconst and tconst are numbers)
  *
- * output: [  [ actorInfo1, movieInfo1 ], ... ]
+ * return: [ [ actorInfo1, movieInfo1 ], ... ]
  */
 function getNamesTitles(path) {
 	return new Promise((resolve, reject) => {
@@ -79,14 +80,15 @@ function getNamesTitles(path) {
 /**
  * This function generates the path to Kevin Bacon, decorates it with pertinent data, and returns it.
  * Given the nconst input it looks it up in the table defined by number, adds itself to the path we 
- * eventually decorate and return, and then recurses on the parent nconst of that nconst.
+ * eventually decorate and return, and then recurses on the parent nconst of that nconst. Kevin Bacon
+ * himself is not included in this path.
  *
  * inputs:
  * nconst: number
  * tconst: number
  * path: [ { nconst: number nconst1, tconst: number tconst1 }, ... ]
  *
- * output: [  [ actorInfo1, movieInfo1 ], ... ]
+ * return: [  [ actorInfo1, movieInfo1 ], ... ]
  */
 module.exports = function(nconst, number, path) {
 	let collection = [ 'first', 'second', 'third', 'fourth', 'fifth', 'sixth' ];

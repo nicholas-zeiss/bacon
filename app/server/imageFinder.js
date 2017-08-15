@@ -41,7 +41,7 @@ function searchImagesUrl(files) {
  * inputs:
  * actors: [ str name1, ... ]
  *
- * output: { name1: str fileTitle1 OR null, ... }
+ * return: { name1: str fileTitle1 OR null, ... }
  */
 function findImageTitles(actors) {
 	return axios({
@@ -87,7 +87,7 @@ function findImageTitles(actors) {
  * inputs:
  * images: { name1: str fileTitle1 OR null, ... }
  *
- * output: { name1: { url: str fileUrl1 OR null, orientation: number orientation1 } OR null, ... }
+ * return: { name1: { url: str fileUrl1 OR null, orientation: number orientation1 } OR null, ... }
  * (orientation is in standard exif format and defaults to 1)
  */
 function findImageUrls(images) {
@@ -149,7 +149,7 @@ function findImageUrls(images) {
  * inputs:
  * actors: [ str name1, ... ]
  *
- * output: { name1: { url: str fileUrl1 OR null, orientation: number orientation1 } OR null, ... }
+ * return: { name1: { url: str fileUrl1 OR null, orientation: number orientation1 } OR null, ... }
  * (orientation is in standard exif format and defaults to 1)
  */
 module.exports = function(actors) {
