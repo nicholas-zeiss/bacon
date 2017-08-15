@@ -19,7 +19,7 @@ const path = require('path');
  *
  * return: a Promise resolving to input.matches
  */
-function traverseTSV(input, output) {
+exports.traverseTSV = function(input, output) {
 	return new Promise((resolve, reject) => {
 		console.log('beggining of search for:\n', path.join(__dirname, 'data/' + input.file), '\n');
 
@@ -74,7 +74,7 @@ exports.getActorsNconsts = function(names) {
 		}
 	}
 
-	return traverseTSV({
+	return exports.traverseTSV({
 		file: 'names.tsv',
 		matches: new Map(),
 		cb: cb
@@ -102,7 +102,7 @@ exports.getActorNames = function(nconsts) {
 		}
 	}
 	
-	return traverseTSV({
+	return exports.traverseTSV({
 		file: 'names.tsv',
 		matches: new Map(),
 		cb: cb
@@ -153,7 +153,7 @@ exports.getCostars = function(parents, alreadyIndexed) {
 		}
 	}
 
-	return traverseTSV({
+	return exports.traverseTSV({
 		file: 'movie.principals.tsv',
 		matches: {
 			actorMap: new Map(),
@@ -182,7 +182,7 @@ exports.getMoviesByTconsts = function(tconsts) {
 		} 
 	}
 
-	return traverseTSV({
+	return exports.traverseTSV({
 		file: 'movie.basics.tsv',
 		matches: new Map(),
 		cb: cb

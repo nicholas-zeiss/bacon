@@ -180,7 +180,7 @@ exports.addMovieReferences = function(documents) {
 
 
 exports.addTreeLevel = function(documents, number) {
-	console.log('sending ', documents.length' documents to actor tree');
+	console.log('sending ', documents.length, ' documents to actor tree');
 	let collection = [ 'first', 'second', 'third', 'fourth', 'fifth', 'sixth' ][number];
 
 	return connectToDb((db, resolve, reject) => {
@@ -277,6 +277,4 @@ exports.getMovieNames = function(tconsts) {
 		});
 	});
 }
-
-
 
