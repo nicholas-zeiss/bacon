@@ -47,7 +47,8 @@ exports.resetDb = function() {
 			  	dob: 1958,
 			  	dod: 0,
 			  	jobs: 'actor,producer,soundtrack',
-			  	url: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Kevinbacongfdl.PNG/428px-Kevinbacongfdl.PNG"
+			  	imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Kevinbacongfdl.PNG/428px-Kevinbacongfdl.PNG",
+			  	imgOrientation: 1
 			  })
 			  .then(res => {
 			  	resolve();
@@ -123,14 +124,14 @@ exports.addTreeLevel = function(documents, number) {
 };
 
 
-exports.addActorImageUrl = function(nconst, url) {
+exports.addActorImageUrl = function(nconst, image) {
 
 	return connectToDb(db => {
 		return new Promise((resolve, reject) => {
 			db.collection('actorReference')
 			.updateOne(
 				{ nconst },
-				{ $set: { url: url }}
+				{ $set: { imgUrl: image.url, imgOrientation: image.orientation }}
 			)
 			.then(res => {
 				console.log('success adding url to database for ', nconst);

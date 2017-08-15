@@ -1,3 +1,8 @@
+/**
+ * This module handles the logic of finding the path of an actor to Kevin Bacon by reading the database.
+ * It does not handle cases where it is supplied an actor outside of the database, this is verified elsewhere.
+ */
+
 const tsv = require('./tsvUtils');
 const db = require('./db');
 
@@ -25,7 +30,8 @@ function prepData(actorTree, names, movies, baconNumber) {
 			dbNames.push(Object.assign({
 				nconst: Number(childNconst.slice(2)),
 				number: baconNumber,
-				url: '',
+				imgOrientation: 1,
+				imgUrl: ''
 			}, names.get(childNconst)));
 		}
 	}

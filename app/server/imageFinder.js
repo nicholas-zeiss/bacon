@@ -1,9 +1,7 @@
 /**
- *	This module allows us to find images for a list of actors. It uses the mediawiki php api
+ * This module allows us to find images for a list of actors. It uses the mediawiki php api
  * to first query wikipedia for an image from an actor's article, should one exist, and find
  * the file name. It then retreives the direct url for that file from wikimedia commons.
- *
- * TODO: see if smaller versions of the image can be found
  */
 
 
@@ -41,9 +39,9 @@ function searchImagesUrl(files) {
  * Given an array of actor names, find an image title for each one or null if none exist.
  *
  * inputs:
- * actors: [ name1, name2, ... ]
+ * actors: [ str name1, ... ]
  *
- * output: { name1: fileTitle1, ... }  (fileTitles can be non empty str or null)
+ * output: { name1: str fileTitle1 OR null, ... }
  */
 function findImageTitles(actors) {
 	return axios({
@@ -87,10 +85,10 @@ function findImageTitles(actors) {
  * If the image also has pesky exif orientation data that would cause it to rotate we record that as well.
  *
  * inputs:
- * images: { name1: fileTitle1 ... }	(fileTitles can be non empty str or null)
+ * images: { name1: str fileTitle1 OR null, ... }
  *
- * output: { name1: { url: fileUrl1, orientation: orientation1 ] ... } OR null 
- * (fileUrls can be non empty str or null, orientation is in standard exif format and defaults to 1)
+ * output: { name1: { url: str fileUrl1 OR null, orientation: number orientation1 } OR null, ... }
+ * (orientation is in standard exif format and defaults to 1)
  */
 function findImageUrls(images) {
 	let titlesToSearch = [];
@@ -145,7 +143,15 @@ function findImageUrls(images) {
 }
 
 
-//put it all together
+/**
+ * Put it all together...
+ *
+ * inputs:
+ * actors: [ str name1, ... ]
+ *
+ * output: { name1: { url: str fileUrl1 OR null, orientation: number orientation1 } OR null, ... }
+ * (orientation is in standard exif format and defaults to 1)
+ */
 module.exports = function(actors) {
 	return findImageTitles(actors).then(imageTitles => {
 		return findImageUrls(imageTitles);

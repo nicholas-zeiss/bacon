@@ -67,20 +67,23 @@ app.post('/images', (req, res) => {
 		nameToNconst[actor.name] = actor.nconst;
 	});
 
-	console.log('calling getImages w/ names:', names)
+	console.log('calling getImages w/ names:\n', names)
 
 	getImages(names)
 	.then(imageUrls => {
-		// for (let name in imageUrls) {
-		// 	if (imageUrls[name]) {
-		// 		db.addActorImageUrl(nameToNconst[name], imageUrls[name])
-		// 	}
-		// }
-		console.log('getImages returned this in server.js:', imageUrls)
+		
+		for (let name of imageUrls) {
+			if (imageUrls[name]) {
+				db.addActorImageUrl(nameToNconst[name], imageUrls[name]);
+			}
+		}
+		
+		console.log('getImages returned this in server.js:\n', imageUrls);
 
 		res.status(200).json(imageUrls);
 	})
 	.catch(error => {
+		console.log('getImages threw error:\n', error);
 		res.sendStatus(500);
 	});
 });
