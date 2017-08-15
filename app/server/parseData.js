@@ -1,22 +1,47 @@
 /**
- * This module handles the logic of finding the path of an actor to Kevin Bacon by reading the database.
- * It does not handle cases where it is supplied an actor outside of the database, this is verified elsewhere.
+ * This module takes our cleaned IMDb data and with it creates a database for our "Bacon tree". Starting off with
+ * Kevin Bacon himself, it finds all movies in which he stars and from that generates a list of costars. It adds all
+ * these movies and costars to the actorReference and movieReference collections in the db, and populates the "first" collection
+ * with the link between these costars and Kevin Bacon. It then recurses on those costars, finding their costars and adding them
+ * to actorReference, movieReference, and "second", etc until 6 degrees of separation are reached.
  */
+
 
 const tsv = require('./tsvUtils');
 const db = require('./db');
 
 
+/**
+ * Formats data collected in the expand function for the database. actorTree holds the links between a parent and child actor
+ * and ends up in one of the cardinal collections ("first", "second", etc). names maps nconsts to actor information and 
+ * ends up in collection actorReference. movies maps tconsts to movie information and ends up in collection movieReference.
+ * 
+ * Besides simply formatting all this information it ensures that each nconst has corresponding actor and movie information.
+ * IMDb's public dataset can be a bit spotty and this is not always the case. Nconsts that satisfy this requirement are added to the
+ * set nextParents which is also returned and used as the parent set for the next round of expanding the Bacon Tree.
+ *
+ * inputs:
+ * actorTree: Map(str nconst => [ str parentNconst, str tconst ])
+ * names: Map(str nconst => { name: str name, dob: number birthYear, dod: number deathYear, jobs: str professions })
+ * movies: Map(str tconst => { title: str title, year: number year })
+ * baconNumber: number
+ *
+ * output: [dbTree, dbNames, dbMovies, nextParents]
+ * dbTree: [ { nconst: number nconst, parent: number nconst, tconst: number tconst}, ... ]
+ * dbNames: [ { nconst: number nconst, number: number degreeOfSeparation, imgOrientation: 1, imgUrl: '', name: str name, dob: number birthYear, dod: number deathYear, jobs: str professions }, ... ]
+ * (imgUrl and imgOrientation are default values at this point, these are created by actually using the app)
+ * dbMovies: [ { tconst: number tconst, title: str title, year: number year }, ... ]
+ * nextParents: Set( str nconst ) 
+ */
 function prepData(actorTree, names, movies, baconNumber) {
 	let dbTree = [];
 	let dbNames = [];
 	let dbMovies = [];
 
-	let validMovies = new Set();		//different childNconst can have same tconst
+	let validMovies = new Set();
 	let nextParents = new Set();
 
 	for (let [childNconst, [ rootNconst, tconst]] of actorTree.entries()) {
-
 		if (names.has(childNconst) && movies.has(tconst)) {
 			nextParents.add(childNconst);
 			validMovies.add(tconst);
@@ -44,27 +69,48 @@ function prepData(actorTree, names, movies, baconNumber) {
 }
 
 
+/**
+ * The recursive function that generates the Bacon tree. Call with Kevin Bacon's info and baconNumber 1 to generate.
+ * parents is the set of nconsts whose costars we will collect in the call and add to the collection
+ * corresponding to baconNumber. alreadyIndexed is the set of all nconsts already in the Bacon tree, including parents.
+ * We check against this when adding a costar to prevent looping back to a higher level of the tree.
+ *
+ * inputs:
+ * parents: Set( str nconst1, ... ) 
+ * alreadyIndexed: Set( str nconst1, ... )
+ * baconNumber: number
+ *
+ * output: none
+ */
 function expand(parents, alreadyIndexed, baconNumber) {
-	console.log('calling expand w/ number ', baconNumber);
-
+	//base case
 	if (baconNumber == 7) {
 		return;
 	}
 
-	tsv.getCostars(parents, alreadyIndexed).then(costars => {
+	console.log('calling expand w/ number ', baconNumber);
+
+	tsv.getCostars(parents, alreadyIndexed)
+	.then(costars => {
 		console.log('got costars');
+		
 		parents = null;
 
+		//costars.actorMap - map of costar nconst to [ parent nconst, linking tconst ]
+		//costars.movieSet - set of all tconsts of linking movies
+		//costars.actorSet - set of all costar nconsts
 		return Promise.all([
 			costars.actorMap,
 			tsv.getMoviesByTconsts(costars.movieSet),
 			tsv.getActorNames(costars.actorSet)
 		]);
-	
-	}).then(([actorTree, titles, names]) => {
+	}).then(([actorMap, titles, names]) => {
 		console.log('got titles and names');
 
-		let [dbTree, dbNames, dbMovies, nextParents] = prepData(actorTree, names, titles, baconNumber);
+		//dbTree  - data to add to collection "first", "second", etc
+		//dbNames - data to add to actorReference
+		//dbMovies - data to add to movieReference
+		let [dbTree, dbNames, dbMovies, nextParents] = prepData(actorMap, names, titles, baconNumber);
 
 		return Promise.all([
 			nextParents,
@@ -72,22 +118,18 @@ function expand(parents, alreadyIndexed, baconNumber) {
 			db.addActorReferences(dbNames),
 			db.addMovieReferences(dbMovies)
 		]);
-
 	}).then(([nextParents, foo, bar, baz]) => {
 		
 		console.log('sent actor tree, actor names, movie names');
 		expand(nextParents, alreadyIndexed, baconNumber + 1);
-
 	});
 }
 
 
+//nm0000102 is the nconst for Kevin Bacon
 let parents = new Set(['nm0000102']);
 let alreadyIndexed = new Set(['nm0000102']);
 
+//clear db and generate Bacon tree
 db.resetDb().then(() => expand(parents, alreadyIndexed, 1));
-
-
-
-
 

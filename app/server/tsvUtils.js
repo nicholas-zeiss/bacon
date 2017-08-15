@@ -157,7 +157,7 @@ exports.getMoviesByTconsts = function(tconsts) {
 				
 				this.matches.set(movie[1], {
 					title: movie[2],
-					year: Number(movie[3])
+					year: Number(year)
 				});
 			} 
 		}
