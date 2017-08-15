@@ -1,60 +1,43 @@
+/**
+ * This controller is responsible for user input. It handles searches and subsequent requests to the server.
+ */
 
 
 function InputController($scope, serverCalls) {
 	let vm = this;
 
 	vm.name = '';
+	vm.loading = false;
+
 	vm.submit = submitName;
 
-	//TODO special case for kevin bacon
+
+	//executes on user search for an actor
 	function submitName() {
-		loadingStart();
-		serverCalls.getPathByName(vm.name, loadingComplete, loadingFailed);
-		// vm.name = '';
-	}
+		if (vm.name === 'Kevin Bacon') {
+			$scope.$emit('searchedForBacon');
+			vm.name = '';
+			return;
+		}
 
-	function loadingStart() {
-		$scope.$emit('reqStarted');
-	}
+		vm.loading = true;
 
-	function loadingComplete(response) {
-		let path = response.data;
+		$scope.$emit('reqStarted', vm.name);
 
-		let actors = [];
-
-		path.forEach(actorMovie => {
-			// if (!actorMovie[0].url) {
-				actors.push({
-					name: actorMovie[0].name,
-					nconst: actorMovie[0].nconst
-				});
-			// }
+		serverCalls.getPathByName(vm.name, res => {
+			vm.name = '';
+			vm.loading = false;
+		
+			$scope.$emit('reqSuccess', res.data);
+		
+		}, res => {
+			vm.name = '';
+			vm.loading = false;
+		
+			$scope.$emit('reqError', res)
 		});
-
-		// console.log(actors);
-
-		serverCalls.getImages(actors,
-			res => {
-				let imageUrls = res.data;
-
-				// console.log(imageUrls);
-
-				path.forEach(actorMovie => {
-					// actorMovie[0].url = imageUrls[actorMovie[0].name] || actorMovie[0].url;
-					actorMovie[0].url = imageUrls[actorMovie[0].name];
-				});
-
-				$scope.$emit('reqSuccess', path);
-			},
-			error => {
-				loadingFailed(error);
-			}
-		);
-	}
-
-	function loadingFailed(response) {
-		$scope.$emit('reqError', response)
 	}
 }
 
 export default InputController;
+

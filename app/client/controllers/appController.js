@@ -6,29 +6,34 @@
 function AppController($scope, $location) {
 	let vm = this;
 
-	//path to Kevin Bacon, which is of format [ [ actor, movie], ... , [ Kevin Bacon, null ]]
-	vm.path = null;
-	//if user searches for a name with multiple matches hold matches here
-	vm.choices = null;
-	//hold errors here
-	vm.error = null;
+	vm.path = null;      //path to Kevin Bacon, which is of format [ [ actor, movie], ... , [ Kevin Bacon, null ]]
+	vm.choices = null;   //if user searches for a name with multiple matches hold matches here
+	vm.error = null;     //hold errors here
 
-	//force return to Home view when appropriate
+	vm.searchFor = null;
+
+	//force return to Home view when user reloads page
 	if ($location.path() !== '/' && (!vm.path || !vm.choices || !vm.error)) {
 		$location.path('/');
 	}
 
+
 	//user just searched for actor, wait for response
-	$scope.$on('reqStarted', () => {
+	$scope.$on('reqStarted', (event, name) => {
 		vm.path = null;
+		vm.searchFor = name;
+		
 		$location.path('/loading');
 	});
+
 
 	//path found, switch to Display view
 	$scope.$on('reqSuccess', (event, path) => {
 		vm.path = path;
-		$location.path('/display/' + path[0][0].nconst);
+		
+		$location.path(`/display/${path[0][0].nconst}`);
 	});
+
 
 	//no path found, either an error or multiple choices
 	$scope.$on('reqError', (event, res) => {
@@ -41,7 +46,7 @@ function AppController($scope, $location) {
 			$location.path('/');
 		
 		} else {
-			vm.error = 'internal server error'
+			vm.error = 'internal server error: ' + res.satus;
 			$location.path('/');
 		}
 	});

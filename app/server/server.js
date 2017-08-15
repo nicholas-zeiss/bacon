@@ -62,6 +62,7 @@ app.post('/name', (req, res) => {
 
 
 //when the web app has searched for a non unique name clarification by nconst and degree of separation is required and handled here
+//req.body should be { nconst: number, number: int }
 app.post('/nconst', (req, res) => {
 	//validate request
 	if (!req.body
@@ -88,6 +89,7 @@ app.post('/nconst', (req, res) => {
 
 //once the web app has received a path it immediately requests for images of the actors in it who do not already have images in the db
 //we gather those image urls, send them, and add them to the db here
+//req.body should be [ { name: str, nconst: int }, ... ]
 app.post('/images', (req, res) => {
 	//validate
 	if (!req.body || !req.body instanceof Array || !req.body.length) {

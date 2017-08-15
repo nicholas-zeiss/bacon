@@ -10,15 +10,11 @@
 		<div id="header">
 			<h1>Six Degrees of Kevin Bacon</h1>
 			<form id="name-input" ng-controller="InputController as input">
-				<input type="text" ng-model="input.name">
-				<input type="submit" ng-click="input.submit()" value="Search">
-			</div>
+				<input type="text" ng-model="input.name" ng-disabled="input.loading">
+				<input type="submit" ng-click="input.submit()" ng-disabled="input.loading" value="Search">
+			</form>
 		</div>
-		
-
-		<div id='content' ng-view autoscroll>
-		</div>
-
+		<div id='content' ng-view autoscroll></div>
 		<div id="imdb-footer">
 			<p>Information courtesy of</p>
 			<p>IMDb</p>
