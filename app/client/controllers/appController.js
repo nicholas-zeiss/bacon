@@ -20,6 +20,7 @@ function AppController($scope, $location) {
 
 	$scope.$on('reqSuccess', (event, path) => {
 		vm.path = path;
+		console.log(path);
 		$location.path('/display/' + path[0][0].nconst);
 	});
 

@@ -62,17 +62,21 @@ app.post('/images', (req, res) => {
 	let names = [];
 	let nameToNconst = {};
 
-	req.body.actors.forEach(actor => {
+	req.body.forEach(actor => {
 		names.push(actor.name);
 		nameToNconst[actor.name] = actor.nconst;
 	});
 
-	getImages(names).then(imageUrls => {
+	console.log('calling getImages w/ names:', names)
+
+	getImages(names)
+	.then(imageUrls => {
 		for (let name in imageUrls) {
 			if (imageUrls[name]) {
 				db.addActorImageUrl(nameToNconst[name], imageUrls[name])
 			}
 		}
+		console.log('getImages returned this in server.js:', imageUrls)
 
 		res.status(200).json(imageUrls);
 	})

@@ -9,9 +9,9 @@
 	<body ng-controller="AppController as app">
 		<div id="header">
 			<h1>Six Degrees of Kevin Bacon</h1>
-			<div id="input" ng-controller="InputController as input">
+			<form id="name-input" ng-controller="InputController as input">
 				<input type="text" ng-model="input.name">
-				<button type="button" ng-click="input.submit()">Search</button>
+				<input type="submit" ng-click="input.submit()" value="Search">
 			</div>
 		</div>
 		

@@ -47,7 +47,8 @@ function getNamesTitles(path) {
 				number: 0,
 				dob: 1958,
 				dod: 0,
-				jobs: 'actor,producer,soundtrack'
+				jobs: 'actor,producer,soundtrack',
+				url: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Kevinbacongfdl.PNG/428px-Kevinbacongfdl.PNG"
 			}, null ]);
 
 			resolve(path);

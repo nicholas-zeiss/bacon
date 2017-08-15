@@ -19,7 +19,7 @@ body {
 		text-align: center;
 	}
 
-		#input {
+		#name-input {
 			padding-bottom: 10px;
 
 			display: flex;
@@ -28,24 +28,24 @@ body {
 			background-color: red;
 		}
 
-		#input > input {
+			#name-input > input:first-child {
 
-			padding: .1em .5em;
-			margin-right: .5em;
-			border: none;
-			outline: none;
-			
-			font-size: 20px;
-		}
+				padding: .1em .5em;
+				margin-right: .5em;
+				border: none;
+				outline: none;
+				
+				font-size: 20px;
+			}
 
-		#input > button {
-			outline: none;
-			border: none;
+			#name-input > input:last-child {
+				outline: none;
+				border: none;
 
-			background-color: blue;
-			color: white;
-			font-size: 20px;
-		}
+				background-color: blue;
+				color: white;
+				font-size: 20px;
+			}
 
 	#content {
 		width: 100%;

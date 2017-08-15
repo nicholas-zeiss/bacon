@@ -18,8 +18,37 @@ function InputController($scope, serverCalls) {
 	}
 
 	function loadingComplete(response) {
-		console.log(response.data);
-		$scope.$emit('reqSuccess', response.data);
+		let path = response.data;
+
+		let actors = [];
+
+		path.forEach(actorMovie => {
+			if (!actorMovie[0].url) {
+				actors.push({
+					name: actorMovie[0].name,
+					nconst: actorMovie[0].nconst
+				});
+			}
+		});
+
+		console.log(actors);
+
+		serverCalls.getImages(actors,
+			res => {
+				let imageUrls = res.data;
+
+				console.log(imageUrls);
+
+				path.forEach(actorMovie => {
+					actorMovie[0].url = imageUrls[actorMovie[0].name] || actorMovie[0].url;
+				});
+
+				$scope.$emit('reqSuccess', path);
+			},
+			error => {
+				loadingFailed(error);
+			}
+		);
 	}
 
 	function loadingFailed(response) {

@@ -123,7 +123,7 @@ exports.addTreeLevel = function(documents, number) {
 };
 
 
-exports.addActorImageUrls = function(nconst, url) {
+exports.addActorImageUrl = function(nconst, url) {
 
 	return connectToDb(db => {
 		return new Promise((resolve, reject) => {
@@ -133,7 +133,7 @@ exports.addActorImageUrls = function(nconst, url) {
 				{ $set: { url: url }}
 			)
 			.then(res => {
-				console.log('success', res);
+				console.log('success adding url to database for ', nconst);
 				db.close(false, resolve);
 			})
 			.catch(rej => {
@@ -214,6 +214,4 @@ exports.getActorParent = function(nconst, table) {
 		});
 	});
 }
-//129
-exports.addActorImageUrls(620, '').then(res => console.log(res)).catch(err => console.log(err));
 

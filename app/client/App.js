@@ -22,7 +22,11 @@ angular.module('app', [
 	'ngRoute'
 ])
 .controller('ChooseController', ChooseController)
-.controller('DisplayController', DisplayController)
+.controller('DisplayController', [
+  '$scope',
+  'serverCalls',
+  DisplayController
+])
 .controller('HomeController', HomeController)
 .controller('LoadingController', LoadingController)
 .controller('AppController', [
@@ -55,7 +59,7 @@ angular.module('app', [
     .when('/display/:nconst', {
       templateUrl: 'client/templates/display.html',
       controller: 'DisplayController',
-      controllerAs: 'path'
+      controllerAs: 'display'
     })
     .otherwise({
       redirectTo:'/'
