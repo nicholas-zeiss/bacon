@@ -6,4 +6,4 @@ node_modules/*
 
 app/dist/*
 
-app/server/data/*
+app/server/data/data/*

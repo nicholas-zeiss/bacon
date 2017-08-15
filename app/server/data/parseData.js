@@ -8,7 +8,7 @@
 
 
 const tsv = require('./tsvUtils');
-const db = require('./db');
+const db = require('../db');
 
 
 /**

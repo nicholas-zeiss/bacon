@@ -119,6 +119,7 @@ app.post('/images', (req, res) => {
 	})
 	.catch(error => {
 		console.log('getImages threw error:\n', error);
+		
 		res.sendStatus(500);
 	});
 });
