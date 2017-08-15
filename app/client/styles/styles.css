@@ -12,6 +12,13 @@ body {
 	font-family: 'Open Sans', sans-serif;
 }
 
+	.actor-image {
+		background-size: contain;
+		background-repeat: no-repeat;
+		background-position: center;
+	}
+
+
 	#header {
 		width: 100%;
 
@@ -81,6 +88,7 @@ body {
 
 				display: flex;
 				flex-direction: row;
+				align-items: center;
 
 				background-color: green;		
 			}
@@ -93,6 +101,21 @@ body {
 					align-items: center;
 
 					background-color: red;
+				}
+
+				.actor-node > div {
+					width: 150px;
+					height: 150px;
+
+					border: 2px solid orange;
+				}
+
+				.actor-node > img {
+					max-width: 200px;
+					max-height: 200px;
+					/*height: 150px;*/
+
+					border: 2px solid orange;
 				}
 
 
@@ -111,7 +134,6 @@ body {
 				border-radius: 16.5vw;
 				border: 10px solid orange;
 
-				background-size: contain;
 				background-image: url("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Kevinbacongfdl.PNG/428px-Kevinbacongfdl.PNG");
 			}
 

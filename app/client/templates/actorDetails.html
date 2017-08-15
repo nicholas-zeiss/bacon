@@ -1,5 +1,7 @@
 
 <div class="actor-node">
+	<!-- <div ng-if="$ctrl.actor.url" class="actor-image" style="background-image:url({{$ctrl.actor.url}})"></div> -->
+	<img ng-if="$ctrl.actor.url" src="{{$ctrl.actor.url}}"
 	<p>{{ $ctrl.actor.name }}</p>
 	<p>{{ $ctrl.actor.dob }}</p>
 </div>

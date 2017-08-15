@@ -1,10 +1,19 @@
+/**
+ *	This module allows us to find images for a list of actors. It uses the mediawiki php api
+ * to first query wikipedia for an image from an actor's article, should one exist, and find
+ * the file name. It then retreives the direct url for that file from wikimedia commons.
+ *
+ * TODO: see if smaller versions of the image can be found
+ */
+
 
 const axios = require('axios');
 const querystring = require('querystring');
 
 
+//gives us the url to query wikipedia for a list of actors and the files on their pages
 function searchNamesUrl(names) {
-	return 'https://commons.wikimedia.org/w/api.php?' + querystring.stringify({
+	return 'https://en.wikipedia.org/w/api.php?' + querystring.stringify({
 		action: 'query',
 		format: 'json',
 		prop: 'images',
@@ -13,31 +22,29 @@ function searchNamesUrl(names) {
 		imlimit: '500'
 	});
 }
-
-
-function searchCategoryUrl(category) {
-	return 'https://commons.wikimedia.org/w/api.php?' + querystring.stringify({
-		action: 'query',
-		format: 'json',
-		list: 'categorymembers',
-		cmtitle: category,
-		cmprop: 'title',
-		cmtype: 'file'
-	});
-}
  
 
+//gives us the url to query wikimedia commons for the image urls of a list of files
 function searchImagesUrl(files) {
 	return 'https://commons.wikimedia.org/w/api.php?' + querystring.stringify({
 		action: 'query',
 		format: 'json',
 		prop: 'imageinfo',
 		titles: files.join('|'),
-		iiprop: 'url'
+		iiprop: 'url|metadata',
+		iiurlwidth: '400'
 	});
 }
 
 
+/**
+ * Given an array of actor names, find an image title for each one or null if none exist.
+ *
+ * inputs:
+ * actors: [ name1, name2, ... ]
+ *
+ * output: { name1: fileTitle1, ... }  (fileTitles can be non empty str or null)
+ */
 function findImageTitles(actors) {
 	return axios({
 		method: 'get',
@@ -46,31 +53,27 @@ function findImageTitles(actors) {
 	.then(result => {
 		let redirectMap = {};
 		let redirects = result.data.query.redirects || [];
-		let normalized = result.data.query.normalized || [];
 
 		let output = {};
-		let categories = {};
 		let pages = result.data.query.pages;
 
-
 		redirects.forEach(redirect => redirectMap[redirect.to] = redirect.from);
-		normalized.forEach(normal => redirectMap[normal.to] = normal.from)
-
 
 		for (let page in pages) {
 			let name = redirectMap[pages[page].title] || pages[page].title;
 
-			if (pages[page].title.match(/^Category:/)) {
-				categories[name] = pages[page].title;
-			} else {
-				output[name] = pages[page].images && pages[page].images.length ? pages[page].images[0].title : null;
+			if (pages[page].images && pages[page].images.length) {
+				let images = pages[page].images.filter(img => img.title.match(/jpg$|png$/i));
+				output[name] = images.length ? images[0].title : null;
 			}
 		}
 
-		// console.log('categories are ', categories);
-		// console.log('regular output is ', output);
+		//if an actor didn't get returned a page we add them to output here
+		actors.forEach(actor => {
+			output[actor] = output[actor] || null;
+		});
 
-		return findCategoryUrls(categories, output, actors)
+		return output;
 	})
 	.catch(error => {
 		console.log('error getting image titles:\n', error);
@@ -79,91 +82,61 @@ function findImageTitles(actors) {
 }
 
 
-//category => category_name
-function findCategoryUrl(name, category) {
-	// console.log(searchCategoryUrl(category))
-	return axios({
-		method: 'get',
-		url: searchCategoryUrl(category)
-	})
-	.then(result => {
-		// console.log('result from category http request is \n\n\n', result, '\n\n\n');
-		return result.data.query && result.data.query.categorymembers && result.data.query.categorymembers.length ? [ name, result.data.query.categorymembers[0].title ] : null;
-	})
-	.catch(error => {
-		throw error;
-	})
-}
-
-
-//category => { name: category_name }
-function findCategoryUrls(categories, output, actors) {
-	let toSearch = [ output, actors ];
-
-	for (let actor in categories) {
-		toSearch.push(findCategoryUrl(actor, categories[actor]));
-	}
-
-	return Promise.all(toSearch).then(categoryFiles => {
-		// console.log('categoryFiles is ', categoryFiles);
-
-		let [ output, actors ] = categoryFiles.splice(0, 2);
-
-		for (let categoryFile of categoryFiles) {
-			if (categoryFile) {
-				output[categoryFile[0]] = categoryFile[1];
-			}
-		}
-
-		actors.forEach(name => {
-			output[name] = output[name] || null;
-		})
-
-		return output;
-	});
-}
-
-
-
-//images => {  name: imagetitle }
+/**
+ * Given an object of actor names and file titles, find a url for each file title or null if none exist.
+ * If the image also has pesky exif orientation data that would cause it to rotate we record that as well.
+ *
+ * inputs:
+ * images: { name1: fileTitle1 ... }	(fileTitles can be non empty str or null)
+ *
+ * output: { name1: { url: fileUrl1, orientation: orientation1 ] ... } OR null 
+ * (fileUrls can be non empty str or null, orientation is in standard exif format and defaults to 1)
+ */
 function findImageUrls(images) {
-	let imageTitles = [];
+	let titlesToSearch = [];
 	let titleToName = {};
-	let imageUrls = {};
-
-	// console.log('input to findImageUrls is ', images);
+	let output = {};
 
 	for (let name in images) {
 		if (images[name]) {
-			imageTitles.push(images[name]);
+			titlesToSearch.push(images[name]);
 			titleToName[images[name]] = name;
 		} else {
-			imageUrls[name] = null;
+			output[name] = null;
 		}
 	}
 
-	// console.log('array being sent in findImageUrls :', imageTitles);
-
-	if (!imageTitles.length) {
-		return imageUrls;
+	if (!titlesToSearch.length) {
+		return output;
 	}
 
 	return axios({
 		method: 'get',
-		url: searchImagesUrl(imageTitles)
+		url: searchImagesUrl(titlesToSearch)
 	})
 	.then(result => {
-
-		//result.data.query.pages => { pageNum: { title: image title, imageinfo: [ { url: image url } ] } }
 		let pages = result.data.query.pages;
 
-		for (let page in pages) {
-			let name = titleToName[pages[page].title]
+		for (let pageid in pages) {
+			let page = pages[pageid];
+			let name = titleToName[page.title]
+			let url = null;
+			let orientation = 1;
 
-			imageUrls[name] = pages[page].imageinfo && pages[page].imageinfo.length ? pages[page].imageinfo[0].url : null;
+			if (page.imageinfo && page.imageinfo.length) {
+				url = pages.imageinfo[0].thumburl;
+
+				pages.imageinfo[0].metadata.forEach(data => {
+					if (data.name === 'Orientation') {
+						orientation = data.value;
+					}
+				});
+			}
+
+			output[name] = { url, orientation }
 		}
 
-		return imageUrls;
+		return output;
 	})
 	.catch(error => {
 		console.log('error getting image urls:\n', error);
@@ -172,7 +145,8 @@ function findImageUrls(images) {
 }
 
 
-function getImages(actors) {
+//put it all together
+module.exports = function(actors) {
 	return findImageTitles(actors).then(imageTitles => {
 		return findImageUrls(imageTitles);
 	})
@@ -182,4 +156,3 @@ function getImages(actors) {
 	});
 }
 
-module.exports = getImages;
