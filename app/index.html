@@ -20,7 +20,7 @@
 		<header>
 			<h1>Six Degrees of Kevin Bacon</h1>
 			<form id="name-input" ng-controller="InputController as input">
-				<input type="text" ng-model="input.name" ng-disabled="input.loading">
+				<input type="text" placeholder="Search for an actor" ng-model="input.name" ng-disabled="input.loading">
 				<input type="submit" ng-click="input.submit()" ng-disabled="input.loading" value="Search">
 			</form>
 		</header>

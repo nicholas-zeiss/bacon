@@ -6,29 +6,39 @@
 function DisplayController($scope, $timeout, $interval) {
 	let vm = this;
 
-	console.log('display controller loaded at\n', Date.now())
-
-	vm.path = [ $scope.app.path[0] ];
+	vm.path = [];
 	vm.pathIndex = 0;
 
-	vm.baconIndex = $scope.app.path.length - 1;
+	$timeout(() => vm.path.push($scope.app.path[0]), 100);
 
 	vm.loading = {};
+	$scope.app.path.forEach((actorMovie, i) => vm.loading[i] = true);
 
-	$scope.app.path.forEach((actorMovie, i) => {
-		vm.loading[i] = true;
-	});
-
+	
 	vm.loaded = function(index) {
-		// without doing this in a timeout the actor-movie-node loads so quickly
+		// without doing this in a timeout the actor-node loads so quickly
 		// that ng-hide doesn't register properly and there is no transition
-		$timeout(() => {
+		
+
+		// $timeout(() => {
 			vm.loading[index] = false;
 
-			if (vm.pathIndex < vm.baconIndex) {
-				$timeout(() => vm.path.push($scope.app.path[++vm.pathIndex]), 2000);
-			}
-		}, 10);
+			if (++vm.pathIndex < $scope.app.path.length) {
+				$timeout(() => {
+					vm.path.push($scope.app.path[vm.pathIndex]);
+
+					//if pathIndex is odd it points to a movie which has no onload event
+					if (vm.pathIndex % 2) {
+						vm.loaded(vm.pathIndex);
+					}
+				}, 2000);
+			} 
+			// else if (vm.pathIndex == $scope.app.path.length) {
+			// 	vm.path.splice(3, 1);
+			// 	console.log(vm.path);
+			// 	$timeout(() => console.log(vm.path), 2000)
+			// }
+		// }, 100);
 	}
 }
 

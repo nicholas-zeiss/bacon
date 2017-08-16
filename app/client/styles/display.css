@@ -16,67 +16,117 @@
 }
 
 
-	.actor-movie-node {
+	/* 4 a 1 1 m 1 1 a 1 1 m 1 1 a 1 1 m 4 */
+	.actor-node-container {
+		display: inline-block;
+
 		box-sizing: border-box;
-		min-width: 30%;
-		max-width: 30%;
 
-		margin: 1.25%;		
+		width: 20%;
+		margin: 1%;
 
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-
-		background-color: green;
-
-		/*opacity: 1;	*/
-		/*transition: opacity linear 1s;*/
+		background-color: yellow;
 	}
 
 
-	.actor-movie-node.bacon-node {
-		min-width: 15%;
-		max-width: 15%;
+	.movie-node-container {
+		display: inline-block;
+
+		box-sizing: border-box;
+
+		width: 7%;
+		margin: 1%;
+
+		background-color: purple;
+	}
+	
+	@keyframes expandActor {
+		0% {
+			max-width: 0;
+		}	100% {
+			max-width: 20%;
+		}
+	}
+
+	@keyframes expandMovie {
+		0% {
+			max-width: 0;
+		}	100% {
+			max-width: 7%;
+		}
 	}
 
 
-	.actor-movie-node.ng-hide-remove {
+	.actor-node-container.expand {
 		opacity: 0;
-		transition: opacity linear 1s;
+		animation: 1s expandActor;
+	}
+
+	.movie-node-container.expand {
+		opacity: 0;
+		animation: 1s expandMovie;
+	}
+
+	@keyframes fadeIn {
+		0% {
+			opacity: 0;
+		}	100% {
+			opacity: 1;
+		}
 	}
 
 
-	.actor-movie-node.ng-hide-remove.ng-hide-remove-active {
+	.actor-node-container.fade,
+	.movie-node-container.fade {
+		animation: 1s fadeIn;
+	}
+
+	/*.actor-node-container.expand.expand-active {
+		max-width: 20%;
+	}
+
+
+	.movie-node-container.expand.expand-active {
+		max-width: 7%;
+	}
+
+
+
+
+	.actor-node-container.fade.fade-active, 
+	.movie-node-container.fade.fade-active {
 		opacity: 1;
-	}
+	}*/
 
 
 		.actor-node, .movie-node {
 			box-sizing: border-box;
-			max-width: calc(50% - 30px);
 
-			margin: 10px;
-			border: 5px solid orange;
+			border: 2px solid orange;
+			margin: 5%;		
 
 			display: flex;
 			flex-direction: column;
 			align-items: center;
 
 			text-align: center;
+		}
 
+
+		.actor-node {
 			background-color: red;
 		}
 
 
-		.bacon-node > .actor-node {
-			min-width: calc(100% - 30px);
-			max-width: calc(100% - 30px);
+		.movie-node {
+			background-color: green;
 		}
 
 
 			.actor-node p, .movie-node p {
 				margin: 0;
 			}
+
 
 			.actor-node img {
 				max-width: calc(100% - 14px);

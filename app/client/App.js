@@ -27,6 +27,9 @@ import HomeController from './controllers/HomeController';
 import InputController from './controllers/InputController';
 import LoadingController from './controllers/LoadingController';
 
+//directives
+import './directives/ExpandFade';
+
 //filters
 import './filters/BirthDeath';
 import './filters/Jobs';
@@ -40,6 +43,7 @@ angular.module('app', [
   'app.movieDetails',
   'app.birthDeath',
   'app.jobs',
+  'app.expandFade',
 	'app.serverCalls',
   'ngAnimate',
   'ngRoute'
