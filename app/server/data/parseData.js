@@ -27,8 +27,8 @@ const db = require('../db');
  *
  * return: [dbTree, dbNames, dbMovies, nextParents]
  * dbTree: [ { nconst: number nconst, parent: number nconst, tconst: number tconst}, ... ]
- * dbNames: [ { nconst: number nconst, number: number degreeOfSeparation, imgOrientation: 1, imgUrl: '', name: str name, dob: number birthYear, dod: number deathYear, jobs: str professions }, ... ]
- * (imgUrl and imgOrientation are default values at this point, these are created by actually using the app)
+ * dbNames: [ { nconst: number nconst, number: number degreeOfSeparation, imgUrl: '', name: str name, dob: number birthYear, dod: number deathYear, jobs: str professions }, ... ]
+ * (imgUrl is default value at this point, these are created by actually using the app)
  * dbMovies: [ { tconst: number tconst, title: str title, year: number year }, ... ]
  * nextParents: Set( str nconst ) 
  */
@@ -54,7 +54,6 @@ function prepData(actorTree, names, movies, baconNumber) {
 			dbNames.push(Object.assign({
 				nconst: Number(childNconst.slice(2)),
 				number: baconNumber,
-				imgOrientation: 1,
 				imgUrl: ''
 			}, names.get(childNconst)));
 		}

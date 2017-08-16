@@ -29,7 +29,7 @@ function searchImagesUrl(files) {
 		format: 'json',
 		prop: 'imageinfo',
 		titles: files.join('|'),
-		iiprop: 'url|metadata',
+		iiprop: 'url',
 		iiurlwidth: '400'
 	});
 }
@@ -41,7 +41,7 @@ function searchImagesUrl(files) {
  * inputs:
  * actors: [ str name1, ... ]
  *
- * return: { name1: str fileTitle1 OR null, ... }
+ * return: A promise resolving to { name1: str fileTitle1 OR null, ... }
  */
 function findImageTitles(actors) {
 	return axios({
@@ -82,13 +82,11 @@ function findImageTitles(actors) {
 
 /**
  * Given an object of actor names and file titles, find a url for each file title or null if none exist.
- * If the image also has pesky exif orientation data that would cause it to rotate we record that as well.
  *
  * inputs:
  * images: { name1: str fileTitle1 OR null, ... }
  *
- * return: { name1: { url: str fileUrl1 OR null, orientation: number orientation1 } OR null, ... }
- * (orientation is in standard exif format and defaults to 1)
+ * return: A promise resolving to { name1: str fileUrl1 OR null, ... }
  */
 function findImageUrls(images) {
 	let titlesToSearch = [];
@@ -119,19 +117,12 @@ function findImageUrls(images) {
 			let page = pages[pageid];
 			let name = titleToName[page.title]
 			let url = null;
-			let orientation = 1;
 
 			if (page.imageinfo && page.imageinfo.length) {
 				url = page.imageinfo[0].thumburl;
-
-				page.imageinfo[0].metadata.forEach(data => {
-					if (data.name === 'Orientation') {
-						orientation = data.value;
-					}
-				});
 			}
 
-			output[name] = { url, orientation }
+			output[name] = url;
 		}
 
 		return output;
@@ -149,8 +140,7 @@ function findImageUrls(images) {
  * inputs:
  * actors: [ str name1, ... ]
  *
- * return: { name1: { url: str fileUrl1 OR null, orientation: number orientation1 } OR null, ... }
- * (orientation is in standard exif format and defaults to 1)
+ * return: A promise resolving to { name1: str fileUrl1 OR null }, ... }
  */
 module.exports = function(actors) {
 	return findImageTitles(actors).then(imageTitles => {

@@ -11,13 +11,16 @@
 	justify-content: space-around;
 	align-items: center;
 
-	background-color: orange;	
+	background-color: cyan;	
 }
 
 
 	/* actor/movie node */
 	#display > div {
-		margin: 0 10px;		
+		box-sizing: border-box;
+		width: 30%;
+
+		margin: 0 1.25%;		
 
 		display: flex;
 		flex-direction: row;
@@ -28,21 +31,29 @@
 
 
 		.actor-node, .movie-node {
+			box-sizing: border-box;
+			width: calc(50% - 10px);
+
 			margin: 10px;
+			border: 5px solid orange;
 
 			display: flex;
 			flex-direction: column;
 			align-items: center;
+
+			text-align: center;
 
 			background-color: red;
 		}
 
 
 		.actor-node img {
-			max-width: 200px;
-			max-height: 200px;
+			min-width: ;
+			max-width: calc(100% - 10px);
+			max-height: calc(100% - 10px);
 
-			border: 2px solid orange;
+			margin: 5px;
+			border: 5px solid orange;
 
 			transform: rotate(0deg);
 		}

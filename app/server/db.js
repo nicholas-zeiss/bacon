@@ -18,8 +18,7 @@
  *			  dob: int,              -  birth year (0 if not in dataset)
  *        dod: int,              -  death year (0 if not in dataset or actor is still alive)
  *        jobs: str, 						 -  comma separated string of their three top professions as according to IMDb dataset
- *        imgUrl: str,					 -  url to the image generated for them (empty str if image not yet generated)
- *        imgOrientation: int    -  EXIF formatted orientation of the above image (1 if image not yet generated)
+ *        imgUrl: str					 -  url to the image generated for them (empty str if image not yet generated)
  *		  }
  *
  *
@@ -82,8 +81,7 @@ exports.resetDb = function() {
 		  	dob: 1958,
 		  	dod: 0,
 		  	jobs: 'actor,producer,soundtrack',
-		  	imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Kevinbacongfdl.PNG/428px-Kevinbacongfdl.PNG",
-		  	imgOrientation: 1
+		  	imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Kevinbacongfdl.PNG/428px-Kevinbacongfdl.PNG"
 		  })
 		  .then(result => {
 		  	console.log('database successfully created');
@@ -110,7 +108,7 @@ exports.resetDb = function() {
  *		SECTION - SETTERS
  *
  *			i. addActorReferences  -  add documents to collection actorReference
- *		 ii. addActorImageUrl    -  add imgUrl and imgOrientation to a document specified by nconst in actorReference
+ *		 ii. addActorImageUrl    -  add imgUrlto a document specified by nconst in actorReference
  *    iii. addMovieReferences  -  add documents to collection movieReference
  *     iv. addTreeLevel				 -  add documents to an ordinal collection
  *
@@ -137,13 +135,12 @@ exports.addActorReferences = function(documents) {
 };
 
 
-//image must be { url: str, orientation: int }
-exports.addActorImageUrl = function(nconst, image) {
+exports.addActorImageUrl = function(nconst, url) {
 	return connectToDb((db, resolve, reject) => {
 		db.collection('actorReference')
 		.updateOne(
 			{ nconst },
-			{ $set: { imgUrl: image.url, imgOrientation: image.orientation }}
+			{ $set: { imgUrl: url }}
 		)
 		.then(result => {
 			console.log('success adding url to database for ', nconst);

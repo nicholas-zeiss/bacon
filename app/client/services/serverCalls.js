@@ -41,9 +41,8 @@ import angular from 'angular';
 				let imgUrls = res.data;
 
 				path.forEach(([actor, movie]) => {
-					if (!actor.imgUrl && imgUrls[actor.name].url) {
-						actor.imgUrl = imgUrls[actor.name].url;
-						actor.imgOrientation = imgUrls[actor.name].orientation;
+					if (!actor.imgUrl && imgUrls[actor.name]) {
+						actor.imgUrl = imgUrls[actor.name];
 					}
 				});
 

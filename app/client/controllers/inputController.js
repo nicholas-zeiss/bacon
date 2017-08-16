@@ -31,7 +31,6 @@ function InputController($scope, serverCalls) {
 			$scope.$emit('reqSuccess', res);
 		
 		}, res => {
-			vm.name = '';
 			vm.loading = false;
 		
 			$scope.$emit('reqError', res)

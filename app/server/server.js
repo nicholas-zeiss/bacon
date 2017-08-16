@@ -110,7 +110,7 @@ app.post('/images', (req, res) => {
 	getImages(names)
 	.then(imageUrls => {
 		for (let name in imageUrls) {
-			if (imageUrls[name] && imageUrls[name].url) {
+			if (imageUrls[name]) {
 				db.addActorImageUrl(nameToNconst[name], imageUrls[name]);
 			}
 		}
