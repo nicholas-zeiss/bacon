@@ -3,9 +3,10 @@
  * as it is displayed in the display view.
  */
 
- import angular from 'angular';
+import angular from 'angular';
 
- (() => {
+
+(() => {
  	angular.module('app.expandFade', [])
  	.directive('expandFade', ['$timeout', $timeout => (scope, element, attrs) => {
  		let index = scope.$index;

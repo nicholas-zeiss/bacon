@@ -3,6 +3,8 @@
  * and must be shown to the user.
  */
 
+import $ from 'jquery';
+
 
 function DisplayController($scope, $timeout, $location, $route) {
 	let vm = this;
@@ -47,7 +49,7 @@ function DisplayController($scope, $timeout, $location, $route) {
 
 		if (++index < $scope.app.path.length) {
 			vm.timeoutPromises.push(
-				$timeout(() => $location.hash('node-' + (index - 1)), 600),
+				$timeout(() => scrollToHash('#node-' + (index - 1)), 600),
 				$timeout(() => {
 					vm.path.push($scope.app.path[index]);
 
@@ -62,12 +64,23 @@ function DisplayController($scope, $timeout, $location, $route) {
 			// $location.hash('node-' + (index - 1));
 
 			vm.timeoutPromises.push(
-				$timeout(() => $location.hash('node-' + (index - 1)), 600),
+				$timeout(() => scrollToHash('#node-' + (index - 1)), 600),
 				$timeout(() => {
 					vm.finishedLoading = true;
 					$scope.$emit('displayFinishedLoading');
 				}, 1250)
 			);
+		}
+	}
+
+	function scrollToHash(hash) {
+		console.log('scrollToHash ', hash)
+		let scrollTo = $(hash);
+		console.log(scrollTo, scrollTo.length);
+		if (scrollTo.length) {
+			$('#content').animate({
+      	scrollTop: scrollTo.offset().top + 50
+      }, 1000);
 		}
 	}
 
