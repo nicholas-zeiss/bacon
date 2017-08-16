@@ -17,7 +17,7 @@
 			$timeout(() => {
 				element.removeClass('expand');
 				element.addClass('fade');
-			}, 1100);
+			}, 550);
 		});	
  	}]);
  })();

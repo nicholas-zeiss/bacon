@@ -4,15 +4,14 @@
  */
 
 
-function AppController($scope, $location, serverCalls) {
-	console.log('started app controller');
-	
+function AppController($scope, $location, serverCalls) {	
 	let vm = this;
 
 	vm.path = null;      //path to Kevin Bacon, which is of format [ actor1, movie1, ... , Kevin Bacon ]
 	vm.choices = null;   //if user searches for a name with multiple matches hold matches here
 	vm.error = null;     //hold errors here
 	vm.searchName = null;
+	vm.inputDisabled = false;
 	
 
 	//reroute as appropriate on reload, if url is /display/nconst load it, otherwise stay here
@@ -23,9 +22,9 @@ function AppController($scope, $location, serverCalls) {
 		if (/^\/display\/\d+$/.test($location.path())) {
 			let nconst = Number($location.path().match(/(\d+)$/)[1]);
 			vm.searchName = 'index: ' + nconst;
+			vm.inputDisabled = true;
 			
 			serverCalls.getPathByNconst(nconst, loadPath, handleError);
-			$scope.$broadcast('disableInput');
 
 			$location.path('/loading');
 
@@ -35,7 +34,22 @@ function AppController($scope, $location, serverCalls) {
 	}
 
 
+	/**	--------------------------------------------- *
+	 *																								*
+	 *     Event Listeners for activity in the		    *
+	 *     display view																*
+	 *																								*
+	 * ---------------------------------------------- **/
+
+
+	//user clicked the clear button, reset app 
 	$scope.$on('reset', reset);
+
+
+	//display loaded all of the path into the dom, enable input
+	$scope.$on('displayFinishedLoading', () => {
+		vm.inputDisabled = false
+	});
 
 
 	function reset() {
@@ -43,13 +57,19 @@ function AppController($scope, $location, serverCalls) {
 		vm.choices = null;
 		vm.error = null;
 		vm.searchName = null;
+		vm.inputDisabled = false;
 
 		$location.hash('');
 		$location.path('/home').replace();
 	}
 
 
-	// Event Listeners for input or server activity
+  /**	--------------------------------------------- *
+	 *																								*
+	 *     Event Listeners for server activity		    *
+	 *																								*
+	 * ---------------------------------------------- **/
+
 
 	//user just searched for actor, wait for response
 	$scope.$on('reqStarted', (event, name) => {
@@ -70,6 +90,7 @@ function AppController($scope, $location, serverCalls) {
 	$scope.$on('reqError', (event, res) => handleError(res));
 
 
+	//handle a successful response from the server
 	function loadPath(path) {
 		vm.path = path.reduce((path, actorMovie) => path.concat(actorMovie), []);
 		
@@ -80,23 +101,20 @@ function AppController($scope, $location, serverCalls) {
 	}
 
 
+	//handle an error from the server
 	function handleError(res) {
+		vm.inputDisabled = false;
+
 		if (res.status === 300) {
 			vm.choices = res.data;
-
-			$scope.$broadcast('enableInput');
 			$location.path('/choose').replace();
 		
 		} else if (res.status === 404) {
 			vm.error = 'actor not found';
-
-			$scope.$broadcast('enableInput');
 			$location.path('/').replace();
 		
 		} else {
 			vm.error = 'internal server error: ' + res.status;
-
-			$scope.$broadcast('enableInput');
 			$location.path('/').replace();
 		}
 	}

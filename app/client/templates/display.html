@@ -7,26 +7,13 @@
 		</button>
 	</div>
 	<div id="display-content">
-		<div 
-			id="node-{{$index}}"
-			ng-class="$odd ? 'movie-node-container' : 'actor-node-container'"
-			ng-repeat="actorMovie in display.path"
-			ng-hide="display.loading[$index]"
-			expand-fade>
+		<div ng-class="$odd ? 'movie-node-container' : 'actor-node-container'"
+		ng-repeat="actorMovie in display.path" ng-hide="display.loading[$index]" expand-fade>
 			
-			<actor-details 
-				class="actor-node"
-				ng-if="$even"
-				actor="actorMovie"
-				loaded="display.loaded"
-				index="$index">
-			</actor-details>
+			<actor-details class="actor-node" ng-if="$even" actor="actorMovie"
+			loaded="display.loaded" index="$index"></actor-details>
 			
-			<movie-details
-				class="movie-node"
-				ng-if="$odd"
-				movie="actorMovie">
-			</movie-details>
+			<movie-details class="movie-node" ng-if="$odd" movie="actorMovie" index="$index"></movie-details>
 		</div>
 	</div>
 </section>

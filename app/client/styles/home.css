@@ -4,21 +4,26 @@
 
 
 #home {
-	width: 33%;
+	width: 30vw;
+	height: 75vh;
 
 	margin: 0 auto;
 
-	background-color: red;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+
+	background-color: green;
 }
 
 
 	#home-bacon-img {
 		box-sizing: border-box;
 
-		min-width: 33vw;
-		min-height: 33vw;
+		width: 30vw;
+		/*min-height: 10vw;*/
 
-		margin: 0;
+		/*margin: auto 0;*/
 		border: 10px solid orange;
 		border-radius: 30px;
 

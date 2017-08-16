@@ -9,7 +9,8 @@ import angular from 'angular';
 	.component('movieDetails', {
 		templateUrl: '/client/templates/movieDetails.html',
 		bindings: { 
-			movie: '<'
+			movie: '<',
+			index: '<'
 		}
 	});
 })();

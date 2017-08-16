@@ -3,155 +3,172 @@
  */
 
 
-#display-header {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-
-
-	#display-header > button, #display-header > h2 {
-		margin: 10px 5px;
-
-		color: white;
-	}
-
-
-	#display-header > button {
-		border: none;
-		border-radius: .2em;
-		outline: none;
-
-		font-size: 20px;
-
-		background-color: red;
-	}
-
-
-#display-content {
+#display {
 	width: 100%;
+	height: 75vh;
 
 	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
-	justify-content: center;
-	align-items: center;
-
-	background-color: cyan;	
+	flex-direction: column;
+	justify-content: flex-start;
 }
 
 
-	.actor-node-container, .movie-node-container {
-		box-sizing: border-box;
+	#display-header {
+		flex: 0 0 auto;
 
-		margin: 1%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 
-		-webkit-backface-visibility: hidden;
-		   -moz-backface-visibility: hidden;
+		background-color: blue;
 	}
 
 
-	.actor-node-container {
-		width: 20%;
-		
-		background-color: yellow;
-	}
+		#display-header > button, #display-header > h2 {
+			margin: 10px 5px;
 
-	.movie-node-container {
-		width: 7%;
-
-		background-color: purple;
-	}
-	
-
-	@keyframes expandActor {
-		0% {
-			max-width: 0;
-		}	100% {
-			max-width: 20%;
-		}
-	}
-
-	@keyframes expandMovie {
-		0% {
-			max-width: 0;
-		}	100% {
-			max-width: 7%;
-		}
-	}
-
-
-	@keyframes fadeIn {
-		0% {
-			opacity: 0;
-		}	100% {
-			opacity: 1;
-		}
-	}
-
-
-	.actor-node-container.expand {
-		opacity: 0;
-		animation: 1s expandActor;
-	}
-
-
-	.movie-node-container.expand {
-		opacity: 0;
-		animation: 1s expandMovie;
-	}
-
-
-	.actor-node-container.fade,
-	.movie-node-container.fade {
-		animation: 1s fadeIn;
-	}
-
-
-		.actor-node, .movie-node {
-			box-sizing: border-box;
-
-			padding: 5px;
-			border: 5px solid orange;
-			margin: 2%;		
-
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-
-			text-align: center;
+			color: white;
 		}
 
 
-		.actor-node {
+		#display-header > button {
+			border: none;
+			border-radius: .2em;
+			outline: none;
+
+			font-size: 25px;
+
 			background-color: red;
 		}
 
 
-		.movie-node {
-			background-color: green;
+	#display-content {
+		width: 100%;
+
+		flex: 1 0 auto;
+
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		justify-content: center;
+		align-items: center;
+		align-content: center;
+
+		background-color: cyan;	
+	}
+
+
+		.actor-node-container, .movie-node-container {
+			box-sizing: border-box;
+
+			margin: 1%;
+
+			-webkit-backface-visibility: hidden;
+			   -moz-backface-visibility: hidden;
 		}
 
 
-			.actor-node > p, .movie-node > p {
-				margin: 2px 0;
+		.actor-node-container {
+			width: 20%;
+			
+			background-color: yellow;
+		}
 
-				font-size: 14px;
+		.movie-node-container {
+			width: 7%;
+
+			background-color: purple;
+		}
+		
+
+		@keyframes expandActor {
+			0% {
+				max-width: 0;
+			}	100% {
+				max-width: 20%;
+			}
+		}
+
+		@keyframes expandMovie {
+			0% {
+				max-width: 0;
+			}	100% {
+				max-width: 7%;
+			}
+		}
+
+
+		@keyframes fadeIn {
+			0% {
+				opacity: 0;
+			}	100% {
+				opacity: 1;
+			}
+		}
+
+
+		.actor-node-container.expand {
+			opacity: 0;
+			animation: .5s expandActor;
+		}
+
+
+		.movie-node-container.expand {
+			opacity: 0;
+			animation: .5s expandMovie;
+		}
+
+
+		.actor-node-container.fade,
+		.movie-node-container.fade {
+			animation: .5s fadeIn;
+		}
+
+
+			.actor-node, .movie-node {
+				box-sizing: border-box;
+
+				padding: 5px;
+				border: 5px solid orange;
+				margin: 2%;		
+
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+
+				text-align: center;
 			}
 
 
-			.actor-node img {
-				max-width: calc(100% - 14px);
-
-				margin: 5px;
-				border: 2px solid black;
-				border-radius: 10px;
-
-				transform: rotate(0deg);
+			.actor-node {
+				background-color: red;
 			}
 
 
-			#empty {
-				display: none;
+			.movie-node {
+				background-color: green;
 			}
+
+
+				.actor-node > p, .movie-node > p {
+					margin: 2px 0;
+
+					font-size: 14px;
+				}
+
+
+				.actor-node img {
+					max-width: calc(100% - 14px);
+
+					margin: 5px;
+					border: 2px solid black;
+					border-radius: 10px;
+
+					transform: rotate(0deg);
+				}
+
+
+				#empty {
+					display: none;
+				}
 
