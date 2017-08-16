@@ -14,6 +14,7 @@ function AppController($scope, $location, serverCalls) {
 
 	//reroute as appropriate on reload
 	if ($location.path() !== '/') {
+		//if url is that of a bacon path, reload it and show it
 		if (/^\/display\/\d+$/.test($location.path())) {
 			let nconst = Number($location.path().match(/(\d+)$/)[1]);
 			
@@ -23,10 +24,7 @@ function AppController($scope, $location, serverCalls) {
 			serverCalls.getPathByNconst(nconst, res => {
 				vm.path = res;
 				$location.path(`/display/${res[0][0].nconst}`)
-			}, res => {
-				$location.path('/');
-				vm.error = res.status;
-			});
+			}, handleError);
 		
 		} else {
 			$location.path('/');
@@ -46,15 +44,17 @@ function AppController($scope, $location, serverCalls) {
 	//path found, switch to Display view
 	$scope.$on('reqSuccess', (event, path) => {
 		vm.path = path;
-		
 		$location.path(`/display/${path[0][0].nconst}`);
 	});
 
 
 	//no path found, either an error or multiple choices
-	$scope.$on('reqError', (event, res) => {
+	$scope.$on('reqError', (event, res) => handleError(res));
+
+
+	function handleError(res) {
 		if (res.status === 300) {
-			vm.choices = response.data;
+			vm.choices = res.data;
 			$location.path('/choose');
 		
 		} else if (res.status === 404) {
@@ -65,7 +65,7 @@ function AppController($scope, $location, serverCalls) {
 			vm.error = 'internal server error: ' + res.status;
 			$location.path('/');
 		}
-	});
+	}
 }
 
 export default AppController;

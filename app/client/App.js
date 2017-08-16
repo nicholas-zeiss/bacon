@@ -27,6 +27,10 @@ import HomeController from './controllers/HomeController';
 import InputController from './controllers/InputController';
 import LoadingController from './controllers/LoadingController';
 
+//filters
+import './filters/BirthDeath';
+import './filters/Jobs';
+
 //services
 import './services/serverCalls';
 
@@ -34,6 +38,8 @@ import './services/serverCalls';
 angular.module('app', [
   'app.actorDetails',
   'app.movieDetails',
+  'app.birthDeath',
+  'app.jobs',
 	'app.serverCalls',
   'ngAnimate',
   'ngRoute'
@@ -47,6 +53,8 @@ angular.module('app', [
 .controller('ChooseController', ChooseController)
 .controller('DisplayController', [
   '$scope',
+  '$timeout',
+  '$interval',
   DisplayController
 ])
 .controller('HomeController', HomeController)

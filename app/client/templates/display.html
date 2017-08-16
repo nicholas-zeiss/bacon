@@ -1,6 +1,6 @@
 
-<div id="display">
-	<div ng-repeat="actorMovie in display.path track by $index">
+<div id="content-display">
+	<div ng-repeat="actorMovie in display.path track by $index" ng-hide="display.loading[$index]" ng-class="$index != display.baconIndex ? 'actor-movie-node' : [ 'actor-movie-node', 'bacon-node' ]">
 		<actor-details actor="actorMovie[0]" loaded="display.loaded" index="$index" class="actor-node"></actor-details>
 		<movie-details ng-if="actorMovie[1]" movie="actorMovie[1]" class="movie-node"></movie-details>
 	</div>

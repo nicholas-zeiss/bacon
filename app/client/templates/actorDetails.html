@@ -1,4 +1,6 @@
 
 <div ng-if="$ctrl.actor.imgUrl" ng-include="'/client/templates/actorImage.html'" onload="$ctrl.loaded($ctrl.index)"></div>
+<div ng-if="!$ctrl.actor.imgUrl" ng-include="'/client/templates/empty.html'" onload="$ctrl.loaded($ctrl.index)"></div>
 <p>{{ $ctrl.actor.name }}</p>
-<p>{{ $ctrl.actor.dob }}</p>
+<p ng-if="$ctrl.actor.dob">{{ [ $ctrl.actor.dob, $ctrl.actor.dod ] | birthDeath }}</p>
+<p ng-if="$ctrl.actor.jobs">{{ $ctrl.actor.jobs | jobs }}</p>
