@@ -119,9 +119,7 @@ app.post('/images', (req, res) => {
 	getImages(names)
 	.then(imageUrls => {
 		for (let name in imageUrls) {
-			if (imageUrls[name]) {
-				db.addActorImageUrl(nameToNconst[name], imageUrls[name]);
-			}
+			db.addActorImageUrl(nameToNconst[name], imageUrls[name]);
 		}
 		
 		console.log('getImages returned this in server.js:\n', imageUrls);

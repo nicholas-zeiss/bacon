@@ -18,7 +18,7 @@
  *			  dob: int,              -  birth year (0 if not in dataset)
  *        dod: int,              -  death year (0 if not in dataset or actor is still alive)
  *        jobs: str, 						 -  comma separated string of their three top professions as according to IMDb dataset
- *        imgUrl: str					 -  url to the image generated for them (empty str if image not yet generated)
+ *        imgUrl: str					   -  url to the image generated for them (empty str if image not yet generated, null if no image could be found)
  *		  }
  *
  *

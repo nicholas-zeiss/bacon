@@ -18,7 +18,7 @@ import angular from 'angular';
 
 			//find actors who do not have an imgUrl
 			path.forEach(([actor, movie]) => {
-				if (!actor.imgUrl) {
+				if (actor.imgUrl === '') {
 					getImagesFor.push({ name: actor.name, nconst: actor.nconst });
 				}
 			});
