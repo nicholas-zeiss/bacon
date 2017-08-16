@@ -12,9 +12,9 @@ function InputController($scope, serverCalls) {
 	vm.submit = submitName;
 
 
-	$scope.on('disableInput' () => vm.disabled = true);
+	$scope.$on('disableInput', () => vm.disabled = true);
 
-	$scope.on('enableInput' () => vm.disabled = false);
+	$scope.$on('enableInput', () => vm.disabled = false);
 
 
 	//executes on user search for an actor

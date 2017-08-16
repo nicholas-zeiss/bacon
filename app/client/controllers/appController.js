@@ -12,27 +12,40 @@ function AppController($scope, $location, serverCalls) {
 	vm.path = null;      //path to Kevin Bacon, which is of format [ actor1, movie1, ... , Kevin Bacon ]
 	vm.choices = null;   //if user searches for a name with multiple matches hold matches here
 	vm.error = null;     //hold errors here
-
 	vm.searchName = null;
 	
 
-	//reroute as appropriate, if url is /display/nconst load it, otherwise stay here
+	//reroute as appropriate on reload, if url is /display/nconst load it, otherwise stay here
 	//also wipes the hash
 	if ($location.path() !== '/home' || $location.hash()) {
+		$location.hash('');
+		
 		if (/^\/display\/\d+$/.test($location.path())) {
 			let nconst = Number($location.path().match(/(\d+)$/)[1]);
 			vm.searchName = 'index: ' + nconst;
 			
 			serverCalls.getPathByNconst(nconst, loadPath, handleError);
-			$scope.broadcast('disableInput');
+			$scope.$broadcast('disableInput');
 
-			$location.hash('');
 			$location.path('/loading');
 
 		} else {
-			$location.hash('');
 			$location.path('/home').replace();
 		}
+	}
+
+
+	$scope.$on('reset', reset);
+
+
+	function reset() {
+		vm.path = null;
+		vm.choices = null;
+		vm.error = null;
+		vm.searchName = null;
+
+		$location.hash('');
+		$location.path('/home').replace();
 	}
 
 
@@ -71,19 +84,19 @@ function AppController($scope, $location, serverCalls) {
 		if (res.status === 300) {
 			vm.choices = res.data;
 
-			$scope.broadcast('enableInput');
+			$scope.$broadcast('enableInput');
 			$location.path('/choose').replace();
 		
 		} else if (res.status === 404) {
 			vm.error = 'actor not found';
 
-			$scope.broadcast('enableInput');
+			$scope.$broadcast('enableInput');
 			$location.path('/').replace();
 		
 		} else {
 			vm.error = 'internal server error: ' + res.status;
 
-			$scope.broadcast('enableInput');
+			$scope.$broadcast('enableInput');
 			$location.path('/').replace();
 		}
 	}

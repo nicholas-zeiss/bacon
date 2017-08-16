@@ -3,10 +3,29 @@
  */
 
 
-#display-title {
-	color: white;
-	text-align: center;
+#display-header {
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
+
+
+	#display-header > button, #display-header > h2 {
+		margin: 10px 5px;
+
+		color: white;
+	}
+
+
+	#display-header > button {
+		border: none;
+		border-radius: .2em;
+		outline: none;
+
+		font-size: 20px;
+
+		background-color: red;
+	}
 
 
 #display-content {

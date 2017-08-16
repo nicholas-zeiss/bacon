@@ -1,6 +1,11 @@
 
 <section id="display">
-	<h2 id="display-title">{{ app.path[0].name }}</h2>
+	<div id="display-header">
+		<h2>{{ [ app.path[0].name, app.path[0].number ] | displayHeader }}</h2>
+		<button type="button" ng-click="display.reset()">
+			{{ display.finishedLoading ? 'Home' : 'Clear' }}
+		</button>
+	</div>
 	<div id="display-content">
 		<div 
 			id="node-{{$index}}"
