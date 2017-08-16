@@ -73,14 +73,14 @@ import angular from 'angular';
 
 
 		//handles a post to /nconst
-		function getPathByNconst(nconst, number, success, failure) {
+		function getPathByNconst(nconst, success, failure) {
 			$http({
 				method: 'POST',
 				url: '/nconst',
 				headers: { 
 					'Content-Type': 'application/json' 
 				},
-				data: JSON.stringify({ nconst, number })
+				data: JSON.stringify(nconst)
 			})
 			.then(res => {
 				let path = res.data;

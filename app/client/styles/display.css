@@ -49,11 +49,11 @@
 
 		.actor-node img {
 			min-width: ;
-			max-width: calc(100% - 10px);
-			max-height: calc(100% - 10px);
+			max-width: calc(100% - 14px);
+			max-height: calc(100% - 14px);
 
 			margin: 5px;
-			border: 5px solid orange;
+			border: 2px solid black;
 
 			transform: rotate(0deg);
 		}

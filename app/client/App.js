@@ -41,6 +41,7 @@ angular.module('app', [
 .controller('AppController', [
 	'$scope',
 	'$location',
+  'serverCalls',
 	AppController
 ])
 .controller('ChooseController', ChooseController)

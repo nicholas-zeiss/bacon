@@ -3,7 +3,7 @@
  * such as the path to Kevin Bacon, if we are waiting on an http request, errors that need displaying, etc.
  */
 
-function AppController($scope, $location) {
+function AppController($scope, $location, serverCalls) {
 	let vm = this;
 
 	vm.path = null;      //path to Kevin Bacon, which is of format [ [ actor, movie], ... , [ Kevin Bacon, null ]]
@@ -12,9 +12,13 @@ function AppController($scope, $location) {
 
 	vm.searchFor = null;
 
-	//force return to Home view when user reloads page
-	if ($location.path() !== '/' && (!vm.path || !vm.choices || !vm.error)) {
-		$location.path('/');
+	//reroute as appropriate on reload
+	if ($location.path() !== '/') {
+		// if (/^\/display\/\d+$/.test($location.path())) {
+			// serverCalls.getPathByNconst($location.path().match(/(\d+)$/)), 
+		// } else {
+			$location.path('/');
+		// }
 	}
 
 

@@ -34,7 +34,7 @@ app.post('/name', (req, res) => {
 	//as names are not unique in our db we return all matches and respond according to the number of matches
 	db.getActorReferences(req.body.name)
 	.then(actors => {
-		if (actors.length == 0) {
+		if (!actors.length) {
 			res.sendStatus(404);
 		
 		} else if (actors.length == 1) {
@@ -61,28 +61,32 @@ app.post('/name', (req, res) => {
 });
 
 
-//when the web app has searched for a non unique name clarification by nconst and degree of separation is required and handled here
-//req.body should be { nconst: number, number: int }
+//when the web app has searched for a non unique name clarification by nconst is required and handled here
+//req.body should be number nconst
 app.post('/nconst', (req, res) => {
 	//validate request
-	if (!req.body
-		  || (!req.body.nconst || typeof req.body.nconst !== 'number')
-		  || (!req.body.number || typeof req.body.number !== 'number' || number > 6 || number < 0)
-		 ) {
+	if (!req.body || typeof req.body !== 'number') {
 		res.sendStatus(400);
 		return;
 	}
 
-	baconPath(req.body.nconst, req.body.number, [])
-	.then(path => {
-		res.status(200).json(path)
+	db.getActorNames([req.body])
+	.then(result => {
+		if (!result.length) {
+			res.sendStatus(404);
+		
+		} else {
+			baconPath(result.nconst, result.number, [])
+			.then(path => {
+				res.status(200).json(path)
+			})
+			.catch(error => {
+				res.sendStatus(500);
+			});
+		}
 	})
 	.catch(error => {
-		if (error === `nconst ${req.body.nconst} does not exist in the db`) {
-			res.sendStatus(404);
-		} else {
-			res.sendStatus(500);
-		}
+		res.sendStatus(500);
 	});
 });
 

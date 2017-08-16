@@ -17,15 +17,15 @@
 	</head>
 	
 	<body ng-controller="AppController as app">
-		<div id="header">
+		<header>
 			<h1>Six Degrees of Kevin Bacon</h1>
 			<form id="name-input" ng-controller="InputController as input">
 				<input type="text" ng-model="input.name" ng-disabled="input.loading">
 				<input type="submit" ng-click="input.submit()" ng-disabled="input.loading" value="Search">
 			</form>
-		</div>
+		</header>
 		
-		<div id="content" ng-view autoscroll></div>
+		<section id="content" ng-view autoscroll></section>
 		
 		<div id="footer">
 			<p>Information courtesy of</p>
