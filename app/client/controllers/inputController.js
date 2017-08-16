@@ -7,9 +7,14 @@ function InputController($scope, serverCalls) {
 	let vm = this;
 
 	vm.name = '';
-	vm.loading = false;
+	vm.disabled = false;
 
 	vm.submit = submitName;
+
+
+	$scope.on('disableInput' () => vm.disabled = true);
+
+	$scope.on('enableInput' () => vm.disabled = false);
 
 
 	//executes on user search for an actor
@@ -20,19 +25,15 @@ function InputController($scope, serverCalls) {
 			return;
 		}
 
-		vm.loading = true;
+		vm.disabled = true;
 
 		$scope.$emit('reqStarted', vm.name);
 
 		serverCalls.getPathByName(vm.name, res => {
 			vm.name = '';
-			vm.loading = false;
-		
 			$scope.$emit('reqSuccess', res);
 		
-		}, res => {
-			vm.loading = false;
-		
+		}, res => {		
 			$scope.$emit('reqError', res)
 		});
 	}
