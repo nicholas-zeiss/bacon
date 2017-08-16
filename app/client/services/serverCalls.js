@@ -80,7 +80,7 @@ import angular from 'angular';
 				headers: { 
 					'Content-Type': 'application/json' 
 				},
-				data: JSON.stringify(nconst)
+				data: JSON.stringify({ nconst })
 			})
 			.then(res => {
 				let path = res.data;

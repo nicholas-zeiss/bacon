@@ -14,11 +14,23 @@ function AppController($scope, $location, serverCalls) {
 
 	//reroute as appropriate on reload
 	if ($location.path() !== '/') {
-		// if (/^\/display\/\d+$/.test($location.path())) {
-			// serverCalls.getPathByNconst($location.path().match(/(\d+)$/)), 
-		// } else {
+		if (/^\/display\/\d+$/.test($location.path())) {
+			let nconst = Number($location.path().match(/(\d+)$/)[1]);
+			
+			vm.searchFor = 'index: ' + nconst;
+			$location.path('/loading');
+
+			serverCalls.getPathByNconst(nconst, res => {
+				vm.path = res;
+				$location.path(`/display/${res[0][0].nconst}`)
+			}, res => {
+				$location.path('/');
+				vm.error = res.status;
+			});
+		
+		} else {
 			$location.path('/');
-		// }
+		}
 	}
 
 
@@ -50,7 +62,7 @@ function AppController($scope, $location, serverCalls) {
 			$location.path('/');
 		
 		} else {
-			vm.error = 'internal server error: ' + res.satus;
+			vm.error = 'internal server error: ' + res.status;
 			$location.path('/');
 		}
 	});

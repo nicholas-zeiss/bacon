@@ -65,27 +65,31 @@ app.post('/name', (req, res) => {
 //req.body should be number nconst
 app.post('/nconst', (req, res) => {
 	//validate request
-	if (!req.body || typeof req.body !== 'number') {
+	if (!req.body || !req.body.nconst || typeof req.body.nconst !== 'number') {
 		res.sendStatus(400);
 		return;
 	}
 
-	db.getActorNames([req.body])
+	db.getActorNames([req.body.nconst])
 	.then(result => {
 		if (!result.length) {
 			res.sendStatus(404);
 		
 		} else {
-			baconPath(result.nconst, result.number, [])
+			baconPath(result[0].nconst, result[0].number, [])
 			.then(path => {
 				res.status(200).json(path)
 			})
 			.catch(error => {
+				console.log('baconPath threw error:\n', error);
+
 				res.sendStatus(500);
 			});
 		}
 	})
 	.catch(error => {
+		console.log('getActorNames threw error:\n', error);
+
 		res.sendStatus(500);
 	});
 });
