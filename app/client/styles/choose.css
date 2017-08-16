@@ -1,0 +1,14 @@
+/*
+ * This stylesheet contains the css for elements in the choose view
+ */
+
+
+#choose {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
+	background-color: red;	
+}
+

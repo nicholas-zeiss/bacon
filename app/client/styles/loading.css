@@ -1,0 +1,8 @@
+/*
+ * This stylesheet contains the css for elements in the loading view
+ */
+
+#loading {
+	background-color: red;	
+}
+

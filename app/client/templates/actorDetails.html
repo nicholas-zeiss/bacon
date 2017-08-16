@@ -1,6 +1,6 @@
 
 <div class="actor-node">
-	<img ng-if="$ctrl.actor.url" ng-src="{{$ctrl.actor.url}}">
+	<div ng-if="$ctrl.actor.imgUrl" ng-include="'/client/templates/actorImage.html'" onload="$ctrl.loaded($ctrl.index)"></div>
 	<p>{{ $ctrl.actor.name }}</p>
 	<p>{{ $ctrl.actor.dob }}</p>
 </div>

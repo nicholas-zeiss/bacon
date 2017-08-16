@@ -1,0 +1,49 @@
+/*
+ * This stylesheet contains the css for elements in the display view
+ */
+
+
+#display {
+	margin: 0 auto;
+
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	align-items: center;
+
+	background-color: orange;	
+}
+
+
+	/* actor/movie node */
+	#display > div {
+		margin: 0 10px;		
+
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+
+		background-color: green;		
+	}
+
+
+		.actor-node, .movie-node {
+			margin: 10px;
+
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+
+			background-color: red;
+		}
+
+
+		.actor-node img {
+			max-width: 200px;
+			max-height: 200px;
+
+			border: 2px solid orange;
+
+			transform: rotate(0deg);
+		}
+

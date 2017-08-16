@@ -90,7 +90,7 @@ function getNamesTitles(path) {
  *
  * return: [  [ actorInfo1, movieInfo1 ], ... ]
  */
-module.exports = function(nconst, number, path) {
+module.exports = function getBaconPath(nconst, number, path) {
 	let collection = [ 'first', 'second', 'third', 'fourth', 'fifth', 'sixth' ];
 
 	return new Promise((resolve, reject) => {	

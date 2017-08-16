@@ -1,0 +1,84 @@
+/*
+ * This stylesheet contains the css for elements that are app wide, ie do not depend on the view
+ */
+
+
+body {
+	min-height: 100vh;
+	min-width: 100vw;
+	
+	margin: 0;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+
+	font-family: 'Open Sans', sans-serif;
+}
+
+
+	#header {
+		width: 100%;
+
+		text-align: center;
+		
+		background-color: red;
+	}
+
+
+		#name-input {
+			padding-bottom: 10px;
+
+			display: flex;
+			justify-content: center;
+
+			background-color: red;
+		}
+
+
+			#name-input > input {
+				font-size: 20px;
+			}
+
+
+			#name-input > input:first-child {
+				outline: none;
+				
+				padding: .1em .5em;
+				margin-right: .5em;
+				border: none;
+			}
+
+
+			#name-input > input:last-child {
+				outline: none;
+				
+				border: none;
+
+				color: white;
+				
+				background-color: blue;
+			}
+
+
+	#content {
+		width: 100%;
+
+		display: flex;
+		justify-content: center;
+
+		background-color: blue;
+	}
+
+
+	#footer {
+		width: 100%;
+
+		text-align: center;
+		font-size: 12px;
+		line-height: .5;
+		
+		background-color: red;
+	}
+

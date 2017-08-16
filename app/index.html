@@ -2,10 +2,17 @@
 <html lang="en" ng-app="app">
 	<head>
 		<title>Six Degrees of Bacon</title>
-		<link rel="stylesheet" href="/client/styles/styles.css">
+		
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700">
+		
+		<link rel="stylesheet" href="/client/styles/choose.css">
+		<link rel="stylesheet" href="/client/styles/display.css">
+		<link rel="stylesheet" href="/client/styles/home.css">
+		<link rel="stylesheet" href="/client/styles/loading.css">
+		
 		<script src="/dist/bundle.js"></script>
 	</head>
+	
 	<body ng-controller="AppController as app">
 		<div id="header">
 			<h1>Six Degrees of Kevin Bacon</h1>
@@ -14,8 +21,10 @@
 				<input type="submit" ng-click="input.submit()" ng-disabled="input.loading" value="Search">
 			</form>
 		</div>
-		<div id='content' ng-view autoscroll></div>
-		<div id="imdb-footer">
+		
+		<div id="content" ng-view autoscroll></div>
+		
+		<div id="footer">
 			<p>Information courtesy of</p>
 			<p>IMDb</p>
 			<p>(http://www.imdb.com).</p>

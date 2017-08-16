@@ -28,7 +28,7 @@ function InputController($scope, serverCalls) {
 			vm.name = '';
 			vm.loading = false;
 		
-			$scope.$emit('reqSuccess', res.data);
+			$scope.$emit('reqSuccess', res);
 		
 		}, res => {
 			vm.name = '';

@@ -1,0 +1,26 @@
+/*
+ * This stylesheet contains the css for elements in the home view
+ */
+
+
+#home {
+	margin: 0 auto;
+
+	background-color: red;
+}
+
+
+	#home-bacon-img {
+		width: 33vw;
+		height: 33vw;
+
+		margin: 0 auto;
+		border: 10px solid orange;
+		border-radius: 16.5vw;
+
+		background-image: url("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Kevinbacongfdl.PNG/428px-Kevinbacongfdl.PNG");
+		background-size: contain;
+		background-repeat: no-repeat;
+		background-position: center;
+	}
+

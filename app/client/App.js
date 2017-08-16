@@ -46,7 +46,6 @@ angular.module('app', [
 .controller('ChooseController', ChooseController)
 .controller('DisplayController', [
   '$scope',
-  'serverCalls',
   DisplayController
 ])
 .controller('HomeController', HomeController)

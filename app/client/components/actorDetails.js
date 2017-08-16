@@ -9,7 +9,9 @@ import angular from 'angular';
 	.component('actorDetails', {
 		templateUrl: '/client/templates/actorDetails.html',
 		bindings: { 
-			actor: '<'
+			actor: '<',
+			loaded: '<',
+			index: '<'
 		}
 	});
 })();

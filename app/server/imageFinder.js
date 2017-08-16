@@ -122,9 +122,9 @@ function findImageUrls(images) {
 			let orientation = 1;
 
 			if (page.imageinfo && page.imageinfo.length) {
-				url = pages.imageinfo[0].thumburl;
+				url = page.imageinfo[0].thumburl;
 
-				pages.imageinfo[0].metadata.forEach(data => {
+				page.imageinfo[0].metadata.forEach(data => {
 					if (data.name === 'Orientation') {
 						orientation = data.value;
 					}
