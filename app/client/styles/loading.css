@@ -3,6 +3,14 @@
  */
 
 #loading {
+	width: 33%;
+
+	margin: 0 auto;
+
+	text-align: center;
+	font-size: 20px;
+
+	color: white;
 	background-color: red;	
 }
 

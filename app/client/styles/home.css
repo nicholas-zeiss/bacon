@@ -4,6 +4,8 @@
 
 
 #home {
+	width: 33%;
+
 	margin: 0 auto;
 
 	background-color: red;
@@ -11,14 +13,15 @@
 
 
 	#home-bacon-img {
-		width: 33vw;
-		height: 33vw;
+		box-sizing: border-box;
 
-		margin: 0 auto;
+		min-width: 33vw;
+		min-height: 33vw;
+
+		margin: 0;
 		border: 10px solid orange;
-		border-radius: 16.5vw;
+		border-radius: 30px;
 
-		background-image: url("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Kevinbacongfdl.PNG/428px-Kevinbacongfdl.PNG");
 		background-size: contain;
 		background-repeat: no-repeat;
 		background-position: center;

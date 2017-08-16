@@ -12,7 +12,6 @@
 
 
 import angular from 'angular';
-import ngAnimate from 'angular-animate';
 import ngRoute from 'angular-route';
 
 //components
@@ -45,7 +44,6 @@ angular.module('app', [
   'app.jobs',
   'app.expandFade',
 	'app.serverCalls',
-  'ngAnimate',
   'ngRoute'
 ])
 .controller('AppController', [
@@ -59,7 +57,7 @@ angular.module('app', [
   '$scope',
   '$timeout',
   '$location',
-  '$anchorScroll',
+  '$route',
   DisplayController
 ])
 .controller('HomeController', HomeController)

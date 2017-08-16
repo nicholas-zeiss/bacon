@@ -16,22 +16,26 @@ function AppController($scope, $location, serverCalls) {
 	vm.searchName = null;
 	
 	//reroute as appropriate on AppController initialization
-	if ($location.path() !== '/') {
-		console.log('redirecting from ', $location.path());
+	if ($location.path() !== '/home' || $location.hash()) {
+
 		//if url is that of a bacon path, reload it and show it
 		if (/^\/display\/\d+$/.test($location.path())) {
 			let nconst = Number($location.path().match(/(\d+)$/)[1]);
 			
 			vm.searchName = 'index: ' + nconst;
+			$location.hash('');
 			$location.path('/loading');
 			serverCalls.getPathByNconst(nconst, loadPath, handleError);
 
 		//otherwise return to home view
 		} else {
-			$location.path('/').replace();
+			$location.hash('');
+			$location.path('/home').replace();
 		}
 	}
 
+
+	// Event Listeners
 
 	//user just searched for actor, wait for response
 	$scope.$on('reqStarted', (event, name) => {

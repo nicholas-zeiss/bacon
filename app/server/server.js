@@ -16,9 +16,6 @@ const app = express();
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '../../app')));
 
-// app.use(/.+/, (req, res) => {
-// 	console.log(req)
-// })
 
 app.get('*', (req, res) => {
 	console.log('wildcard');

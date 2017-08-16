@@ -26,6 +26,7 @@ body {
 		background-color: red;
 	}
 
+
 		header > h1 {
 			margin: .3em 0;
 		}
@@ -47,19 +48,17 @@ body {
 
 
 			#name-input > input:first-child {
-				outline: none;
-				
 				padding: .2em .5em;
 				margin-right: .75em;
 				border: none;
+				outline: none;
 			}
 
 
 			#name-input > input:last-child {
-				outline: none;
-				
 				border: none;
 				border-radius: .2em;
+				outline: none;
 
 				color: white;
 				
