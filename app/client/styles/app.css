@@ -67,6 +67,11 @@ body {
 			}
 
 
+			#name-input > input:last-child:disabled {
+				background-color: green;
+			}
+
+
 	#content {
 		width: 100%;
 

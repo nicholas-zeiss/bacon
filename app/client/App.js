@@ -58,7 +58,8 @@ angular.module('app', [
 .controller('DisplayController', [
   '$scope',
   '$timeout',
-  '$interval',
+  '$location',
+  '$anchorScroll',
   DisplayController
 ])
 .controller('HomeController', HomeController)
@@ -70,7 +71,7 @@ angular.module('app', [
 ])
 .config($routeProvider => {
   $routeProvider
-    .when('/', {
+    .when('/home', {
       templateUrl: 'client/templates/home.html',
       controller: 'HomeController',
       controllerAs: 'home'
@@ -91,7 +92,14 @@ angular.module('app', [
       controllerAs: 'display'
     })
     .otherwise({
-      redirectTo:'/'
+      redirectTo:'/home'
     });
-});
+})
+.config($locationProvider => {
+  $locationProvider.html5Mode({
+    enabled: true,
+    requireBase: true,
+    rewriteLinks: true
+  });
+})
 

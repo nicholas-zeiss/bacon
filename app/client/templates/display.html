@@ -1,8 +1,10 @@
 
-<p>{{ app.path[0].name }}</p>
-<div id="content-display">
-	<div ng-repeat="actorMovie in display.path" ng-hide="display.loading[$index]" ng-class="$odd ? 'movie-node-container' : 'actor-node-container'" expand-fade>
-		<actor-details ng-if="$even" actor="actorMovie" loaded="display.loaded" index="$index" class="actor-node"></actor-details>
-		<movie-details ng-if="$odd" movie="actorMovie" class="movie-node"></movie-details>
+<section id="display">
+	<p id="display-title">{{ app.path[0].name }}</p>
+	<div id="display-content">
+		<div id="node-{{$index}}" ng-class="$odd ? 'movie-node-container' : 'actor-node-container'" ng-repeat="actorMovie in display.path" ng-hide="display.loading[$index]" expand-fade>
+			<actor-details class="actor-node" ng-if="$even" actor="actorMovie" loaded="display.loaded" index="$index"></actor-details>
+			<movie-details class="movie-node" ng-if="$odd" movie="actorMovie"></movie-details>
+		</div>
 	</div>
-</div>
+</section>

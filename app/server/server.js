@@ -16,9 +16,13 @@ const app = express();
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '../../app')));
 
+// app.use(/.+/, (req, res) => {
+// 	console.log(req)
+// })
 
-app.get('/', (req, res) => {
-	res.render('index.html');
+app.get('*', (req, res) => {
+	console.log('wildcard');
+	res.sendFile(path.join(__dirname, '../../app/index.html'));
 });
 
 
@@ -138,5 +142,4 @@ app.post('/images', (req, res) => {
 const port = process.env.PORT || 4000;
 
 app.listen(port, () => console.log('Listening on port ', port));
-
 
