@@ -19,7 +19,7 @@
 		<script src="/dist/bundle.js"></script>
 	</head>
 	
-	<body ng-controller="AppController as app">
+	<body ng-cloak ng-controller="AppController as app">
 		<header>
 			<h1>Six Degrees of Kevin Bacon</h1>
 			<form id="name-input" ng-controller="InputController as input">
@@ -28,7 +28,7 @@
 			</form>
 		</header>
 		
-		<section id="content" ng-view autoscroll></section>
+		<section id="{{app.view}}" ng-view autoscroll></section>
 		
 		<div id="footer">
 			<p>Information courtesy of</p>

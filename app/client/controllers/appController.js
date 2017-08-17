@@ -12,21 +12,20 @@ function AppController($scope, $location, serverCalls) {
 	vm.error = null;     //hold errors here
 	vm.searchName = null;
 	vm.inputDisabled = false;
-	
+	vm.view = 'home';		//tracked for generating an id on element containing the view
 
-	//reroute as appropriate on reload, if url is /display/nconst load it, otherwise stay here
-	//also wipes the hash
-	if ($location.path() !== '/home' || $location.hash()) {
-		$location.hash('');
-		
+	//set vm.view and reroute as appropriate on reload
+	if ($location.path() !== '/home') {		
 		if (/^\/display\/\d+$/.test($location.path())) {
 			let nconst = Number($location.path().match(/(\d+)$/)[1]);
-			vm.searchName = 'index: ' + nconst;
-			vm.inputDisabled = true;
 			
-			serverCalls.getPathByNconst(nconst, loadPath, handleError);
+			vm.inputDisabled = true;
+			vm.view = 'loading';
+			vm.searchName = `index: ${nconst}`;
+			
+			serverCalls.getPathByNconst(nconst);
 
-			$location.path('/loading');
+			$location.path('/loading').replace();
 
 		} else {
 			$location.path('/home').replace();
@@ -34,34 +33,37 @@ function AppController($scope, $location, serverCalls) {
 	}
 
 
+	//handler for browser using back/forward through history
+	// $scope.$on('locationChangeSuccessful', () => {
+
+	// });
+
+
 	/**	--------------------------------------------- *
 	 *																								*
 	 *     Event Listeners for activity in the		    *
-	 *     display view																*
+	 *     						display view										*
 	 *																								*
 	 * ---------------------------------------------- **/
 
 
 	//user clicked the clear button, reset app 
-	$scope.$on('reset', reset);
-
-
-	//display loaded all of the path into the dom, enable input
-	$scope.$on('displayFinishedLoading', () => {
-		vm.inputDisabled = false
-	});
-
-
-	function reset() {
+	$scope.$on('reset', () => {
 		vm.path = null;
 		vm.choices = null;
 		vm.error = null;
 		vm.searchName = null;
 		vm.inputDisabled = false;
+		vm.view = 'home';
 
-		$location.hash('');
-		$location.path('/home').replace();
-	}
+		$location.path('/home');
+	});
+
+
+	//display loaded all of the path into the dom, enable input
+	$scope.$on('displayFinishedLoading', () => {
+		vm.inputDisabled = false;
+	});
 
 
   /**	--------------------------------------------- *
@@ -75,6 +77,8 @@ function AppController($scope, $location, serverCalls) {
 	$scope.$on('reqStarted', (event, name) => {
 		vm.path = null;
 		vm.searchName = name;
+		vm.inputDisabled = true;
+		vm.view = 'loading';
 		
 		$location.path('/loading');
 	});
@@ -82,42 +86,32 @@ function AppController($scope, $location, serverCalls) {
 
 	//path found, switch to Display view
 	$scope.$on('reqSuccess', (event, path) => {
-		loadPath(path);
-	});
-
-
-	//no path found, either an error or multiple choices
-	$scope.$on('reqError', (event, res) => handleError(res));
-
-
-	//handle a successful response from the server
-	function loadPath(path) {
+		vm.view = 'display';
 		vm.path = path.reduce((path, actorMovie) => path.concat(actorMovie), []);
 		
 		//remove the null placeholder for Kevin Bacon's movie
 		vm.path = vm.path.slice(0, -1);
 
+
 		$location.path(`/display/${vm.path[0].nconst}`).replace();
-	}
+	});
 
 
-	//handle an error from the server
-	function handleError(res) {
+	//no path found, either an error or multiple choices
+	$scope.$on('reqError', (event, res) => {
 		vm.inputDisabled = false;
 
 		if (res.status === 300) {
 			vm.choices = res.data;
+			vm.view = 'choose'
 			$location.path('/choose').replace();
 		
-		} else if (res.status === 404) {
-			vm.error = 'actor not found';
-			$location.path('/').replace();
-		
 		} else {
-			vm.error = 'internal server error: ' + res.status;
-			$location.path('/').replace();
+			vm.path = 'home';
+			vm.error = res.status;
+			$location.path('/home').replace();
 		}
-	}
+	});
 }
 
 export default AppController;

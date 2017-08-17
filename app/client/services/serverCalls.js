@@ -8,7 +8,7 @@ import angular from 'angular';
 
 (() => {
 	angular.module('app.serverCalls', [])
-	.factory('serverCalls', ['$http', $http => {
+	.factory('serverCalls', ['$http', '$rootScope', ($http, $rootScope) => {
 
 
 		//helper function that handles getting image Urls for a path returned
@@ -54,8 +54,32 @@ import angular from 'angular';
 		}
 
 
+		function successWrapper(success) {
+			return function(path) {
+				$rootScope.$broadcast('reqSuccess', path);
+				
+				if (success) {
+					success(path);
+				}
+			}
+		}
+
+
+		function failureWrapper(failure) {
+			return function(res) {
+				$rootScope.$broadcast('reqError', res);
+				
+				if (failure) {
+					failure(res);
+				}
+			}
+		}
+
+
 		//handles a post to /name
 		function getPathByName(name, success, failure) {
+			$rootScope.$broadcast('reqStarted', name);
+
 			$http({
 				method: 'POST',
 				url: '/name',
@@ -67,13 +91,15 @@ import angular from 'angular';
 			.then(res => {
 				let path = res.data;
 
-				getImages(path, success, failure);			
-			}, failure);
+				getImages(path, successWrapper(success), failureWrapper(failure));
+			}, failureWrapper(failure));
 		}
 
 
 		//handles a post to /nconst
 		function getPathByNconst(nconst, success, failure) {
+			$rootScope.$broadcast('reqStarted', `index: ${nconst}`);
+
 			$http({
 				method: 'POST',
 				url: '/nconst',
@@ -85,9 +111,8 @@ import angular from 'angular';
 			.then(res => {
 				let path = res.data;
 
-				getImages(path, success, failure);
-			
-			}, failure);
+				getImages(path, successWrapper(success), failureWrapper(failure));			
+			}, failureWrapper(failure));
 		}
 
 

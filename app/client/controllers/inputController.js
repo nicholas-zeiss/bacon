@@ -21,15 +21,9 @@ function InputController($scope, serverCalls) {
 			return;
 		}
 
-		$scope.$emit('reqStarted', vm.name);
+		serverCalls.getPathByName(vm.name);
 
-		serverCalls.getPathByName(vm.name, res => {
-			vm.name = '';
-			$scope.$emit('reqSuccess', res);
-		
-		}, res => {		
-			$scope.$emit('reqError', res)
-		});
+		vm.name = '';
 	}
 }
 

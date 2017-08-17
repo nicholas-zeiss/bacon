@@ -65,10 +65,9 @@ function DisplayController($scope, $timeout) {
 
 	function scrollToNode(nodeId) {
 		let scrollTo = $(nodeId);
-		console.log(nodeId, scrollTo.offset().top + scrollTo.height())
 
 		if (scrollTo.length) {
-			$('#content').animate({
+			$('#display').animate({
       	scrollTop: scrollTo.offset().top + scrollTo.height()
       }, 1000);
 		}

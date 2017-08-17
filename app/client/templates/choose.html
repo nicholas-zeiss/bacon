@@ -1,7 +1,5 @@
 
-<div id="choose">
-	Which of these actors did you mean?
-	<div ng-repeat="actor in app.choices track by $index">
-		<p>{{ actor }}</p>
-	</div>
+<p>Which of these actors did you mean?<p>
+<div ng-repeat="actor in app.choices track by $index">
+	<actor-details class="actor-node" actor="actor" 
 </div>

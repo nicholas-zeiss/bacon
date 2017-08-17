@@ -61,13 +61,13 @@ exports.traverseTSV = function(input, output) {
 
 
 //regex for the rows in names.tsv, parentheses correspond to nconst, name, birth year, death year, professions
-const nameRow = /^(nm\d{7})\t([^\t]+)\t([^\t]+)\t([^\t]+)\t([^\t\n]+)\n$/;
+const NAME_ROW = /^(nm\d{7})\t([^\t]+)\t([^\t]+)\t([^\t]+)\t([^\t\n]+)\n$/;
 
 
 //given a set of names to search for (exact match), return a map of str nconst => str name
 exports.getActorsNconsts = function(names) {
 	function cb(row) {
-		let actor = row.match(nameRow);
+		let actor = row.match(NAME_ROW);
 		
 		if (actor && names.has(actor[2])) {
 			this.matches.set(actor[1], actor[2]);
@@ -87,7 +87,7 @@ exports.getActorNames = function(nconsts) {
 	console.log('getting actor names');
 
 	function cb(row) {
-		let actor = row.match(nameRow);
+		let actor = row.match(NAME_ROW);
 
 		if (actor && nconsts.has(actor[1])) {
 			let dob = actor[3] == '\\N' ? 0 : actor[3];

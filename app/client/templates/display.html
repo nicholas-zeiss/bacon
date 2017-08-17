@@ -1,14 +1,13 @@
 
-<section id="display">
-	<div id="display-header">
-		<h2>{{ [ app.path[0].name, app.path[0].number ] | displayHeader }}</h2>
-		<button type="button" ng-click="display.reset()">
-			{{ display.finishedLoading ? 'Home' : 'Clear' }}
-		</button>
-	</div>
+<div id="display-header">
+	<h2>{{ [ app.path[0].name, app.path[0].number ] | displayHeader }}</h2>
+	<button type="button" ng-click="display.reset()">{{ display.finishedLoading ? 'Home' : 'Clear' }}</button>
+</div>
+
+<div id="display-content-container">
 	<div id="display-content">
-		<div ng-class="$odd ? 'movie-node-container' : 'actor-node-container'"
-		ng-repeat="actorMovie in display.pathToBacon" ng-hide="display.loading[$index]" expand-fade="{{display.duration}}">
+		<div ng-class="$odd ? 'movie-node-container' : 'actor-node-container'" ng-repeat="actorMovie in display.pathToBacon"
+		ng-hide="display.loading[$index]" expand-fade="{{display.duration}}">
 			
 			<actor-details id="node-{{$index}}" class="actor-node" ng-if="$even" actor="actorMovie"
 			loaded="display.actorMovieLoaded" index="$index"></actor-details>
@@ -16,4 +15,4 @@
 			<movie-details id="node-{{$index}}" class="movie-node" ng-if="$odd" movie="actorMovie" index="$index"></movie-details>
 		</div>
 	</div>
-</section>
+</div>

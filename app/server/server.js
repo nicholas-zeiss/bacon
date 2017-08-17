@@ -18,9 +18,22 @@ app.use(express.static(path.join(__dirname, '../../app')));
 
 
 app.get('*', (req, res) => {
-	console.log('wildcard');
 	res.sendFile(path.join(__dirname, '../../app/index.html'));
 });
+
+
+//helper for /name and /nconst post requests
+function sendBaconPath(nconst, number, res) {
+	baconPath(nconst, number, [])
+	.then(path => {
+		res.status(200).json(path)
+	})
+	.catch(error => {
+		console.log('baconPath threw error:\n', error);
+
+		res.sendStatus(500);
+	});
+}
 
 
 //posts to name are requests for the path between name and Kevin Bacon, find one if one exists
@@ -39,13 +52,7 @@ app.post('/name', (req, res) => {
 			res.sendStatus(404);
 		
 		} else if (actors.length == 1) {
-			baconPath(actors[0].nconst, actors[0].number, [])
-			.then(path => {
-				res.status(200).json(path);
-			})
-			.catch(error => {
-				res.sendStatus(500);
-			});
+			sendBaconPath(actors[0].nconst, actors[0].number, res);
 		
 		//if name not unique send all matched actors and await a call to /nconst
 		} else {
@@ -75,17 +82,8 @@ app.post('/nconst', (req, res) => {
 	.then(result => {
 		if (!result.length) {
 			res.sendStatus(404);
-		
 		} else {
-			baconPath(result[0].nconst, result[0].number, [])
-			.then(path => {
-				res.status(200).json(path)
-			})
-			.catch(error => {
-				console.log('baconPath threw error:\n', error);
-
-				res.sendStatus(500);
-			});
+			sendBaconPath(result[0].nconst, result[0].number, res);
 		}
 	})
 	.catch(error => {
@@ -100,7 +98,6 @@ app.post('/nconst', (req, res) => {
 //we gather those image urls, send them, and add them to the db here
 //req.body should be [ { name: str, nconst: int }, ... ]
 app.post('/images', (req, res) => {
-	//validate
 	if (!req.body || !req.body instanceof Array || !req.body.length) {
 		res.sendStatus(400);
 		return;

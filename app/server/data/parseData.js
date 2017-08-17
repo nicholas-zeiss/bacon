@@ -15,9 +15,6 @@ const db = require('../db');
  * Formats data collected in the expand function for the database. actorTree holds the links between a parent and child actor
  * and ends up in one of the cardinal collections ("first", "second", etc). names and movies map nconsts/tconst to actor/movie
  * information and actorReference/movieReference.
- * 
- * Also ensures each nconst has corresponding actor/movie info; this is not always the case. Valid nconsts are added to the
- * set nextParents which is also returned and used as the parent set for the next round of expanding the Bacon Tree.
  *
  * inputs:
  * actorTree: Map(str nconst => [ str parentNconst, str tconst ])
@@ -69,9 +66,8 @@ function prepData(actorTree, names, movies, baconNumber) {
 
 /**
  * The recursive function that generates the Bacon tree. Call with Kevin Bacon's info and baconNumber 1 to generate.
- * parents is the set of nconsts whose costars we will collect in the call and add to the collection
+ * parents is the set of nconsts whose costars we will collect each function call and add to the collection
  * corresponding to baconNumber. alreadyIndexed is the set of all nconsts already in the Bacon tree, including parents.
- * We check against this when adding a costar to prevent looping back to a higher level of the tree.
  *
  * inputs:
  * parents: Set( str nconst1, ... ) 
@@ -81,7 +77,6 @@ function prepData(actorTree, names, movies, baconNumber) {
  * return: none
  */
 function expand(parents, alreadyIndexed, baconNumber) {
-	//base case
 	if (baconNumber == 7) {
 		return;
 	}

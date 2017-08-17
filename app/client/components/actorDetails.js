@@ -7,7 +7,7 @@ import angular from 'angular';
 (() => {
 	angular.module('app.actorDetails', [])
 	.component('actorDetails', {
-		templateUrl: '/client/templates/actorDetails.html',
+		templateUrl: '/client/components/templates/actorDetails.html',
 		bindings: { 
 			actor: '<',
 			loaded: '<',

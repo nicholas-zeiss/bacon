@@ -7,16 +7,16 @@
 const tsv  = require('./tsvUtils');
 
 
-//Takes title.basics.tsv, which holds all movies/tv shows/episodes etc in the dataset, and output only movie rows to movie.basics.tsv.
+//Takes title.basics.tsv, which holds all movies/tv shows/episodes etc in the dataset, and output only non pornographic movie rows to movie.basics.tsv.
 //It resolves to a set of tconsts for such movies which we need to clean title.principals.tsv.
 function cleanBasics() {
 	let basicsInput = {
 		file: 'title.basics.tsv',
 		matches: new Set(),
 		cb: function(row) {
-			let movie = row.match(/^(tt\d{7})\t([^\t]+)\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t\n]+\n$/);
+			let movie = row.match(/^(tt\d{7})\t([^\t]+)\t[^\t]+\t[^\t]+\t([^\t])+\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t\n]+\n$/);
 
-			if (movie && movie[2] == 'movie') {
+			if (movie && movie[2] == 'movie' && movie[3] == '0') {
 				this.matches.add(movie[1]);
 			}
 		}
@@ -25,11 +25,11 @@ function cleanBasics() {
 	let basicsOutput = {
 		file: 'movie.basics.tsv',
 		cb: function(row, stream) {
-			let movie = row.match(/^(tt\d{7})\t([^\t]+)\t([^\t]+)\t[^\t]+\t[^\t]+\t([^\t]+)\t[^\t]+\t[^\t]+\t[^\t\n]+\n$/);
+			let movie = row.match(/^(tt\d{7})\t([^\t]+)\t([^\t]+)\t[^\t]+\t([^\t])+\t([^\t]+)\t[^\t]+\t[^\t]+\t[^\t\n]+\n$/);
 
-			if (movie && movie[2] == 'movie') {
+			if (movie && movie[2] == 'movie' && movie[4] == '0') {
 				//writes a row holding tconst title year
-				stream.write(`${movie[1]}\t${movie[3]}\t${movie[4]}\n`);
+				stream.write(`${movie[1]}\t${movie[3]}\t${movie[5]}\n`);
 			}
 		}
 	};
@@ -94,7 +94,7 @@ cleanBasics().then(tconsts => {
 	console.log('cleaned principals');
 });
 
-cleanNames().then(() => {
-	console.log('cleaned names');
-});
+// cleanNames().then(() => {
+// 	console.log('cleaned names');
+// });
 

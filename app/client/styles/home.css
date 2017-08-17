@@ -3,32 +3,16 @@
  */
 
 
-#home {
+#home-bacon-img {
+	box-sizing: border-box;
+
 	width: 30vw;
-	height: 75vh;
 
-	margin: 0 auto;
+	border: 10px solid orange;
+	border-radius: 30px;
 
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-
-	background-color: green;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
 }
-
-
-	#home-bacon-img {
-		box-sizing: border-box;
-
-		width: 30vw;
-		/*min-height: 10vw;*/
-
-		/*margin: auto 0;*/
-		border: 10px solid orange;
-		border-radius: 30px;
-
-		background-size: contain;
-		background-repeat: no-repeat;
-		background-position: center;
-	}
 
