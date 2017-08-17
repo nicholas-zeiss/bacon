@@ -8,12 +8,12 @@
 	</div>
 	<div id="display-content">
 		<div ng-class="$odd ? 'movie-node-container' : 'actor-node-container'"
-		ng-repeat="actorMovie in display.path" ng-hide="display.loading[$index]" expand-fade>
+		ng-repeat="actorMovie in display.pathToBacon" ng-hide="display.loading[$index]" expand-fade="{{display.duration}}">
 			
-			<actor-details class="actor-node" ng-if="$even" actor="actorMovie"
-			loaded="display.loaded" index="$index"></actor-details>
+			<actor-details id="node-{{$index}}" class="actor-node" ng-if="$even" actor="actorMovie"
+			loaded="display.actorMovieLoaded" index="$index"></actor-details>
 			
-			<movie-details class="movie-node" ng-if="$odd" movie="actorMovie" index="$index"></movie-details>
+			<movie-details id="node-{{$index}}" class="movie-node" ng-if="$odd" movie="actorMovie" index="$index"></movie-details>
 		</div>
 	</div>
 </section>

@@ -1,38 +1,32 @@
 /**
  * This is controller is responsible for the Display view which occurs when a path to Kevin Bacon has been loaded
- * and must be shown to the user.
+ * and must be shown to the user. Actor and movie information nodes are inserted into the DOM one by one and on insert
+ * go through two animations of length vm.duration, and are scrolled to using jquery.
  */
 
 import $ from 'jquery';
 
 
-function DisplayController($scope, $timeout, $location, $route) {
+function DisplayController($scope, $timeout) {
 	let vm = this;
 
-	vm.path = [$scope.app.path[0]];
-	// vm.pathIndex = 0;
+	//IMPT if you change this also change values in display.css
+	vm.duration = 500;
 
+	vm.pathToBacon = [$scope.app.path[0]];
+
+	//actors can have images, we need to wait for them to load their image before animating their insertion
 	vm.loading = {};
-	vm.finishedLoading = false;
 	
 	$scope.app.path.forEach((actorMovie, i) => vm.loading[i] = true);
 
-	//used to keep track of promises we need to clear if display is closed before finished loading
+	//we need to clear these if display is closed before finished loading actors/movies
 	vm.timeoutPromises = [];
+	
 	vm.reseting = false;
-
-	vm.currentUrl = $location.path();
-	vm.currentRoute = $route.current;
-
-
-	//prevent page reload when $location.hash is altered in vm.loaded
-	$scope.$on('$locationChangeSuccess', event => {
-		if (vm.currentUrl == $location.path()) {
-			$route.current = vm.currentRoute;
-		}
-	});
 	
 
+	//called when user wishes to reset the app to the home page
 	vm.reset = function() {
 		vm.reseting = true;
 		vm.timeoutPromises.forEach(promise => $timeout.cancel(promise));
@@ -40,50 +34,50 @@ function DisplayController($scope, $timeout, $location, $route) {
 	}
 	
 
-	vm.loaded = function(index) {
+	//called when an actor has loaded its image using the onload attribute provided by ngInclude,
+	//or called manually when inserting a movie
+	vm.actorMovieLoaded = function(index) {
 		if (vm.reseting) {
 			return;
 		}
 
 		vm.loading[index] = false;
+		vm.timeoutPromises.push($timeout(() => scrollToNode('#node-' + index), 100));		//give it a moment to render into the dom
 
-		if (++index < $scope.app.path.length) {
-			vm.timeoutPromises.push(
-				$timeout(() => scrollToHash('#node-' + (index - 1)), 600),
-				$timeout(() => {
-					vm.path.push($scope.app.path[index]);
+		if (index < $scope.app.path.length - 1) {
+			vm.timeoutPromises.push($timeout(() => {
+				vm.pathToBacon.push($scope.app.path[index + 1]);
 
-					//if pathIndex is odd it points to a movie-node and we need to call vm.loaded manually
-					if (index % 2) {
-						vm.loaded(index);
-					}
-				}, 1250)
-			);
+				if (isMovie(index + 1)) {
+					vm.actorMovieLoaded(index + 1);
+				}
+			}, 2 * vm.duration));
 
 		} else {
-			// $location.hash('node-' + (index - 1));
-
 			vm.timeoutPromises.push(
-				$timeout(() => scrollToHash('#node-' + (index - 1)), 600),
 				$timeout(() => {
-					vm.finishedLoading = true;
 					$scope.$emit('displayFinishedLoading');
-				}, 1250)
+				}, 2 * vm.duration)
 			);
 		}
 	}
 
-	function scrollToHash(hash) {
-		console.log('scrollToHash ', hash)
-		let scrollTo = $(hash);
-		console.log(scrollTo, scrollTo.length);
+
+	function scrollToNode(nodeId) {
+		let scrollTo = $(nodeId);
+		console.log(nodeId, scrollTo.offset().top + scrollTo.height())
+
 		if (scrollTo.length) {
 			$('#content').animate({
-      	scrollTop: scrollTo.offset().top + 50
+      	scrollTop: scrollTo.offset().top + scrollTo.height()
       }, 1000);
 		}
 	}
 
+ 
+	function isMovie(index) {
+		return !!(index % 2);
+	}
 }
 
 export default DisplayController;

@@ -58,8 +58,6 @@ angular.module('app', [
 .controller('DisplayController', [
   '$scope',
   '$timeout',
-  '$location',
-  '$route',
   DisplayController
 ])
 .controller('HomeController', HomeController)
