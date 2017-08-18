@@ -21,15 +21,14 @@ function DisplayController($scope, $timeout) {
 	$scope.app.path.forEach((actorMovie, i) => vm.loading[i] = true);
 
 	//we need to clear these if display is closed before finished loading actors/movies
-	vm.timeoutPromises = [];
-	
-	vm.reseting = false;
+	let timeoutPromises = [];
+	let reseting = false;
 	
 
 	//called when user wishes to reset the app to the home page
 	vm.reset = function() {
-		vm.reseting = true;
-		vm.timeoutPromises.forEach(promise => $timeout.cancel(promise));
+		reseting = true;
+		timeoutPromises.forEach(promise => $timeout.cancel(promise));
 		$scope.$emit('reset');
 	}
 	
@@ -37,15 +36,16 @@ function DisplayController($scope, $timeout) {
 	//called when an actor has loaded its image using the onload attribute provided by ngInclude,
 	//or called manually when inserting a movie
 	vm.actorMovieLoaded = function(index) {
-		if (vm.reseting) {
+		if (reseting) {
 			return;
 		}
 
 		vm.loading[index] = false;
-		vm.timeoutPromises.push($timeout(() => scrollToNode('#node-' + index), 100));		//give it a moment to render into the dom
+
+		timeoutPromises.push($timeout(() => scrollToNode('#node-' + index), 100));		//give it a moment to render into the dom
 
 		if (index < $scope.app.path.length - 1) {
-			vm.timeoutPromises.push($timeout(() => {
+			timeoutPromises.push($timeout(() => {
 				vm.pathToBacon.push($scope.app.path[index + 1]);
 
 				if (isMovie(index + 1)) {
@@ -54,7 +54,7 @@ function DisplayController($scope, $timeout) {
 			}, 2 * vm.duration));
 
 		} else {
-			vm.timeoutPromises.push(
+			timeoutPromises.push(
 				$timeout(() => {
 					$scope.$emit('displayFinishedLoading');
 				}, 2 * vm.duration)
@@ -63,13 +63,19 @@ function DisplayController($scope, $timeout) {
 	}
 
 
-	function scrollToNode(nodeId) {
-		let scrollTo = $(nodeId);
+	let lastScrollPos = 0;
 
-		if (scrollTo.length) {
-			$('#display').animate({
-      	scrollTop: scrollTo.offset().top + scrollTo.height()
-      }, 1000);
+	function scrollToNode(nodeId) {
+		let node = $(nodeId);
+		let scrollTo = node.position().top + node.height();
+
+		if (scrollTo > lastScrollPos) {
+			console.log('scrolling', lastScrollPos, scrollTo)
+			lastScrollPos = scrollTo;
+
+			$('#display-content-container').animate({
+      	scrollTop: scrollTo
+      }, 2000);
 		}
 	}
 
