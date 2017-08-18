@@ -10,22 +10,19 @@ import $ from 'jquery';
 function DisplayController($scope, $timeout) {
 	let vm = this;
 
-	//IMPT if you change this also change values in display.css
-	vm.duration = 500;
-
-	vm.pathToBacon = [$scope.app.pathToBacon[0]];
-
-	//actors can have images, we need to wait for them to load their image before animating their insertion
-	vm.loading = {};
-	
-	$scope.app.pathToBacon.forEach((actorMovie, i) => vm.loading[i] = true);
-
-	//we need to clear these if display is closed before finished loading actors/movies
-	let timeoutPromises = [];
+	let timeoutPromises = [];				//unresolved timeouts need to be cleared on reset
 	let reseting = false;
+	let lastScrollPos = 0;					//current scrollTop of the #display-content-container element
+
+
+	vm.duration = 500;							//IMPT if you change this also change values in display.css
+	vm.loading = {};								//actor nodes need to load images and we need to track if they are loaded
+	vm.pathToBacon = [$scope.app.pathToBacon[0]];
 	
 
-	//called when user wishes to reset the app to the home page
+	$scope.app.pathToBacon.forEach((actorMovie, i) => vm.loading[i] = true);	
+
+
 	vm.reset = function() {
 		reseting = true;
 		timeoutPromises.forEach(promise => $timeout.cancel(promise));
@@ -62,18 +59,11 @@ function DisplayController($scope, $timeout) {
 		}
 	}
 
- 
-	function isMovie(index) {
-		return !!(index % 2);
-	}
 
-	let lastScrollPos = 0;
-
-
+	//helpers for vm.actorMovieLoaded
 	function scrollToNode(nodeId) {
 		let node = $(nodeId);
 
-		//to prevent forward/back through browser history erros
 		if (!node.length) {
 			return;
 		}
@@ -87,6 +77,11 @@ function DisplayController($scope, $timeout) {
       	scrollTop: scrollTo
       }, 1000);
 		}
+	}
+
+ 
+	function isMovie(index) {
+		return !!(index % 2);
 	}
 }
 

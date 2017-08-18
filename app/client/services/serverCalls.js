@@ -16,7 +16,6 @@ import angular from 'angular';
 		function getImages(path, success, failure) {
 			let getImagesFor = [];
 
-			//find actors who do not have an imgUrl
 			path.forEach(([actor, movie]) => {
 				if (actor.imgUrl === '') {
 					getImagesFor.push({ name: actor.name, nconst: actor.nconst });
@@ -28,7 +27,7 @@ import angular from 'angular';
 				return;
 			}
 
-			//if there are actors to search for make the post request
+
 			$http({
 				method: 'POST',
 				url: '/images',
@@ -105,3 +104,4 @@ import angular from 'angular';
 		};	
 	}]);
 })();
+

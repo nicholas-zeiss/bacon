@@ -2,7 +2,7 @@
  * This stylesheet contains the css for elements in the loading view
  */
 
-#loading {
+#loading > div {
 	text-align: center;
 	font-size: 20px;
 }

@@ -7,10 +7,9 @@ function InputController($scope, serverCalls) {
 	let vm = this;
 
 	vm.name = '';
-
 	vm.submit = submitName;
 
-	//executes on user search for an actor
+	//executes on user search
 	function submitName() {
 		if (vm.name) {
 			if (/kevin\sbacon/i.test(vm.name)) {

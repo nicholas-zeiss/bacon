@@ -1,5 +1,5 @@
 /**
- * This filter formats an comma separated string of jobs into an easy to read string
+ * This filter formats an error and name into an informational message
  */
 
 

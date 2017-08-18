@@ -6,9 +6,9 @@
 
 
 function AppController($scope, $location, serverCalls) {	
-	const URL_PARSER = /([a-z]+)\/?([a-zA-Z-]+)?([0-9]+)?$/;
-	
 	let vm = this;
+	
+	const URL_PARSER = /([a-z]+)\/?([a-zA-Z-]+)?([0-9]+)?$/;
 
 	//these variables hold all stateful information for the app (not including the views)
 	vm.pathToBacon = null;     //format [ actor1, movie1, ... , Kevin Bacon ]
