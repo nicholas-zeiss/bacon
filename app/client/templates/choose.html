@@ -1,5 +1,6 @@
 
 <h2>Which of these actors did you mean?</h2>
 <div id="choices">
-	<actor-choice ng-repeat="actor in app.choices" class="actor-choice" actor="actor"></actor-choice>
+	<actor-choice class="actor-choice" ng-repeat="actor in app.choices" actor="actor" ng-click="choice.makeChoice(actor.nconst)"></actor-choice>
 </div>
+<button ng-click="app.reset()">Reset</button>

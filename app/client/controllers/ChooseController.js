@@ -3,8 +3,12 @@
  * an ambiguous name.
  */
 
-function ChooseController() {
-	
+function ChooseController($scope) {
+	let vm = this;
+
+	vm.makeChoice = function(nconst) {
+		$scope.$emit('choiceMade', nconst);
+	}
 }
 
 export default ChooseController;

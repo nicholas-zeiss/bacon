@@ -56,7 +56,10 @@ angular.module('app', [
   'serverCalls',
 	AppController
 ])
-.controller('ChooseController', ChooseController)
+.controller('ChooseController', [
+  '$scope',
+  ChooseController
+])
 .controller('DisplayController', [
   '$scope',
   '$timeout',
@@ -81,7 +84,7 @@ angular.module('app', [
       controller: 'LoadingController',
       controllerAs: 'loading'
     })
-    .when('/choose', {
+    .when('/choose/:name', {
       templateUrl: 'client/templates/choose.html',
       controller: 'ChooseController',
       controllerAs: 'choice'

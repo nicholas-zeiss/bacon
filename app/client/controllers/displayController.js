@@ -29,7 +29,7 @@ function DisplayController($scope, $timeout) {
 	vm.reset = function() {
 		reseting = true;
 		timeoutPromises.forEach(promise => $timeout.cancel(promise));
-		$scope.$emit('reset');
+		$scope.app.reset();
 	}
 	
 
@@ -41,10 +41,6 @@ function DisplayController($scope, $timeout) {
 		}
 
 		vm.loading[index] = false;
-
-		// let node = $(nodeId).animate({
-
-		// });
 
 		timeoutPromises.push($timeout(() => scrollToNode('#node-' + index), 100));		//give it a moment to render into the dom
 
@@ -66,11 +62,22 @@ function DisplayController($scope, $timeout) {
 		}
 	}
 
+ 
+	function isMovie(index) {
+		return !!(index % 2);
+	}
 
 	let lastScrollPos = 0;
 
+
 	function scrollToNode(nodeId) {
 		let node = $(nodeId);
+
+		//to prevent forward/back through browser history erros
+		if (!node.length) {
+			return;
+		}
+
 		let scrollTo = node.position().top + node.height();
 
 		if (scrollTo > lastScrollPos) {
@@ -80,11 +87,6 @@ function DisplayController($scope, $timeout) {
       	scrollTop: scrollTo
       }, 1000);
 		}
-	}
-
- 
-	function isMovie(index) {
-		return !!(index % 2);
 	}
 }
 
