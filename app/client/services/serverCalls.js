@@ -54,31 +54,19 @@ import angular from 'angular';
 		}
 
 
-		function successWrapper(success) {
-			return function(path) {
-				$rootScope.$broadcast('reqSuccess', path);
-				
-				if (success) {
-					success(path);
-				}
-			}
+		function success(path) {
+			$rootScope.$broadcast('reqSuccess', path);
 		}
 
 
-		function failureWrapper(failure) {
-			return function(res) {
-				$rootScope.$broadcast('reqError', res);
-				
-				if (failure) {
-					failure(res);
-				}
-			}
+		function failure(failure) {
+			$rootScope.$broadcast('reqError', failure);
 		}
 
 
 		//handles a post to /name
-		function getPathByName(name, success, failure) {
-			$rootScope.$broadcast('reqStarted', name);
+		function getPathByName(name, replaceHistory) {
+			$rootScope.$broadcast('reqStarted', name, replaceHistory);
 
 			$http({
 				method: 'POST',
@@ -91,14 +79,14 @@ import angular from 'angular';
 			.then(res => {
 				let path = res.data;
 
-				getImages(path, successWrapper(success), failureWrapper(failure));
-			}, failureWrapper(failure));
+				getImages(path, success, failure);
+			}, failure);
 		}
 
 
 		//handles a post to /nconst
-		function getPathByNconst(nconst, success, failure) {
-			$rootScope.$broadcast('reqStarted', `index: ${nconst}`);
+		function getPathByNconst(nconst, replaceHistory) {
+			$rootScope.$broadcast('reqStarted', `index: ${nconst}`, replaceHistory);
 
 			$http({
 				method: 'POST',
@@ -111,8 +99,8 @@ import angular from 'angular';
 			.then(res => {
 				let path = res.data;
 
-				getImages(path, successWrapper(success), failureWrapper(failure));			
-			}, failureWrapper(failure));
+				getImages(path, success, failure);			
+			}, failure);
 		}
 
 

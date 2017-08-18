@@ -15,13 +15,13 @@ function InputController($scope, serverCalls) {
 		if (!vm.name) {
 			return;
 
-		} else if (vm.name === 'Kevin Bacon') {
+		} else if (/kevin\sbacon/i.test(vm.name)) {
 			$scope.$emit('searchedForBacon');
 			vm.name = '';
 			return;
 		}
 
-		serverCalls.getPathByName(vm.name);
+		serverCalls.getPathByName(vm.name, false);
 
 		vm.name = '';
 	}

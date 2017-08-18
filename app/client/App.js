@@ -33,6 +33,7 @@ import './directives/ExpandFade';
 //filters
 import './filters/BirthDeath';
 import './filters/DisplayHeader';
+import './filters/Error';
 import './filters/Jobs';
 
 //services
@@ -45,6 +46,7 @@ angular.module('app', [
   'app.movieDetails',
   'app.birthDeath',
   'app.displayHeader',
+  'app.error',
   'app.jobs',
   'app.expandFade',
 	'app.serverCalls',

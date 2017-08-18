@@ -21,19 +21,20 @@ function AppController($scope, $location, serverCalls) {
 
 	//reroute as appropriate on reload
 	if ($location.path() !== '/home') {
-		$location.path('/home').replace();
 		let url = $location.path().match(URL_PARSER);
 
 		if (url && ((url[1] == 'display' && url[3]) || (url[1] == 'choose' && url[2]))) {
+			$location.path('/loading').replace();
 			vm.inputDisabled = true;
+			vm.view = 'loading';
 
 			if (url[1] == 'display') {
 				vm.searchName = `index: ${url[3]}`;
-				serverCalls.getPathByNconst(Number(url[3]));
+				serverCalls.getPathByNconst(Number(url[3]), false);
 			
 			} else {
 				vm.searchName = url[2].replace('-', ' ');
-				serverCalls.getPathByName(vm.searchName);
+				serverCalls.getPathByName(vm.searchName, false);
 			}
 
 		} else {
@@ -54,30 +55,45 @@ function AppController($scope, $location, serverCalls) {
 		vm.inputDisabled = true;
 		vm.view = 'loading';
 		
-		serverCalls.getPathByNconst(nconst);
+		serverCalls.getPathByNconst(nconst, false);
 
 		$location.path('/loading');
 	});
 
 
-
-	//handler for browser using back/forward through history
-	//all urls are assumed to be valid as the app itself only produces valid urls
-	//and manually loading a bad url is rerouted up above to /home
-	//back/forward through a reload causes another reload
+	//handles browser moving back/forward through history by prepping state as appropriate
 	$scope.$on('$locationChangeSuccess', (event, newUrl, prevUrl) => {
-		console.log(prevUrl, newUrl);
 		prevUrl = prevUrl.match(URL_PARSER);
 	  newUrl = newUrl.match(URL_PARSER);
+
+	  //only occurs during app activity, no need match state to url
+	  if (!prevUrl || !newUrl || prevUrl[1] == 'loading' || newUrl[1] == 'loading') {
+	  	return;
+	  }
 		
 		if (newUrl[1] == 'home') {
+			vm.inputDisabled = false;
+			vm.view = 'home';
 
 		} else if (newUrl[1] == 'choose') {
+			vm.inputDisabled = true;
+			vm.view = 'choose';
 
+			if (!vm.choices || newUrl[2].replace('-', ' ') != vm.choices[0].name) {
+				vm.view = 'loading';
+				vm.searchName = vm.choices[0].name;
+				serverCalls.getPathByName(vm.choices[0].name, true);
+			}
 		} else if (newUrl[1] == 'display') {
+			vm.inputDisabled = true;
+			vm.view = 'display';
 
-		} else if (newUrl[1] != 'loading') {
-			// $location.path('home').replace();
+			if (!vm.path || newUrl[3] != vm.path[0].nconst) {
+				vm.view = 'loading';
+				vm.searchName = `index: ${newUrl[3]}`;
+				serverCalls.getPathByNconst(Number(newUrl[3]), true);
+			}
+
 		}
 	});
 
@@ -92,12 +108,15 @@ function AppController($scope, $location, serverCalls) {
 
 	//user clicked the clear button, reset app 
 	vm.reset = function() {
-		vm.error = null;
-		vm.searchName = null;
 		vm.inputDisabled = false;
 		vm.view = 'home';
 
 		$location.path('/home');
+	}
+
+	vm.resetError = function() {
+		vm.error = null;
+		vm.searchName = null;
 	}
 
 
@@ -115,13 +134,17 @@ function AppController($scope, $location, serverCalls) {
 
 
 	//user just searched for actor, wait for response
-	$scope.$on('reqStarted', (event, name) => {
+	$scope.$on('reqStarted', (event, name, replace) => {
 		vm.error = null;
 		vm.searchName = name;
 		vm.inputDisabled = true;
 		vm.view = 'loading';
 		
-		$location.path('/loading');
+		if (replace) {
+			$location.path('/loading').replace();
+		} else {
+			$location.path('/loading');
+		}
 	});
 
 
@@ -142,8 +165,6 @@ function AppController($scope, $location, serverCalls) {
 
 	//no path found, either an error or multiple choices
 	$scope.$on('reqError', (event, res) => {
-		vm.searchName = null;
-
 		if (res.status === 300) {
 			vm.choices = res.data;
 			vm.view = 'choose';

@@ -1,4 +1,4 @@
 
 <img ng-if="!app.error" id="home-bacon-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Kevinbacongfdl.PNG/428px-Kevinbacongfdl.PNG">
-<p ng-if="app.error">{{ app.error }}</p>
-<button ng-if="app.error" ng-click="app.reset()">reset</button>
+<p ng-if="app.error">{{ [ app.error, app.searchName ] | error }}</p>
+<button ng-if="app.error" ng-click="app.resetError()">reset</button>
