@@ -1,0 +1,4 @@
+
+<span><b>{{ $ctrl.actor.name }}</b></span>
+<span ng-if="$ctrl.actor.dob">{{ [ $ctrl.actor.dob, $ctrl.actor.dod ] | birthDeath }}</span>
+<span ng-if="$ctrl.actor.jobs">{{ $ctrl.actor.jobs | jobs }}</span>

@@ -16,6 +16,7 @@ import ngRoute from 'angular-route';
 
 //components
 import './components/actorDetails';
+import './components/actorChoice';
 import './components/movieDetails';
 
 //controllers
@@ -40,6 +41,7 @@ import './services/serverCalls';
 
 angular.module('app', [
   'app.actorDetails',
+  'app.actorChoice',
   'app.movieDetails',
   'app.birthDeath',
   'app.displayHeader',

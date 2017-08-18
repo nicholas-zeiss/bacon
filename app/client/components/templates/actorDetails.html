@@ -1,5 +1,5 @@
 
 <p>{{ $ctrl.actor.name }}</p>
 <div ng-include="'/client/components/templates/' + ($ctrl.actor.imgUrl ? 'image.html' : 'empty.html')" onload="$ctrl.loaded($ctrl.index)"></div>
-<p ng-if="$ctrl.actor.dob">{{ [ $ctrl.actor.dob, $ctrl.actor.dod ] | birthDeath }}</p>
-<p ng-if="$ctrl.actor.jobs">{{ $ctrl.actor.jobs | jobs }}</p>
+<p>{{ [ $ctrl.actor.dob, $ctrl.actor.dod ] | birthDeath }}</p>
+<p>{{ $ctrl.actor.jobs | jobs }}</p>

@@ -42,6 +42,10 @@ function DisplayController($scope, $timeout) {
 
 		vm.loading[index] = false;
 
+		// let node = $(nodeId).animate({
+
+		// });
+
 		timeoutPromises.push($timeout(() => scrollToNode('#node-' + index), 100));		//give it a moment to render into the dom
 
 		if (index < $scope.app.path.length - 1) {
@@ -70,12 +74,11 @@ function DisplayController($scope, $timeout) {
 		let scrollTo = node.position().top + node.height();
 
 		if (scrollTo > lastScrollPos) {
-			console.log('scrolling', lastScrollPos, scrollTo)
 			lastScrollPos = scrollTo;
 
 			$('#display-content-container').animate({
       	scrollTop: scrollTo
-      }, 2000);
+      }, 1000);
 		}
 	}
 

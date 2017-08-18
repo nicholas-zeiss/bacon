@@ -9,15 +9,7 @@
 (() => {
 	angular.module('app.birthDeath', [])
 	.filter('birthDeath', () => ([dob, dod]) => {
-		if (dob) {
-			if (dod) {
-				return `${dob} - ${dod}`;
-			}
-
-			return String(dob);
-		}
-
-		return '';
+		return dob ? `${dob} - ${dod ? dod : 'present'}` : '';
 	});
 })();
 

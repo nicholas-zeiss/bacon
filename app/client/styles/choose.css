@@ -4,6 +4,59 @@
 
 
 #choose {
-
+	justify-content: flex-start !important;
 }
 
+
+	#choose > h2 {
+		margin: 15vh 0 0 0;
+	}
+
+
+	#choose span {
+		font-size: 20px;
+	}
+
+
+	#choices {
+		width: 70%;
+
+		margin-top: 3em;
+	}
+
+
+		actor-choice {
+			display: block;
+
+			padding: .5em;
+			margin: .1em 0;
+			border: 2px solid black;
+
+			background-color: red;
+			transition: all .25s ease-out;
+		}
+
+
+		actor-choice:hover {
+			padding: .6em .5em;
+			background-color: cyan;
+		}
+
+
+		actor-choice:first-child {
+			border-radius: 3px 3px 0 0;
+		}
+
+
+		actor-choice:last-child {
+			border-radius: 0 0 3px 3px;
+		}
+
+
+			actor-choice > span:first-child {
+				margin-right: 1em;
+			}
+
+			actor-choice > span:last-child {
+				float: right;
+			}

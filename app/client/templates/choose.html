@@ -1,5 +1,5 @@
 
-<p>Which of these actors did you mean?<p>
-<div ng-repeat="actor in app.choices track by $index">
-	<actor-details class="actor-node" actor="actor" 
+<h2>Which of these actors did you mean?</h2>
+<div id="choices">
+	<actor-choice ng-repeat="actor in app.choices" class="actor-choice" actor="actor"></actor-choice>
 </div>

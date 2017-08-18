@@ -9,13 +9,11 @@
 (() => {
 	angular.module('app.jobs', [])
 	.filter('jobs', () => jobs => {
-		
-
-		function capitalize(str) {
+		let capitalize = str => {
 			return str.replace(/^\w/, char => char.toUpperCase());
 		}
 
-		return jobs.split(',').map(capitalize).join(', ');
+		return jobs ? jobs.split(',').map(capitalize).join(', ') : '';
 	});
 })();
 
