@@ -13,12 +13,12 @@ function DisplayController($scope, $timeout) {
 	//IMPT if you change this also change values in display.css
 	vm.duration = 500;
 
-	vm.pathToBacon = [$scope.app.path[0]];
+	vm.pathToBacon = [$scope.app.pathToBacon[0]];
 
 	//actors can have images, we need to wait for them to load their image before animating their insertion
 	vm.loading = {};
 	
-	$scope.app.path.forEach((actorMovie, i) => vm.loading[i] = true);
+	$scope.app.pathToBacon.forEach((actorMovie, i) => vm.loading[i] = true);
 
 	//we need to clear these if display is closed before finished loading actors/movies
 	let timeoutPromises = [];
@@ -29,7 +29,7 @@ function DisplayController($scope, $timeout) {
 	vm.reset = function() {
 		reseting = true;
 		timeoutPromises.forEach(promise => $timeout.cancel(promise));
-		$scope.app.reset();
+		$scope.app.resetApp();
 	}
 	
 
@@ -44,9 +44,9 @@ function DisplayController($scope, $timeout) {
 
 		timeoutPromises.push($timeout(() => scrollToNode('#node-' + index), 100));		//give it a moment to render into the dom
 
-		if (index < $scope.app.path.length - 1) {
+		if (index < $scope.app.pathToBacon.length - 1) {
 			timeoutPromises.push($timeout(() => {
-				vm.pathToBacon.push($scope.app.path[index + 1]);
+				vm.pathToBacon.push($scope.app.pathToBacon[index + 1]);
 
 				if (isMovie(index + 1)) {
 					vm.actorMovieLoaded(index + 1);

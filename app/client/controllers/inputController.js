@@ -12,18 +12,16 @@ function InputController($scope, serverCalls) {
 
 	//executes on user search for an actor
 	function submitName() {
-		if (!vm.name) {
-			return;
+		if (vm.name) {
+			if (/kevin\sbacon/i.test(vm.name)) {
+				$scope.$emit('searchedForBacon');
 
-		} else if (/kevin\sbacon/i.test(vm.name)) {
-			$scope.$emit('searchedForBacon');
+			} else {
+				$scope.$emit('inputSubmission', vm.name);
+			}
+
 			vm.name = '';
-			return;
 		}
-
-		serverCalls.getPathByName(vm.name, false);
-
-		vm.name = '';
 	}
 }
 

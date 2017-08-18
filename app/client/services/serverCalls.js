@@ -53,21 +53,18 @@ import angular from 'angular';
 			});
 		}
 
-
+		
 		function success(path) {
 			$rootScope.$broadcast('reqSuccess', path);
 		}
 
-
-		function failure(failure) {
-			$rootScope.$broadcast('reqError', failure);
+		function failure(res) {
+			$rootScope.$broadcast('reqError', res);
 		}
 
 
 		//handles a post to /name
-		function getPathByName(name, replaceHistory) {
-			$rootScope.$broadcast('reqStarted', name, replaceHistory);
-
+		function getPathByName(name) {
 			$http({
 				method: 'POST',
 				url: '/name',
@@ -85,9 +82,7 @@ import angular from 'angular';
 
 
 		//handles a post to /nconst
-		function getPathByNconst(nconst, replaceHistory) {
-			$rootScope.$broadcast('reqStarted', `index: ${nconst}`, replaceHistory);
-
+		function getPathByNconst(nconst) {
 			$http({
 				method: 'POST',
 				url: '/nconst',
