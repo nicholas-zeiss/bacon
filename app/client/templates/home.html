@@ -1,7 +1,5 @@
 
-<div>
-	<img ng-if="!app.serverError" id="home-bacon-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Kevinbacongfdl.PNG/428px-Kevinbacongfdl.PNG">
-	<h2 ng-if="app.serverError">{{ [ app.serverError, app.searchName ] | error }}</h2>
-	<p ng-if="app.serverError == 404">If this does not seem correct, please make sure you are using the same spelling as <a href="http://imdb.com">IMDb</a>.</p>
-	<button ng-if="app.serverError" ng-click="app.resetError()">Reset</button>
-</div>
+<div ng-if="!app.serverError" id="home-bacon-img"></div>
+<h1 ng-if="app.serverError">{{ [ app.serverError, app.searchName ] | error }}</h1>
+<p ng-if="app.serverError == 404">If this does not seem correct, please make sure you are using the same spelling as <a href="http://imdb.com">IMDb</a>.</p>
+<button ng-if="app.serverError" ng-click="app.resetError()">New Search</button>

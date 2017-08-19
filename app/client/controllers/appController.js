@@ -83,25 +83,29 @@ function AppController($scope, $location, serverCalls) {
 
 		//a loading url means this url change is app activity and need not be altered		
 		if (prevUrl && newUrl && prevUrl[1] != 'loading' && newUrl[1] != 'loading') {
-		  vm.view = newUrl[1];			//could be either 'home', 'choose', or 'display'
-		  
+		  let view = newUrl[1];			//could be either 'home', 'choose', or 'display'
 		  let param = newUrl[2] || newUrl[3];
 			
-			if (vm.view == 'home') {
+			if (view == 'home') {
 				vm.serverError = null;
 				vm.inputDisabled = false;
+				vm.view == 'home';
 
 			} else {
 				vm.inputDisabled = true;
 
-				let invalidChooseUrl = !vm.choices || param.replace('-', ' ') != vm.choices[0].name;
-				let invalidDisplayUrl = !vm.pathToBacon || param != vm.pathToBacon[0].nconst;
-
-				if (vm.view == 'choose' && invalidChooseUrl) {
-					vm.search(vm.choices[0].name, true);
-
-				} else if (vm.view == 'display' && invalidDisplayUrl) {
-					vm.search(Number(newUrl[3]), true);
+				if (view == 'choose') {
+					if (!vm.choices || param.replace('-', ' ') != vm.choices[0].name) {
+						vm.search(param.replace('-', ' '), true);
+					} else {
+						vm.view == 'choose';
+					}
+				} else {
+					if (!vm.pathToBacon || param != vm.pathToBacon[0].nconst) {
+						vm.search(Number(param), true); 
+					} else {
+						vm.view == 'display';
+					}
 				}
 			} 
 		}

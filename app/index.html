@@ -9,7 +9,7 @@
 
 		<title>Six Degrees of Bacon</title>
 		
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700">
 		<link rel="stylesheet" href="/client/styles/app.css">
 		<link rel="stylesheet" href="/client/styles/choose.css">
 		<link rel="stylesheet" href="/client/styles/display.css">
@@ -24,15 +24,14 @@
 			<h1>Six Degrees of Kevin Bacon</h1>
 			<form id="name-input" ng-controller="InputController as input">
 				<input type="text" placeholder="Search for an actor" ng-model="input.name" ng-disabled="app.inputDisabled">
-				<input type="submit" ng-click="input.submit()" ng-disabled="app.inputDisabled" value="Search">
+				<input type="submit" ng-click="input.submit()" ng-disabled="app.inputDisabled" value="">
 			</form>
 		</header>
 		
 		<section id="{{app.view}}" ng-view autoscroll></section>
 		
 		<div id="footer">
-			<p>Information courtesy of</p>
-			<p>IMDb</p>
+			<p>Information courtesy of IMDb</p>
 			<p>(http://www.imdb.com).</p>
 			<p>Used with permission.</p>
 		</div>

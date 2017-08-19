@@ -3,16 +3,77 @@
  */
 
 
-#home-bacon-img {
-	box-sizing: border-box;
+#home {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 
-	width: 30vw;
-
-	border: 10px solid orange;
-	border-radius: 30px;
-
-	background-size: contain;
-	background-repeat: no-repeat;
-	background-position: center;
+	color: #353535;
 }
+
+
+	#home-bacon-img {
+		box-sizing: border-box;
+		width: 30vw;
+		height: 30vw;
+
+		border: 10px solid orange;
+		border-radius: 30vw;
+
+		background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Kevinbacongfdl.PNG/428px-Kevinbacongfdl.PNG');
+		background-size: cover;
+		background-repeat: no-repeat;
+		background-position: 40% 60%;
+	}
+
+
+	#home > h1 {
+		margin: 0;
+
+		font-size: 30px;
+		text-shadow: 1px 1px 1px #d6d6d6;
+	}
+
+
+	#home > p {
+		margin: 1.5rem 0 2rem;
+
+		font-size: 20px;
+	}
+
+
+	#home > p > a {
+		font-weight: 600;
+		text-decoration: none;
+		color: #3f35ff;
+	}
+
+
+	#home > p > a:hover {
+		text-decoration: underline;
+	}
+
+
+	#home > button {
+		padding: .3em .5em;
+		border: none;
+		border-radius: 3px;
+		outline: none;
+		margin: 0;
+		box-shadow: 0 0 6px 1px #666;
+
+		font-size: 25px;
+		text-shadow: 1px 1px 1px #136b36;
+		color: #f8f8f8;
+		background-color: #23bc61;
+
+		cursor: pointer;
+		transition: background-color .25s;
+	}
+
+
+	#home > button:hover {
+		background-color: #1b914a;
+	}
 

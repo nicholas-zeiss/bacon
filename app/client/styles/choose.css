@@ -3,56 +3,98 @@
  */
 
 
-#choose h2 {
-	margin: 15vh 0 0 0;
+#choose {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 }
 
 
-#choices {
-	width: 70%;
+	#choose > h1 {
+		margin: 0;
 
-	margin-top: 3em;
-}
-
-
-	#choices span {
-		font-size: 20px;
+		font-size: 30px;
+		text-shadow: 1px 1px 1px #d6d6d6;
+		color: #353535;
 	}
 
 
-	actor-choice {
-		display: block;
+	.actor-choice {
+		min-width: 70%;
 
 		padding: .5em;
-		margin: .1em 0;
-		border: 2px solid black;
+		border-width: 1px 2px;
+		border-style: solid;
+		border-color: #2658a8;
+		margin: 0;
 
-		background-color: red;
+		color: #f2f2f2;
+		text-shadow: 1px 1px 3px #143160;
+		background-color: #3273db;
+
+		cursor: pointer;
 		transition: all .25s ease-out;
 	}
 
 
-	actor-choice:hover {
+	.actor-choice:hover {
 		padding: .6em .5em;
-		background-color: cyan;
+
+		background-color: #1e74ff;
 	}
 
 
-	actor-choice:first-child {
+	.actor-choice:first-of-type {
+		border-width: 2px 2px 1px 2px;
 		border-radius: 3px 3px 0 0;
+		margin-top: 2em;
 	}
 
 
-	actor-choice:last-child {
+	.actor-choice:last-of-type {
+		border-width: 1px 2px 2px 2px;
 		border-radius: 0 0 3px 3px;
+		margin-bottom: 2em;
 	}
 
 
-		actor-choice > span:first-child {
+		.actor-choice > span {
+			font-size: 20px;
+		}
+
+
+		.actor-choice > span:first-child {
 			margin-right: 1em;
 		}
 
-		actor-choice > span:last-child {
+		.actor-choice > span:last-child {
 			float: right;
+
+			margin-left: 3em;
 		}
+
+
+	#choose > button {
+		padding: .2em .5em;
+		border: none;
+		border-radius: 3px;
+		outline: none;
+		margin: 0;
+		box-shadow: 0 0 6px 1px #666;
+
+		font-size: 25px;
+		text-shadow: 1px 1px 1px #136b36;
+		color: #f8f8f8;
+		background-color: #23bc61;
+
+		cursor: pointer;
+		transition: background-color .25s;
+	}
+
+
+	#choose > button:hover {
+		background-color: #1b914a;
+	}
+
 

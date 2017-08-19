@@ -1,5 +1,6 @@
 /*
  * This stylesheet contains the css for elements that are app wide, ie do not depend on the view
+ * rem is 16px
  */
 
 
@@ -14,88 +15,129 @@ body {
 	align-items: center;
 
 	font-family: 'Open Sans', sans-serif;
+	font-size: 16px;
 }
 
 
 	header {
-		width: 100%;
-		height: 15vh;
+		z-index: 1;
 
-		text-align: center;
+		flex: 0 0 auto;
+		width: 100%;
+		height: 4rem;
+
+		box-shadow: 0 -6px 7px 6px black;
 		
-		background-color: red;
+		color: #f2f2f2;
+		background: linear-gradient(0deg, #3273db, #2353a0);
 	}
 
 
 		header > h1 {
-			margin: .3em 0;
+			float: left;
+
+			margin: .6rem 1rem;
+
+			text-shadow: 1px 1px 3px black;
 		}
 
 
 		#name-input {
-			padding: .5em;
+			float: right;
+			width: 25rem;
+			height: 1.75rem;
 
-			display: flex;
-			justify-content: center;
+			margin: 1.1rem 1rem 1rem;
+			border-radius: 1px;
+			box-shadow: inset 0 0 1px #132c54;
 
-			background-color: red;
+			background-color: #f9f9f9;
 		}
 
 
 			#name-input > input {
-				font-size: 20px;
-			}
-
-
-			#name-input > input:first-child {
-				padding: .2em .5em;
-				margin-right: .75em;
-				border: none;
-				outline: none;
-			}
-
-
-			#name-input > input:first-child:disabled {
-				background-color: grey;
-			}
-
-
-			#name-input > input:last-child {
-				border: none;
-				border-radius: .2em;
 				outline: none;
 
-				color: white;
-				
-				background-color: blue;
+				font-size: 18px;
+				color: #353535;
+				background-color: transparent;
+
+				transition: all .5s;
 			}
 
 
-			#name-input > input:last-child:disabled {
-				background-color: green;
+			#name-input > input:disabled {
+				background-color: #a3abb7;
 			}
+
+
+			#name-input > input::placeholder {
+				color: #b2b2b2;
+				transition: all 1s;
+			}
+
+
+			#name-input > input:disabled::placeholder {
+				color: #818996;
+			}
+
+
+				#name-input > input:first-child {
+					box-sizing: border-box;
+					width: 23.25rem;
+					height: 1.75rem;
+
+					padding: 0 .33rem;
+					margin: 0;
+					border: none;
+					border-radius: 3px 0 0 3px;
+				}
+
+
+				#name-input > input:last-child {
+					box-sizing: border-box;
+					float: right;
+					width: 1.75rem;
+					height: 1.75rem;
+
+					padding: .1rem;
+					margin: 0;
+					border: none;
+					border-radius: 0 3px 3px 0;
+					outline: none;
+					
+					background-image: url('/search.svg');
+					background-origin: content-box;
+					background-position: 50% 50%;
+					background-size: 150%;
+
+					cursor: pointer;
+				}
+
+				#name-input > input:last-child:hover {
+					background-color: #aab4c4;
+				}
 
 
 	#choose, #display, #home, #loading {
+		flex: 1 0 auto;
 		width: 100%;
-		min-height: 75vh;
-		max-height: 75vh;
 
-		display: flex;
-		flex-direction: column;
-		justify-content: space-around;
-		align-items: center;
-		overflow: scroll;
-
-		background-color: white;
+		background-color: #edebe8;
 	}
 
 
 	#footer {
-		width: 100%;
-		height: 10vh;
+		z-index: 1;
 
-		background-color: red;
+		flex: 0 0 auto;
+		width: 100%;
+		height: 4rem;
+
+		box-shadow: 0 6px 7px 6px black;
+
+		color: #f2f2f2;
+		background: linear-gradient(180deg, #3273db, #2353a0);
 	}
 
 
