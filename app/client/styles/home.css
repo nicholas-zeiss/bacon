@@ -4,6 +4,9 @@
 
 
 #home {
+	width: 100%;
+	min-height: 100%;
+
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -16,15 +19,17 @@
 	#home-bacon-img {
 		box-sizing: border-box;
 		width: 30vw;
+		min-width: 360px;
 		height: 30vw;
+		min-height: 360px;
 
-		border: 10px solid orange;
 		border-radius: 30vw;
+		box-shadow: 0px 0px 100px 30px #ffc800;
 
-		background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Kevinbacongfdl.PNG/428px-Kevinbacongfdl.PNG');
+		background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Kevin_Bacon_by_David_Shankbone.jpg/576px-Kevin_Bacon_by_David_Shankbone.jpg');
 		background-size: cover;
 		background-repeat: no-repeat;
-		background-position: 40% 60%;
+		background-position: 50% 10%;
 	}
 
 

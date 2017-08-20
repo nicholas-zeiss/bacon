@@ -16,7 +16,6 @@ function AppController($scope, $location, serverCalls) {
 	vm.serverError = null;
 	vm.searchName = null;
 	vm.inputDisabled = false;
-	vm.view = 'home';					 //tracked for generating an id on element containing the view
 
 
 	//start a search for an actor, term can either be a name or a nconst number
@@ -25,7 +24,6 @@ function AppController($scope, $location, serverCalls) {
 		vm.serverError = null;
 		vm.searchName = (typeof term == 'number' ? 'index: ' : '') + term;
 		vm.inputDisabled = true;
-		vm.view = 'loading';
 
 		let history = $location.path('/loading');
 
@@ -77,35 +75,28 @@ function AppController($scope, $location, serverCalls) {
 
 
 	//handles browser moving back/forward through history by prepping app state as appropriate
-	$scope.$on('$locationChangeSuccess', (event, newUrl, prevUrl) => {
+	$scope.$on('$locationChangeStart', (event, newUrl, prevUrl) => {
 		prevUrl = prevUrl.match(URL_PARSER);
 	  newUrl = newUrl.match(URL_PARSER);
 
-		//a loading url means this url change is app activity and need not be altered		
-		if (prevUrl && newUrl && prevUrl[1] != 'loading' && newUrl[1] != 'loading') {
-		  let view = newUrl[1];			//could be either 'home', 'choose', or 'display'
-		  let param = newUrl[2] || newUrl[3];
-			
-			if (view == 'home') {
+		//prevent the user moving back/forward while a page is loading	
+		if (prevUrl && newUrl && prevUrl[1] == 'loading' && newUrl[1] == 'home' && !vm.serverError) {
+			event.preventDefault();
+
+		//if this is the case url change is user activity not app activity
+		} else if (prevUrl && newUrl && prevUrl[1] != 'loading' && newUrl[1] != 'loading') {			
+			if (newUrl[1] == 'home') {
 				vm.serverError = null;
 				vm.inputDisabled = false;
-				vm.view == 'home';
 
 			} else {
 				vm.inputDisabled = true;
 
-				if (view == 'choose') {
-					if (!vm.choices || param.replace('-', ' ') != vm.choices[0].name) {
-						vm.search(param.replace('-', ' '), true);
-					} else {
-						vm.view == 'choose';
-					}
-				} else {
-					if (!vm.pathToBacon || param != vm.pathToBacon[0].nconst) {
-						vm.search(Number(param), true); 
-					} else {
-						vm.view == 'display';
-					}
+				if (newUrl[1] == 'choose' && (!vm.choices || newUrl[2].replace('-', ' ') != vm.choices[0].name)) {
+					vm.search(param.replace('-', ' '), true);
+				
+				} else if (!vm.pathToBacon || newUrl[3] != vm.pathToBacon[0].nconst) {
+					vm.search(Number(param), true); 
 				}
 			} 
 		}
@@ -149,7 +140,6 @@ function AppController($scope, $location, serverCalls) {
 		//path returned by server is [[actor1, movie1], ... [Kevin Bacon, null]]
 		vm.pathToBacon = path.reduce((path, actorMovie) => path.concat(actorMovie), []).slice(0, -1);		
 		vm.searchName = null;
-		vm.view = 'display';
 
 		$location.path(`/display/${vm.pathToBacon[0].nconst}`).replace();
 	});
@@ -159,13 +149,11 @@ function AppController($scope, $location, serverCalls) {
 	$scope.$on('reqError', (event, res) => {
 		if (res.status === 300) {
 			vm.choices = res.data;
-			vm.view = 'choose';
 			$location.path(`/choose/${vm.choices[0].name.replace(' ', '-')}`).replace();
 		
 		} else {
 			vm.serverError = res.status;
 			vm.inputDisabled = false;
-			vm.view = 'home';
 			$location.path('/home').replace();
 		}
 	});

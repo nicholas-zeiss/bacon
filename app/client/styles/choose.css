@@ -4,6 +4,8 @@
 
 
 #choose {
+	width: 100%;
+
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -22,30 +24,31 @@
 
 	.actor-choice {
 		min-width: 70%;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 
 		padding: .5em;
 		border-width: 1px 2px;
 		border-style: solid;
-		border-color: #2658a8;
-		margin: 0;
+		border-color: #c72222;
 
 		color: #f2f2f2;
 		text-shadow: 1px 1px 3px #143160;
-		background-color: #3273db;
+		background-color: #f23a3a;
 
 		cursor: pointer;
-		transition: all .25s ease-out;
+		transition: background-color .25s ease-out;
 	}
 
 
 	.actor-choice:hover {
-		padding: .6em .5em;
-
-		background-color: #1e74ff;
+		background-color: #c72222;
 	}
 
 
 	.actor-choice:first-of-type {
+		position: relative;
 		border-width: 2px 2px 1px 2px;
 		border-radius: 3px 3px 0 0;
 		margin-top: 2em;
@@ -59,29 +62,34 @@
 	}
 
 
-		.actor-choice > span {
+		.actor-choice > div {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+		}
+
+
+		.actor-choice p {
 			font-size: 20px;
+			margin: 0;
+			padding: 0;
 		}
 
 
-		.actor-choice > span:first-child {
-			margin-right: 1em;
-		}
+		.actor-choice h1 {
+			margin: 0 2rem 0 0;
+			padding-bottom: .1em;
 
-		.actor-choice > span:last-child {
-			float: right;
-
-			margin-left: 3em;
+			font-size: 25px;
 		}
 
 
 	#choose > button {
 		padding: .2em .5em;
-		border: none;
+		border: 1px solid #198a46;
 		border-radius: 3px;
 		outline: none;
 		margin: 0;
-		box-shadow: 0 0 6px 1px #666;
 
 		font-size: 25px;
 		text-shadow: 1px 1px 1px #136b36;

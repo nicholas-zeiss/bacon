@@ -5,17 +5,83 @@
 
 #loading {
 	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
+	flex-direction: row;
+	/*align-items: center;*/
 }
 
-	#loading > h1 {
-		margin: 0;
+	#load-message {
+		margin: 0 .25em 0 0;
 
 		font-size: 30px;
 		text-shadow: 1px 1px 1px #d6d6d6;
 		color: #353535;
 	}
+
+	@keyframes spin1 {
+		0% {
+			transform: scale(1);
+		} 25% {
+			transform: scale(1.5);
+		} 50% {
+			transform: scale(1);
+		} 75% {
+			transform: scale(1);
+		} 100% {
+			transform: scale(1);
+		}
+	}
+
+	@keyframes spin2 {
+		0% {
+			transform: scale(1);
+		} 25% {
+			transform: scale(1);
+		} 50% {
+			transform: scale(1.5);
+		} 75% {
+			transform: scale(1);
+		} 100% {
+			transform: scale(1);
+		}
+	}
+
+	@keyframes spin3 {
+		0% {
+			transform: scale(1);
+		} 25% {
+			transform: scale(1);
+		} 50% {
+			transform: scale(1);
+		} 75% {
+			transform: scale(1.5);
+		} 100% {
+			transform: scale(1);
+		}
+	}
+
+
+	#load-animation > span {
+		display: inline-block;
+		margin-right: .2em;
+
+		font-size:	30px;
+		font-weight: bold;
+	}
+
+
+	#load-animation > span:first-child {
+		animation: spin1 1s infinite;
+	}
+
+
+	#load-animation > span:nth-child(2n) {
+		animation: spin2 1s infinite;
+	}
+
+	#load-animation > span:last-child {
+		animation: spin3 1s infinite;
+	}
+
+
 
 
