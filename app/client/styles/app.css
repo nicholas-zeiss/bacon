@@ -153,7 +153,7 @@ body {
 		}
 
 
-@media (max-width: 800px) {
+@media (max-width: 799px) {
 	header {
 		height: 7rem;
 	} #name-input {

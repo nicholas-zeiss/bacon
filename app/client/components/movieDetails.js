@@ -10,7 +10,8 @@ import angular from 'angular';
 		templateUrl: '/client/components/templates/movieDetails.html',
 		bindings: { 
 			movie: '<',
-			index: '<'
+			index: '<',
+			size: '<'
 		}
 	});
 })();

@@ -1,5 +1,11 @@
 
 <h2>{{ $ctrl.actor.name }}</h2>
-<div ng-include="'/client/components/templates/' + ($ctrl.actor.imgUrl ? 'image.html' : 'empty.html')" onload="$ctrl.loaded($ctrl.index)"></div>
-<p>{{ [ $ctrl.actor.dob, $ctrl.actor.dod ] | birthDeath }}</p>
-<p>{{ $ctrl.actor.jobs | jobs }}</p>
+<p class="dob">{{ [ $ctrl.actor.dob, $ctrl.actor.dod ] | birthDeath }}</p>
+
+<div ng-if="$ctrl.size == 'large'">
+	<div ng-include="'/client/components/templates/image.html'" onload="$ctrl.loaded($ctrl.index)"></div>
+	<p class="jobs" >{{ $ctrl.actor.jobs | jobs }}</p>
+</div>
+
+<div ng-if="$ctrl.size != 'large'" ng-include="'/client/components/templates/image.html'" onload="$ctrl.loaded($ctrl.index)"></div>
+<p class="jobs" ng-if="$ctrl.size != 'large'">{{ $ctrl.actor.jobs | jobs }}</p>

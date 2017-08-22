@@ -50,7 +50,6 @@
 	}
 
 
-
 	#load-animation {
 		width: 10px;
 		height: 10px;
@@ -76,5 +75,4 @@
 
 		animation: spin 1s steps(1) infinite;
 	}
-
 

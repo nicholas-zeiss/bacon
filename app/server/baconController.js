@@ -40,7 +40,7 @@ function getNamesTitles(path) {
 					number: actor.number,
 					dob: actor.dob,
 					dod: actor.dod,
-					jobs: actor.jobs.split('').sort((a,b) => b.length - a.length).join(','),
+					jobs: actor.jobs.split(',').sort((a,b) => b.length - a.length).join(','),
 					imgUrl: actor.imgUrl
 				});
 			});

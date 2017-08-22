@@ -139,6 +139,11 @@ function AppController($scope, $location, serverCalls) {
 	$scope.$on('reqSuccess', (event, path) => {
 		//path returned by server is [[actor1, movie1], ... [Kevin Bacon, null]]
 		vm.pathToBacon = path.reduce((path, actorMovie) => path.concat(actorMovie), []).slice(0, -1);		
+		vm.pathToBacon.forEach((actor, i) => {
+			if (!(i % 2)) {
+				actor.imgUrl = actor.imgUrl ? actor.imgUrl : '/client/images/no-image.png';
+			}
+		})
 		vm.searchName = null;
 
 		$location.path(`/display/${vm.pathToBacon[0].nconst}`).replace();

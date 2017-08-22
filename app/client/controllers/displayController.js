@@ -7,7 +7,7 @@
 import $ from 'jquery';
 
 
-function DisplayController($scope, $timeout) {
+function DisplayController($scope, $timeout, $window) {
 	let vm = this;
 
 	let timeoutPromises = [];				//unresolved timeouts need to be cleared on reset
@@ -17,7 +17,10 @@ function DisplayController($scope, $timeout) {
 
 	vm.duration = 500;							//IMPT if you change this also change values in display.css
 	vm.loading = {};								//actor nodes need to load images and we need to track if they are loaded
+	vm.device = $window.innerWidth < 1000 ? $window.innerWidth < 800 ? 'small' : 'medium' : 'large';
+
 	vm.pathToBacon = [$scope.app.pathToBacon[0]];
+	// vm.pathToBacon = [vm.mobile ? [$scope.app.pathToBacon[0]] : $scope.app.pathToBacon[0]];
 	
 
 	$scope.app.pathToBacon.forEach((actorMovie, i) => vm.loading[i] = true);	
@@ -39,7 +42,7 @@ function DisplayController($scope, $timeout) {
 
 		vm.loading[index] = false;
 
-		timeoutPromises.push($timeout(() => scrollToNode('#node-' + index), 100));		//give it a moment to render into the dom
+		// timeoutPromises.push($timeout(() => scrollToNode('#node-' + index), 100));		//give it a moment to render into the dom
 
 		if (index < $scope.app.pathToBacon.length - 1) {
 			timeoutPromises.push($timeout(() => {
@@ -48,14 +51,13 @@ function DisplayController($scope, $timeout) {
 				if (isMovie(index + 1)) {
 					vm.actorMovieLoaded(index + 1);
 				}
-			}, 2 * vm.duration));
+			}, 2 * vm.duration + 100));
 
 		} else {
 			timeoutPromises.push(
 				$timeout(() => {
 					$scope.$emit('displayFinishedLoading');
-				}, 2 * vm.duration)
-			);
+				}, 2 * vm.duration + 100));
 		}
 	}
 

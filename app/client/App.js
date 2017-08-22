@@ -65,6 +65,7 @@ angular.module('app', [
 .controller('DisplayController', [
   '$scope',
   '$timeout',
+  '$window',
   DisplayController
 ])
 .controller('HomeController', HomeController)

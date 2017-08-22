@@ -112,7 +112,7 @@
 	}
 
 
-@media (max-width: 800px) {
+@media (max-width: 799px) {
 	.actor-choice {
 		min-width: calc(100% - 3em);
 	} .actor-choice > div {

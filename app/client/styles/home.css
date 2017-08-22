@@ -14,6 +14,8 @@
 
 	color: #353535;
 }
+
+
 	@keyframes toggle {
 		0% {
 			opacity: 0;
@@ -23,6 +25,7 @@
 			opacity: 1;
 		}
 	}
+
 
 	#home-bacon-img {
 		opacity: 1;
