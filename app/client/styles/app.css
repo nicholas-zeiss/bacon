@@ -7,8 +7,6 @@
 body {
 	min-height: 100vh;
 	min-width: 100vw;
-
-	min-width: 900px;
 	
 	margin: 0;
 
@@ -34,7 +32,6 @@ body {
 		background: linear-gradient(0deg, #3273db, #2353a0);
 	}
 
-
 		header > h1 {
 			float: left;
 
@@ -46,7 +43,7 @@ body {
 
 		#name-input {
 			float: right;
-			width: 25rem;
+			width: 19rem;
 			height: 1.75rem;
 
 			margin: 1.1rem 1rem 1rem;
@@ -69,13 +66,13 @@ body {
 
 
 			#name-input > input:disabled {
-				background-color: #a3abb7;
+				background-color: #aab4c4;
 			}
 
 
 			#name-input > input::placeholder {
 				color: #b2b2b2;
-				transition: all 1s;
+				transition: all .5s;
 			}
 
 
@@ -84,41 +81,42 @@ body {
 			}
 
 
-				#name-input > input:first-child {
-					box-sizing: border-box;
-					width: 23.25rem;
-					height: 1.75rem;
+			#name-input > input:first-child {
+				box-sizing: border-box;
+				width: 17.25rem;
+				height: 1.75rem;
 
-					padding: 0 .33rem;
-					margin: 0;
-					border: none;
-					border-radius: 3px 0 0 3px;
-				}
+				padding: 0 .33rem;
+				margin: 0;
+				border: none;
+				border-radius: 3px 0 0 3px;
+			}
 
 
-				#name-input > input:last-child {
-					box-sizing: border-box;
-					float: right;
-					width: 1.75rem;
-					height: 1.75rem;
+			#name-input > input:last-child {
+				box-sizing: border-box;
+				float: right;
+				width: 1.75rem;
+				height: 1.75rem;
 
-					padding: .1rem;
-					margin: 0;
-					border: none;
-					border-radius: 0 3px 3px 0;
-					outline: none;
-					
-					background-image: url('/search.svg');
-					background-origin: content-box;
-					background-position: 50% 50%;
-					background-size: 150%;
+				padding: .1rem;
+				margin: 0;
+				border: none;
+				border-radius: 0 3px 3px 0;
+				outline: none;
+				
+				background-image: url('/client/images/search.svg');
+				background-origin: content-box;
+				background-position: 50% 50%;
+				background-size: 150%;
 
-					cursor: pointer;
-				}
+				cursor: pointer;
+			}
 
-				#name-input > input:last-child:hover {
-					background-color: #aab4c4;
-				}
+			#name-input > input:last-child:hover {
+				background-color: #aab4c4;
+				cursor: default;
+			}
 
 
 	#view {
@@ -153,4 +151,20 @@ body {
 			font-size: 12px;
 			line-height: .5;
 		}
+
+
+@media (max-width: 800px) {
+	header {
+		height: 7rem;
+	} #name-input {
+		float: none;
+		clear: left;
+		width: 90%;
+		margin: 4rem auto 1rem;
+	} #name-input > input:first-child {
+		width: calc(100% - 1.75rem);
+	} #view {
+		height: calc(100vh - 11rem);
+	}
+}
 

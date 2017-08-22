@@ -13,7 +13,7 @@
 			return str.replace(/^\w/, char => char.toUpperCase());
 		}
 
-		return jobs ? jobs.split(',').map(capitalize).join(', ') : '';
+		return jobs ? jobs.split(',').join(', ') : '';
 	});
 })();
 

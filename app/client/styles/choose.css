@@ -18,12 +18,13 @@
 
 		font-size: 30px;
 		text-shadow: 1px 1px 1px #d6d6d6;
+		text-align: center;
 		color: #353535;
 	}
 
 
 	.actor-choice {
-		min-width: 70%;
+		min-width: 700px;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
@@ -32,6 +33,7 @@
 		border-width: 1px 2px;
 		border-style: solid;
 		border-color: #c72222;
+		margin: 0 1em;
 
 		color: #f2f2f2;
 		text-shadow: 1px 1px 3px #143160;
@@ -48,7 +50,6 @@
 
 
 	.actor-choice:first-of-type {
-		position: relative;
 		border-width: 2px 2px 1px 2px;
 		border-radius: 3px 3px 0 0;
 		margin-top: 2em;
@@ -69,18 +70,24 @@
 		}
 
 
+		.actor-choice h1 {
+			margin: 0 1rem 0 0;
+			padding-bottom: .1em;
+
+			font-size: 25px;
+		}
+
+
 		.actor-choice p {
 			font-size: 20px;
 			margin: 0;
 			padding: 0;
 		}
 
-
-		.actor-choice h1 {
-			margin: 0 2rem 0 0;
-			padding-bottom: .1em;
-
-			font-size: 25px;
+		.actor-choice p:last-child {
+			font-size: 20px;
+			margin: 0;
+			padding: 0;
 		}
 
 
@@ -97,7 +104,6 @@
 		background-color: #23bc61;
 
 		cursor: pointer;
-		transition: background-color .25s;
 	}
 
 
@@ -105,4 +111,13 @@
 		background-color: #1b914a;
 	}
 
+
+@media (max-width: 800px) {
+	.actor-choice {
+		min-width: calc(100% - 3em);
+	} .actor-choice > div {
+		flex-direction: column;
+		align-items: left;
+	}
+}
 

@@ -71,6 +71,7 @@ angular.module('app', [
 .controller('LoadingController', LoadingController)
 .controller('InputController', [
 	'$scope',
+  '$timeout',
 	'serverCalls',
 	InputController
 ])

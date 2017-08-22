@@ -40,7 +40,7 @@ function getNamesTitles(path) {
 					number: actor.number,
 					dob: actor.dob,
 					dod: actor.dod,
-					jobs: actor.jobs,
+					jobs: actor.jobs.split('').sort((a,b) => b.length - a.length).join(','),
 					imgUrl: actor.imgUrl
 				});
 			});
@@ -61,7 +61,7 @@ function getNamesTitles(path) {
 				number: 0,
 				dob: 1958,
 				dod: 0,
-				jobs: 'actor,producer,soundtrack',
+				jobs: 'soundtrack,producer,actor',
 				imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Kevinbacongfdl.PNG/428px-Kevinbacongfdl.PNG"
 			}, null ]);
 
