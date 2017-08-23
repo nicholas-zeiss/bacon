@@ -9,11 +9,13 @@ import angular from 'angular';
 (() => {
  	angular.module('app.expand', [])
  	.directive('expand', ['$timeout', $timeout => ($scope, $element, $attrs) => {		
-		$element.addClass('expand');
+		if ($element.parent().hasClass('first-row')) {
+			$element.addClass('expand');
 
-		$timeout(() => {
-			$element.removeClass('expand');
-		}, Number($attrs.expand));
+			$timeout(() => {
+				$element.removeClass('expand');
+			}, Number($attrs.expand));
+		}
  	}]);
  })();
 

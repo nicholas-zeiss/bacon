@@ -10,8 +10,7 @@ import angular from 'angular';
 		templateUrl: '/client/components/templates/actorDetails.html',
 		bindings: { 
 			actor: '<',
-			loaded: '<',
-			index: '<'
+			loaded: '<'
 		}
 	});
 })();

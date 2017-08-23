@@ -2,4 +2,4 @@
 <h2>{{ $ctrl.actor.name }}</h2>
 <p class="dob">{{ [ $ctrl.actor.dob, $ctrl.actor.dod ] | birthDeath }}</p>
 
-<div ng-include="'/client/components/templates/image.html'" onload="$ctrl.loaded($ctrl.index)"></div>
+<div ng-include="'/client/components/templates/image.html'" onload="$ctrl.loaded()"></div>
