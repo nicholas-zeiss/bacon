@@ -13,23 +13,51 @@ function DisplayController($scope, $timeout, $window) {
 	let timeoutPromises = [];				//unresolved timeouts need to be cleared on reset
 	let reseting = false;
 	let lastScrollPos = 0;					//current scrollTop of the #display-content-container element
-	let nodeType = [];
+	let device = $window.innerWidth < 1000 ? $window.innerWidth < 800 ? 'small' : 'medium' : 'large';
 
 
 	vm.duration = 500;							//IMPT if you change this also change values in display.css
 	vm.loading = {};								//actor nodes need to load images and we need to track if they are loaded
-	//TODO make this local?
-	vm.device = $window.innerWidth < 1000 ? $window.innerWidth < 800 ? 'small' : 'medium' : 'large';
-	vm.pathToBacon = [{ actor: $scope.app.pathToBacon[0] }];
-	// vm.pathToBacon = [[{ actor: $scope.app.pathToBacon[0] }]];
+	vm.pathToBacon = [$scope.app.pathToBacon[0]];
+	vm.nodeType = [];
 
 
 
+	$scope.app.pathToBacon.forEach((actorMovie, index, arr) => {
+		vm.loading[index] = true
 
-	$scope.app.pathToBacon.forEach((actorMovie, i) => {
-		vm.loading[i] = true
+			// if (isMovie(index)) {
+			// 	if (device == 'small') {
+			// 		if (index == 1 || index == 9) {
+			// 			nodeType[index] = { arrow: 'right' }
 
+			// 		} else if (index == 3) {
+			// 			if (arr.length == 5) {
+			// 				nodeType[index] = { arrow: 'left', orientation: 'down' };
 
+			// 			} else {
+			// 				nodeType[index] = { arrow: 'down' };
+			// 			}
+
+			// 		} else if (index == 5) {
+			// 			nodeType[index] = { arrow: 'left' };
+						
+			// 		} else if (index == 7) {
+			// 			if (arr.length == 9) {
+			// 				nodeType[index] = { arrow: 'right'; orientation: 'down' };
+			// 			} else {
+			// 				nodeType[index] = { arrow: 'down' };
+			// 			}
+			// 		} else if (index == 11) {
+			// 			nodeType[index] =  { arrow: 'left', orientation: 'down' };;
+			// 		}
+			// 	} else if (device == 'medium') {
+			// 	} else if (device == 'large') {
+			// 	}
+			// } else {
+			// 	nodeType[index] = 'actor';
+			// }
+		// }
 	});	
 
 

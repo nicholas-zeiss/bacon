@@ -17,7 +17,7 @@ import ngRoute from 'angular-route';
 //components
 import './components/actorDetails';
 import './components/actorChoice';
-import './components/movieDetails';
+import './components/arrowRight';
 
 //controllers
 import AppController from './controllers/AppController';
@@ -29,7 +29,6 @@ import LoadingController from './controllers/LoadingController';
 
 //directives
 import './directives/ExpandFade';
-import './directives/MovieArrow';
 
 //filters
 import './filters/BirthDeath';
@@ -38,19 +37,21 @@ import './filters/Error';
 import './filters/Jobs';
 
 //services
+import './services/nodeTypes';
 import './services/serverCalls';
 
 
 angular.module('app', [
   'app.actorDetails',
   'app.actorChoice',
+  'app.arrowRight',
   'app.movieDetails',
   'app.birthDeath',
   'app.displayHeader',
   'app.error',
   'app.jobs',
   'app.expandFade',
-  'app.movieArrow',
+  'app.nodeTypes',
 	'app.serverCalls',
   'ngRoute'
 ])

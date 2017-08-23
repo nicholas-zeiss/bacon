@@ -99,7 +99,7 @@ body {
 				width: 1.75rem;
 				height: 1.75rem;
 
-				padding: .1rem;
+				padding: .2rem .1rem 0;
 				border: none;
 				border-radius: 0 3px 3px 0;
 				outline: none;
@@ -107,15 +107,13 @@ body {
 				
 				background-image: url('/client/images/search.svg');
 				background-origin: content-box;
-				background-position: 50% 50%;
-				background-size: 150%;
+				background-size: 110%;
 
 				cursor: pointer;
 			}
 
 			#name-input > input:last-child:hover {
 				background-color: #aab4c4;
-				cursor: default;
 			}
 
 
