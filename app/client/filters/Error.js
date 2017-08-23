@@ -2,6 +2,8 @@
  * This filter formats an error and name into an informational message
  */
 
+//TODO - does this need to be a filter? just put in appController
+
 
  import angular from 'angular';
 

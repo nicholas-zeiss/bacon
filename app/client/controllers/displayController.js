@@ -7,7 +7,7 @@
 import $ from 'jquery';
 
 
-function DisplayController($scope, $timeout, $window) {
+function DisplayController($scope, $timeout, $window, nodeTypes) {
 	let vm = this;
 
 	let timeoutPromises = [];				//unresolved timeouts need to be cleared on reset
@@ -26,38 +26,6 @@ function DisplayController($scope, $timeout, $window) {
 	$scope.app.pathToBacon.forEach((actorMovie, index, arr) => {
 		vm.loading[index] = true
 
-			// if (isMovie(index)) {
-			// 	if (device == 'small') {
-			// 		if (index == 1 || index == 9) {
-			// 			nodeType[index] = { arrow: 'right' }
-
-			// 		} else if (index == 3) {
-			// 			if (arr.length == 5) {
-			// 				nodeType[index] = { arrow: 'left', orientation: 'down' };
-
-			// 			} else {
-			// 				nodeType[index] = { arrow: 'down' };
-			// 			}
-
-			// 		} else if (index == 5) {
-			// 			nodeType[index] = { arrow: 'left' };
-						
-			// 		} else if (index == 7) {
-			// 			if (arr.length == 9) {
-			// 				nodeType[index] = { arrow: 'right'; orientation: 'down' };
-			// 			} else {
-			// 				nodeType[index] = { arrow: 'down' };
-			// 			}
-			// 		} else if (index == 11) {
-			// 			nodeType[index] =  { arrow: 'left', orientation: 'down' };;
-			// 		}
-			// 	} else if (device == 'medium') {
-			// 	} else if (device == 'large') {
-			// 	}
-			// } else {
-			// 	nodeType[index] = 'actor';
-			// }
-		// }
 	});	
 
 

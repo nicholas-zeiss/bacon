@@ -13,7 +13,7 @@ import angular from 'angular';
 
 
 		function small(length) {
-			let types = [
+			let types = {
 				3: [
 					'actor',
 					'right',
@@ -74,14 +74,14 @@ import angular from 'angular';
 					'rightCenter',
 					'actor'
 				]
-			];
+			};
 
 			return types[length];
 		}
 
 
 		function medium(length) {
-			let types = [
+			let types = {
 				3: [
 					'actor',
 					'right',
@@ -99,7 +99,7 @@ import angular from 'angular';
 					'rightShort',
 					'actor',
 					'rightShort',
-					'actor'
+					'actor',
 					'rightCenterLong',
 					'actor'
 				],
@@ -108,7 +108,7 @@ import angular from 'angular';
 					'rightShort',
 					'actor',
 					'rightShort',
-					'actor'
+					'actor',
 					'rightCenterShort',
 					'actor',
 					'leftShort',
@@ -119,7 +119,7 @@ import angular from 'angular';
 					'rightShort',
 					'actor',
 					'rightShort',
-					'actor'
+					'actor',
 					'downOnRight',
 					'actor',
 					'leftShort',
@@ -132,7 +132,7 @@ import angular from 'angular';
 					'rightShort',
 					'actor',
 					'rightShort',
-					'actor'
+					'actor',
 					'downOnRight',
 					'actor',
 					'leftShort',
@@ -142,14 +142,14 @@ import angular from 'angular';
 					'leftCenterLong',
 					'actor'
 				]
-			];
+			};
 
 			return types[length];
 		}
 
 
 		function large(length) {
-let types = [
+			let types = {
 				3: [
 					'actor',
 					'right',
@@ -178,7 +178,7 @@ let types = [
 					'curvedTop',
 					'actor',
 					'curvedBottom',
-					'actor'
+					'actor',
 					'up',
 					'actor'
 				],
@@ -189,9 +189,9 @@ let types = [
 					'curvedTop',
 					'actor',
 					'curvedBottom',
-					'actor'
+					'actor',
 					'curvedBottom',
-					'actor'
+					'actor',
 					'upRight',
 					'actor'
 				],
@@ -202,15 +202,15 @@ let types = [
 					'curvedTop',
 					'actor',
 					'curvedTop',
-					'actor'
+					'actor',
 					'curvedBottom',
-					'actor'
+					'actor',
 					'curvedBottom',
 					'actor',
 					'upRight',
 					'actor'
 				]
-			];
+			};
 
 			return types[length];
 		}
