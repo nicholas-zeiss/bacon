@@ -17,7 +17,10 @@ import ngRoute from 'angular-route';
 //components
 import './components/actorDetails';
 import './components/actorChoice';
+import './components/arrows/arrowLeft';
 import './components/arrows/arrowRight';
+import './components/arrows/arrowDownOnLeft';
+import './components/arrows/arrowDownOnRight';
 
 //controllers
 import AppController from './controllers/AppController';
@@ -46,7 +49,10 @@ import './services/serverCalls';
 angular.module('app', [
   'app.actorDetails',
   'app.actorChoice',
+  'app.arrowLeft',
   'app.arrowRight',
+  'app.arrowDownOnLeft',
+  'app.arrowDownOnRight',
   'app.birthDeath',
   'app.displayHeader',
   'app.error',
