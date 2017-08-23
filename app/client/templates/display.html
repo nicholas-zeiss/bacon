@@ -6,13 +6,13 @@
 
 <div id="display-content-container">
 	<div id="display-content">
-		<div ng-class="($odd ? 'movie-node-container ' : 'actor-node-container ') + display.device" ng-repeat="actorMovie in display.pathToBacon"
+		<div ng-class="($odd ? 'movie-node-container' : 'actor-node-container')" ng-repeat="actorMovie in display.pathToBacon"
 		ng-hide="display.loading[$index]" expand-fade="{{display.duration}}">
 			
-			<actor-details id="node-{{$index}}" ng-class="'actor-node ' + display.device" ng-if="$even" actor="actorMovie"
-			loaded="display.actorMovieLoaded" index="$index" size="display.device"></actor-details>
+			<actor-details id="node-{{$index}}" class="actor-node" ng-if="actorMovie.actor" actor="actorMovie.actor"
+			loaded="display.actorMovieLoaded" index="$index"></actor-details>
 			
-			<movie-details id="node-{{$index}}" class="movie-node" ng-if="$odd" movie="actorMovie" index="$index" size="display.device"></movie-details>
+			<div id="node-{{$index}}" class="movie-node" ng-if="actorMovie.movie" movie-arrow="{{actorMovie.arrow}}" movie-title="{{actorMovie.movie.title}}" year={{actorMovie.movie.year}}></div>
 		</div>
 	</div>
 </div>

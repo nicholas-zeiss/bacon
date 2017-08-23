@@ -13,17 +13,24 @@ function DisplayController($scope, $timeout, $window) {
 	let timeoutPromises = [];				//unresolved timeouts need to be cleared on reset
 	let reseting = false;
 	let lastScrollPos = 0;					//current scrollTop of the #display-content-container element
+	let nodeType = [];
 
 
 	vm.duration = 500;							//IMPT if you change this also change values in display.css
 	vm.loading = {};								//actor nodes need to load images and we need to track if they are loaded
+	//TODO make this local?
 	vm.device = $window.innerWidth < 1000 ? $window.innerWidth < 800 ? 'small' : 'medium' : 'large';
+	vm.pathToBacon = [{ actor: $scope.app.pathToBacon[0] }];
+	// vm.pathToBacon = [[{ actor: $scope.app.pathToBacon[0] }]];
 
-	vm.pathToBacon = [$scope.app.pathToBacon[0]];
-	// vm.pathToBacon = [vm.mobile ? [$scope.app.pathToBacon[0]] : $scope.app.pathToBacon[0]];
-	
 
-	$scope.app.pathToBacon.forEach((actorMovie, i) => vm.loading[i] = true);	
+
+
+	$scope.app.pathToBacon.forEach((actorMovie, i) => {
+		vm.loading[i] = true
+
+
+	});	
 
 
 	vm.reset = function() {
@@ -44,9 +51,18 @@ function DisplayController($scope, $timeout, $window) {
 
 		// timeoutPromises.push($timeout(() => scrollToNode('#node-' + index), 100));		//give it a moment to render into the dom
 
+
 		if (index < $scope.app.pathToBacon.length - 1) {
 			timeoutPromises.push($timeout(() => {
-				vm.pathToBacon.push($scope.app.pathToBacon[index + 1]);
+				let next;
+
+				if(isMovie(index + 1)) {
+					next = { movie: $scope.app.pathToBacon[index + 1], arrow: 'right'};
+				}	else {
+					next = { actor: $scope.app.pathToBacon[index + 1] };
+				}
+
+				vm.pathToBacon.push(next);
 
 				if (isMovie(index + 1)) {
 					vm.actorMovieLoaded(index + 1);

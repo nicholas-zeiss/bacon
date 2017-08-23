@@ -29,6 +29,7 @@ import LoadingController from './controllers/LoadingController';
 
 //directives
 import './directives/ExpandFade';
+import './directives/MovieArrow';
 
 //filters
 import './filters/BirthDeath';
@@ -49,6 +50,7 @@ angular.module('app', [
   'app.error',
   'app.jobs',
   'app.expandFade',
+  'app.movieArrow',
 	'app.serverCalls',
   'ngRoute'
 ])

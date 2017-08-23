@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
-<svg version="1.1" id="icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+<svg version="1.1" id="arrow" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="200px" height="100px" viewBox="0 0 200 100" style="enable-background:new 0 0 200 100;"
 	 xml:space="preserve">
-	<path style="fill: #000;" d="M 0 33 L 160 33 L 160 10 L 200 50 L 160 90 L 160 66 L 0 66 L 0 33"/>
+	<path style="fill:#353535;" d="M 0 45 L 183 45 L 180 35 L 200 50 L 180 65 L 183 55 L 0 55 L 0 45"/>
+	<foreignObject x="0" y="10" width="180" height="40">
+		<p style="overflow-wrap:break-word;width:100%;font-size:14px;text-align:center;margin:0;" xmlns="http://www.w3.org/1999/xhtml">Text goes here1 Text goes here2 Text goes here3 Text goes here4 Text goes here5 Text goes here Text goes here </p>
+	</foreignObject>
 </svg>

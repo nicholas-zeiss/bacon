@@ -11,8 +11,7 @@ import angular from 'angular';
 		bindings: { 
 			actor: '<',
 			loaded: '<',
-			index: '<',
-			size: '<'
+			index: '<'
 		}
 	});
 })();

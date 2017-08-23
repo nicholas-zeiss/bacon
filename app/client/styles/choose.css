@@ -92,13 +92,13 @@
 
 
 	#choose > button {
-		padding: .2em .5em;
+		padding:  .2rem .5rem;
 		border: 1px solid #198a46;
 		border-radius: 3px;
 		outline: none;
 		margin: 0;
 
-		font-size: 25px;
+		font-size: 1.5rem;
 		text-shadow: 1px 1px 1px #136b36;
 		color: #f8f8f8;
 		background-color: #23bc61;

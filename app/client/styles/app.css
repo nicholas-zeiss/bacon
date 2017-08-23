@@ -100,10 +100,10 @@ body {
 				height: 1.75rem;
 
 				padding: .1rem;
-				margin: 0;
 				border: none;
 				border-radius: 0 3px 3px 0;
 				outline: none;
+				margin: 0;
 				
 				background-image: url('/client/images/search.svg');
 				background-origin: content-box;
