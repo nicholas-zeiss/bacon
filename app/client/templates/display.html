@@ -6,17 +6,16 @@
 
 <div id="display-content-container">
 	<div id="display-content">
-		<div ng-class="'row' + (!$index ? ' first-row' : '') + ($odd ? ' arrow-row' : '')" ng-repeat="row in display.rows">
-			<div ng-class="node.type == 'actor' ? 'actor-node-container' : 'movie-node-container'" ng-repeat="node in row" ng-hide="node.loading">
+		<div ng-class="'row' + (!$index ? ' first-row' : '') + ($odd ? ' arrow-row' : '') + ($index == 2 ? ' reverse-row' : '')" ng-repeat="row in display.rows" ng-hide="display.rowHidden[$index]">
+			<div ng-class="node.type == 'actor' ? 'actor-node-container' : 'movie-node-container'" ng-repeat="node in row" hide="node.hidden">
 				
-				<actor-details class="actor-node" ng-if="node.type == 'actor'" actor="node.actor"
-				loaded="display.nodeLoaded"></actor-details>
+				<actor-details class="actor-node" ng-if="node.type == 'actor'" actor="node.actorMovie"></actor-details>
 				
-				<arrow-right class="movie-node" ng-if="node.type == 'right'" movie="node.movie"></arrow-right>
+				<arrow-right class="movie-node" ng-if="node.type == 'right'" movie="node.actorMovie"></arrow-right>
 
-				<arrow-left class="movie-node" ng-if="node.type == 'left'" movie="node.movie"></arrow-left>
+				<arrow-left class="movie-node" ng-if="node.type == 'left'" movie="node.actorMovie"></arrow-left>
 
-				<arrow-down-on-left class="movie-node" ng-if="node.type.includes('down') || node.type.includes('Center')" movie="node.movie"></arrow-down-on-left>
+				<arrow-down-on-left class="movie-node" ng-if="node.type.includes('down') || node.type.includes('Center')" movie="node.actorMovie"></arrow-down-on-left>
 			
 			</div>
 		</div>

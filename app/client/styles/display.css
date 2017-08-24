@@ -85,10 +85,15 @@
 		}
 
 
+		.row.reverse-row {
+			flex-direction: row-reverse;
+		}
+
+
 			.row.arrow-row {
 				height: 15rem;
 			}
-			
+
 
 			.row.arrow-row > .movie-node-container {
 				width: 37.5rem;
@@ -100,6 +105,17 @@
 
 				-webkit-backface-visibility: hidden;
 				   -moz-backface-visibility: hidden;
+			}
+
+
+			.row.first-row > .actor-node-container.hide,
+			.row.first-row > .movie-node-container.hide {
+				display: none;
+			}
+
+
+			.actor-node-container.hide, .movie-node-container.hide {
+				visibility: hidden;
 			}
 
 
@@ -122,16 +138,26 @@
 
 			@keyframes expandActor {
 				0% {
+					opacity: 0;
 				  width: 0;
+				} 50% {
+					opacity: 0;
+					width: 10rem;
 				}	100% {
-					width: 12rem;
+					opacity: 1;
+					width: 10rem;
 				}
 			}
 
 			@keyframes expandMovie {
 				0% {
+					opacity: 0;
 					width: 0;
-				}	100% {
+				}	50% { 
+					opacity: 0;
+					width: 15.5rem;
+				} 100% {
+					opacity: 1;
 					width: 15.5rem;
 				}
 			}
@@ -146,21 +172,26 @@
 			}
 
 
-			.actor-node-container.expand {
-				opacity: 0;
-				animation: .5s expandActor;
+			.row.first-row > .actor-node-container.fadeIn {
+				-webkit-animation: 1s ease-in expandActor;
+				/*-webkit-animation: .5s ease-in .5s fadeIn;*/
+				animation: 1s ease-in expandActor;
+				/*animation: .5s ease-in .5s fadeIn;*/
 			}
 
 
-			.movie-node-container.expand {
-				opacity: 0;
-				animation: .5s expandMovie;
+			.row.first-row > .movie-node-container.fadeIn {
+				-webkit-animation: 1s ease-in expandMovie;
+				/*-webkit-animation: 1s ease-in 1s fadeIn;*/
+				animation: 1s ease-in expandMovie;
+				/*animation: .5s ease-in .7s fadeIn;*/
 			}
 
 
-			.actor-node-container.fade,
-			.movie-node-container.fade {
-				animation: .5s fadeIn;
+			.actor-node-container.fadeIn,
+			.movie-node-container.fadeIn {
+				-webkit-animation: .5s ease-in fadeIn;
+				animation: .5s ease-in fadeIn;
 			}
 
 

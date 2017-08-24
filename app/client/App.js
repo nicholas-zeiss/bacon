@@ -26,13 +26,10 @@ import './components/arrows/arrowDownOnRight';
 import AppController from './controllers/AppController';
 import ChooseController from './controllers/ChooseController';
 import DisplayController from './controllers/DisplayController';
-import HomeController from './controllers/HomeController';
 import InputController from './controllers/InputController';
-import LoadingController from './controllers/LoadingController';
 
 //directives
-import './directives/Expand';
-import './directives/Fade';
+import './directives/Hide';
 
 
 //filters
@@ -57,8 +54,7 @@ angular.module('app', [
   'app.displayHeader',
   'app.error',
   'app.jobs',
-  'app.expand',
-  'app.fade',
+  'app.hide',
   'app.nodeTypes',
 	'app.serverCalls',
   'ngRoute'
@@ -80,8 +76,6 @@ angular.module('app', [
   'nodeTypes',
   DisplayController
 ])
-.controller('HomeController', HomeController)
-.controller('LoadingController', LoadingController)
 .controller('InputController', [
 	'$scope',
   '$timeout',
@@ -91,14 +85,10 @@ angular.module('app', [
 .config($routeProvider => {
   $routeProvider
     .when('/home', {
-      templateUrl: 'client/templates/home.html',
-      controller: 'HomeController',
-      controllerAs: 'home'
+      templateUrl: 'client/templates/home.html'
     })
     .when('/loading', {
-      templateUrl: 'client/templates/loading.html',
-      controller: 'LoadingController',
-      controllerAs: 'loading'
+      templateUrl: 'client/templates/loading.html'
     })
     .when('/choose/:name', {
       templateUrl: 'client/templates/choose.html',

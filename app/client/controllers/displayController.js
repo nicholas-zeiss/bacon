@@ -12,14 +12,32 @@ function DisplayController($scope, $timeout, $window, nodeTypes) {
 
 	let timeoutPromises = [];				//unresolved timeouts need to be cleared on reset
 	let reseting = false;
-	let lastScrollPos = 0;					//current scrollTop of the #display-content-container element
-	let baconPathIndex = 0;
+	// let lastScrollPos = 0;					//current scrollTop of the #display-content-container element
 	let device = $window.innerWidth < 1000 ? $window.innerWidth < 800 ? 'small' : 'medium' : 'large';
+	let nodeType = nodeTypes(device, $scope.app.pathToBacon.length);
+	let nodeRowIndex = [];
 
 
 	vm.duration = 500;							//IMPT if you change this also change values in display.css
-	vm.rows = [[{ type: 'actor', loading: true, actor: $scope.app.pathToBacon[0] }]];
-	vm.nodeType = nodeTypes(device, $scope.app.pathToBacon.length);
+	vm.rows = [];
+	vm.rowHidden = [];
+
+
+	$scope.app.pathToBacon.forEach((node, i) => {
+		let type = nodeType[i];
+		let row = getRowIndex(i);
+
+		vm.rows[row] = vm.rows[row] || [];
+		vm.rowHidden[row] = true;
+
+		let length = vm.rows[row].push({
+			type: type,
+			hidden: true,
+			actorMovie: node
+		});
+
+		nodeRowIndex[i] = [row, length - 1];
+	});
 
 
 	vm.reset = function() {
@@ -29,41 +47,17 @@ function DisplayController($scope, $timeout, $window, nodeTypes) {
 	}
 	
 
-	//called when an actor has loaded its image using the onload attribute provided by ngInclude,
-	//or called manually when inserting a movie
-	vm.nodeLoaded = function() {
-		if (reseting) {
-			return;
-		}
+	$timeout(showNodes.bind(null, 0), 100);
 
-		let currRow = getRowIndex(baconPathIndex);
-		let duration = currRow == 0 ? 2 * vm.duration : vm.duration;
 
-		vm.rows[currRow][vm.rows[currRow].length - 1].loading = false;
+	function showNodes(index) {
+		let [ row, rowPos ] = nodeRowIndex[index];
 
-		//if not last node
-		if (baconPathIndex++ < $scope.app.pathToBacon.length - 1) {
-			timeoutPromises.push($timeout(() => {
-				let row = getRowIndex(baconPathIndex);
-				let type = vm.nodeType[baconPathIndex];
+		vm.rowHidden[row] = false;
+		vm.rows[row][rowPos].hidden = false;
 
-				vm.rows[row] = vm.rows[row] || [];
-
-				if (type == 'actor') {
-					vm.rows[row].push({ type: type, loading: true, actor: $scope.app.pathToBacon[baconPathIndex] });
-
-				} else {
-					vm.rows[row].push({ type: type, loading: true, movie: $scope.app.pathToBacon[baconPathIndex] });					
-					vm.nodeLoaded();
-				}
-			}, duration + 100));
-
-		} else {
-			console.log('finished\n', vm.rows);
-			timeoutPromises.push(
-				$timeout(() => {
-					$scope.$emit('displayFinishedLoading');
-				}, duration + 100));
+		if (index < nodeRowIndex.length - 1) {
+			$timeout(showNodes.bind(null, index + 1), 2 * vm.duration + 100);
 		}
 	}
 
@@ -80,39 +74,28 @@ function DisplayController($scope, $timeout, $window, nodeTypes) {
 	}
 
 
-	function mediumRowIndex(index) {
-		
-	}
-
-
 	function largeRowIndex(index) {
 		
 	}
 
 
-	//helpers for vm.actorMovieLoaded
-	function scrollToNode(nodeId) {
-		let node = $(nodeId);
+	// function scrollToNode(nodeId) {
+	// 	let node = $(nodeId);
 
-		if (!node.length) {
-			return;
-		}
+	// 	if (!node.length) {
+	// 		return;
+	// 	}
 
-		let scrollTo = node.position().top + node.height();
+	// 	let scrollTo = node.position().top + node.height();
 
-		if (scrollTo > lastScrollPos) {
-			lastScrollPos = scrollTo;
+	// 	if (scrollTo > lastScrollPos) {
+	// 		lastScrollPos = scrollTo;
 
-			$('#display-content-container').animate({
-      	scrollTop: scrollTo
-      }, 1000);
-		}
-	}
-
- 
-	function isMovie(index) {
-		return !!(index % 2);
-	}
+	// 		$('#display-content-container').animate({
+ //      	scrollTop: scrollTo
+ //      }, 1000);
+	// 	}
+	// }
 }
 
 export default DisplayController;

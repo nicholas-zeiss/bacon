@@ -9,8 +9,7 @@ import angular from 'angular';
 	.component('actorDetails', {
 		templateUrl: '/client/components/templates/actorDetails.html',
 		bindings: { 
-			actor: '<',
-			loaded: '<'
+			actor: '<'
 		}
 	});
 })();
