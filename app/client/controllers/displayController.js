@@ -12,7 +12,7 @@ function DisplayController($scope, $timeout, $window, nodeTypes) {
 
 	let timeoutPromises = [];				//unresolved timeouts need to be cleared on reset
 	let reseting = false;
-	// let lastScrollPos = 0;					//current scrollTop of the #display-content-container element
+	let lastScrollPos = 0;					//current scrollTop of the #display-content-container element
 	let device = $window.innerWidth < 1000 ? $window.innerWidth < 800 ? 'small' : 'medium' : 'large';
 	let nodeType = nodeTypes(device, $scope.app.pathToBacon.length);
 	let nodeRowIndex = [];
@@ -47,17 +47,21 @@ function DisplayController($scope, $timeout, $window, nodeTypes) {
 	}
 	
 
-	$timeout(showNodes.bind(null, 0), 100);
+	timeoutPromises.push($timeout(showNodes.bind(null, 0), 100));
 
 
 	function showNodes(index) {
 		let [ row, rowPos ] = nodeRowIndex[index];
 
+		if (vm.rowHidden[row]) {
+			timeoutPromises.push($timeout(scrollToNode.bind(null, '#row-' + row), 100));
+		}
+
 		vm.rowHidden[row] = false;
 		vm.rows[row][rowPos].hidden = false;
 
 		if (index < nodeRowIndex.length - 1) {
-			$timeout(showNodes.bind(null, index + 1), 2 * vm.duration + 100);
+			timeoutPromises.push($timeout(showNodes.bind(null, index + 1), 2 * vm.duration + 100));
 		} else {
 			$scope.$emit('displayFinishedLoading');
 		}
@@ -81,23 +85,23 @@ function DisplayController($scope, $timeout, $window, nodeTypes) {
 	}
 
 
-	// function scrollToNode(nodeId) {
-	// 	let node = $(nodeId);
+	function scrollToNode(nodeId) {
+		let node = $(nodeId);
 
-	// 	if (!node.length) {
-	// 		return;
-	// 	}
+		if (!node.length) {
+			return;
+		}
 
-	// 	let scrollTo = node.position().top + node.height();
+		let scrollTo = node.position().top + node.height();
 
-	// 	if (scrollTo > lastScrollPos) {
-	// 		lastScrollPos = scrollTo;
+		if (scrollTo > lastScrollPos) {
+			lastScrollPos = scrollTo;
 
-	// 		$('#display-content-container').animate({
- //      	scrollTop: scrollTo
- //      }, 1000);
-	// 	}
-	// }
+			$('#display-content-container').animate({
+      	scrollTop: scrollTo
+      }, 900);
+		}
+	}
 }
 
 export default DisplayController;

@@ -6,7 +6,7 @@
 
 <div id="display-content-container">
 	<div id="display-content">
-		<div ng-class="'row' + (!$index ? ' first-row' : '') + ($odd ? ' arrow-row' : '') + ($index == 2 ? ' reverse-row' : '')" ng-repeat="row in display.rows" ng-hide="display.rowHidden[$index]">
+		<div id="row-{{$index}}" ng-class="'row' + (!$index ? ' first-row' : '') + ($odd ? ' arrow-row' : '') + ($index == 2 ? ' reverse-row' : '')" ng-repeat="row in display.rows" ng-hide="display.rowHidden[$index]">
 			<div ng-class="node.type == 'actor' ? 'actor-node-container' : 'movie-node-container'" ng-repeat="node in row" hide="node.hidden">
 				
 				<actor-details class="actor-node" ng-if="node.type == 'actor'" actor="node.actorMovie"></actor-details>
