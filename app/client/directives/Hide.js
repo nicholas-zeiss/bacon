@@ -1,6 +1,7 @@
 /**
  * This is the directive used to hide actor/movie nodes until ready to be displayed.
  * Unlike ng-hide, this uses visibility not display, so layout is preserved.
+ * Once no longer hidden it adds the fade-in
  */
 
 import angular from 'angular';
@@ -15,7 +16,7 @@ import angular from 'angular';
 			
 			} else {
 				$element.removeClass('hide');
-				$element.addClass('fadeIn');
+				$element.addClass('fade-in');
 			}
 		});
  	});

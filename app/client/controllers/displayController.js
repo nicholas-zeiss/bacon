@@ -58,6 +58,8 @@ function DisplayController($scope, $timeout, $window, nodeTypes) {
 
 		if (index < nodeRowIndex.length - 1) {
 			$timeout(showNodes.bind(null, index + 1), 2 * vm.duration + 100);
+		} else {
+			$scope.$emit('displayFinishedLoading');
 		}
 	}
 

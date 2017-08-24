@@ -11,12 +11,11 @@
 				
 				<actor-details class="actor-node" ng-if="node.type == 'actor'" actor="node.actorMovie"></actor-details>
 				
-				<arrow-right class="movie-node" ng-if="node.type == 'right'" movie="node.actorMovie"></arrow-right>
+				<arrow-right-left class="movie-node" ng-if="node.type == 'right' || node.type == 'left'" movie="node.actorMovie" type="node.type"></arrow-right-left>
 
-				<arrow-left class="movie-node" ng-if="node.type == 'left'" movie="node.actorMovie"></arrow-left>
+				<arrow-down class="movie-node" ng-if="node.type.includes('down')" movie="node.actorMovie" type="node.type.slice(6)"></arrow-down>
 
-				<arrow-down-on-left class="movie-node" ng-if="node.type.includes('down') || node.type.includes('Center')" movie="node.actorMovie"></arrow-down-on-left>
-			
+				<arrow-to-center class="movie-node" ng-if="node.type.includes('Center')" movie="node.actorMovie" type="node.type == 'rightCenter' ? 'right' : 'left'"></arrow-to-center>
 			</div>
 		</div>
 	</div>

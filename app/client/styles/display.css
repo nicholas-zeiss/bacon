@@ -97,14 +97,12 @@
 
 			.row.arrow-row > .movie-node-container {
 				width: 37.5rem;
+				height: 15rem;
 			}
 
 
 			.actor-node-container, .movie-node-container {
 				box-sizing: border-box;
-
-				-webkit-backface-visibility: hidden;
-				   -moz-backface-visibility: hidden;
 			}
 
 
@@ -120,19 +118,21 @@
 
 
 			.actor-node-container {
-				width: 10rem;
-				height: 18rem;
+				width: 10.5rem;
+				height: 18.5rem;
 
-				margin: .5rem;
-				
-				background-color: lightblue;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+
+				margin: .25rem;
 			}
 
 
 			.movie-node-container {
 				width: 15.5rem;
-
-				background-color: beige;
+				height: 19rem;
 			}
 			
 
@@ -172,24 +172,20 @@
 			}
 
 
-			.row.first-row > .actor-node-container.fadeIn {
+			.row.first-row > .actor-node-container.fade-in {
 				-webkit-animation: 1s ease-in expandActor;
-				/*-webkit-animation: .5s ease-in .5s fadeIn;*/
 				animation: 1s ease-in expandActor;
-				/*animation: .5s ease-in .5s fadeIn;*/
 			}
 
 
-			.row.first-row > .movie-node-container.fadeIn {
+			.row.first-row > .movie-node-container.fade-in {
 				-webkit-animation: 1s ease-in expandMovie;
-				/*-webkit-animation: 1s ease-in 1s fadeIn;*/
 				animation: 1s ease-in expandMovie;
-				/*animation: .5s ease-in .7s fadeIn;*/
 			}
 
 
-			.actor-node-container.fadeIn,
-			.movie-node-container.fadeIn {
+			.actor-node-container.fade-in,
+			.movie-node-container.fade-in {
 				-webkit-animation: .5s ease-in fadeIn;
 				animation: .5s ease-in fadeIn;
 			}
@@ -197,20 +193,19 @@
 
 				.actor-node {
 					box-sizing: border-box;
-					height: 100%;
+					width: 100%;
 
 					display: flex;
 					flex-direction: column;
+					justify-content: center;
 					align-items: center;
 
+					padding: .25rem;
+					border-radius: 5px;
+					box-shadow: 0 0 10px -1px black;
+
 					color: #353535;
-				}
-
-
-				.actor-node {
-					width: 100%;
-
-					justify-content: center;
+					background-color: lightblue;
 				}
 
 
@@ -258,7 +253,6 @@
 
 								transform: rotate(0deg);
 							}
-
 
 
 @media (max-width: 799px) {

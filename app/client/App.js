@@ -17,10 +17,6 @@ import ngRoute from 'angular-route';
 //components
 import './components/actorDetails';
 import './components/actorChoice';
-import './components/arrows/arrowLeft';
-import './components/arrows/arrowRight';
-import './components/arrows/arrowDownOnLeft';
-import './components/arrows/arrowDownOnRight';
 
 //controllers
 import AppController from './controllers/AppController';
@@ -29,8 +25,10 @@ import DisplayController from './controllers/DisplayController';
 import InputController from './controllers/InputController';
 
 //directives
+import './directives/ArrowDown';
+import './directives/ArrowRightLeft';
+import './directives/ArrowToCenter';
 import './directives/Hide';
-
 
 //filters
 import './filters/BirthDeath';
@@ -46,14 +44,13 @@ import './services/serverCalls';
 angular.module('app', [
   'app.actorDetails',
   'app.actorChoice',
-  'app.arrowLeft',
-  'app.arrowRight',
-  'app.arrowDownOnLeft',
-  'app.arrowDownOnRight',
   'app.birthDeath',
   'app.displayHeader',
   'app.error',
   'app.jobs',
+  'app.arrowDown',
+  'app.arrowRightLeft',
+  'app.arrowToCenter',
   'app.hide',
   'app.nodeTypes',
 	'app.serverCalls',
