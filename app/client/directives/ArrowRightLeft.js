@@ -13,7 +13,10 @@ import angular from 'angular';
 				movie: '=movie',
 				type: '=type'
 			},
-			templateUrl: '/client/templates/arrows/arrowRightLeft.html'
+			templateUrl: ($element, $attrs) => {
+				console.log($attrs.foo)
+				return '/client/templates/arrows/arrowRightLeft.html'
+			}
 		};
  	});
 })();

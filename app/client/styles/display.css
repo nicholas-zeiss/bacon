@@ -258,7 +258,9 @@
 @media (max-width: 799px) {
 	#display-header {
 		height: 6rem;
+		margin-top: -1rem;
 		flex-direction: column;
+		justify-content: flex-start;
 	} #display-header > h2 {
 		margin: 0 1rem .5rem;
 	} #display-content-container {
@@ -268,8 +270,10 @@
 
 
 @media (min-width: 800px) {
-	.movie-node-container {
-		/*width: 8.5rem;*/
+	.row.arrow-row > .movie-node-container {
+		width: 50rem;
+	} .movie-node-container {
+		/*width:;*/
 	}
 }
 

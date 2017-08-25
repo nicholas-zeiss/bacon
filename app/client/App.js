@@ -29,6 +29,7 @@ import './directives/ArrowDown';
 import './directives/ArrowRightLeft';
 import './directives/ArrowToCenter';
 import './directives/Hide';
+import './directives/ScrollLock';
 
 //filters
 import './filters/BirthDeath';
@@ -52,6 +53,7 @@ angular.module('app', [
   'app.arrowRightLeft',
   'app.arrowToCenter',
   'app.hide',
+  'app.scrollLock',
   'app.nodeTypes',
 	'app.serverCalls',
   'ngRoute'

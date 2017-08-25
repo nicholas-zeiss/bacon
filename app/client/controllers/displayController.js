@@ -64,6 +64,7 @@ function DisplayController($scope, $timeout, $window, nodeTypes) {
 			timeoutPromises.push($timeout(showNodes.bind(null, index + 1), 2 * vm.duration + 100));
 		} else {
 			$scope.$emit('displayFinishedLoading');
+			$scope.$broadcast('scrollable')
 		}
 	}
 

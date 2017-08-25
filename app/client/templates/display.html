@@ -4,14 +4,14 @@
 	<button type="button" ng-click="display.reset()">Reset</button>
 </div>
 
-<div id="display-content-container">
+<div id="display-content-container" scroll-lock>
 	<div id="display-content">
 		<div id="row-{{$index}}" ng-class="'row' + (!$index ? ' first-row' : '') + ($odd ? ' arrow-row' : '') + ($index == 2 ? ' reverse-row' : '')" ng-repeat="row in display.rows" ng-hide="display.rowHidden[$index]">
 			<div ng-class="node.type == 'actor' ? 'actor-node-container' : 'movie-node-container'" ng-repeat="node in row" hide="node.hidden">
 				
 				<actor-details class="actor-node" ng-if="node.type == 'actor'" actor="node.actorMovie"></actor-details>
 				
-				<arrow-right-left class="movie-node" ng-if="node.type == 'right' || node.type == 'left'" movie="node.actorMovie" type="node.type"></arrow-right-left>
+				<arrow-right-left class="movie-node" ng-if="node.type == 'right' || node.type == 'left'" movie="node.actorMovie" type="node.type" foo="bar"></arrow-right-left>
 
 				<arrow-down class="movie-node" ng-if="node.type.includes('down')" movie="node.actorMovie" type="node.type.slice(6)"></arrow-down>
 
