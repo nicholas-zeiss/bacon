@@ -8,7 +8,6 @@
 function AppController($scope, $location, serverCalls) {	
 	let vm = this;
 	
-	const URL_PARSER = /([a-z]+)\/?([a-zA-Z-]+)?([0-9]+)?$/;
 
 	//these variables hold all stateful information for the app (not including the views)
 	vm.pathToBacon = null;     //format [ actor1, movie1, ... , Kevin Bacon ]
@@ -58,6 +57,9 @@ function AppController($scope, $location, serverCalls) {
 	 *																								*
 	 * ---------------------------------------------- **/
 
+	const URL_PARSER = /([a-z]+)\/?([a-zA-Z-]+)?([0-9]+)?$/;
+	
+
 	//reroute as appropriate on reload
 	if ($location.path() !== '/home') {
 		let url = $location.path().match(URL_PARSER);
@@ -93,10 +95,10 @@ function AppController($scope, $location, serverCalls) {
 				vm.inputDisabled = true;
 
 				if (newUrl[1] == 'choose' && (!vm.choices || newUrl[2].replace('-', ' ') != vm.choices[0].name)) {
-					vm.search(param.replace('-', ' '), true);
+					vm.search(newUrl[2].replace('-', ' '), true);
 				
-				} else if (!vm.pathToBacon || newUrl[3] != vm.pathToBacon[0].nconst) {
-					vm.search(Number(param), true); 
+				} else if (newUrl[1] == 'display' && (!vm.pathToBacon || newUrl[3] != vm.pathToBacon[0].nconst)) {
+					vm.search(Number(newUrl[3]), true); 
 				}
 			} 
 		}

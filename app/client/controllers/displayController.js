@@ -1,7 +1,11 @@
 /**
  * This is controller is responsible for the Display view which occurs when a path to Kevin Bacon has been loaded
- * and must be shown to the user. Actor and movie information nodes are inserted into the DOM one by one and on insert
- * go through two animations of length vm.duration, and are scrolled to using jquery.
+ * and must be shown to the user. Actor and movie information nodes are all loaded and then made visible into the DOM one by one.
+ * All nodes take a duration of vm.duration to have an opacity animation, nodes in the first row also take vm.duration to do a width
+ * animation before hand.
+ *
+ * On loading of a new row, jquery is used to scroll the display container to that position. User scrolling is disabled while nodes
+ * are loading
  */
 
 import $ from 'jquery';

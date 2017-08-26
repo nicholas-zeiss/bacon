@@ -142,10 +142,10 @@
 				  width: 0;
 				} 50% {
 					opacity: 0;
-					width: 10rem;
+					width: 10.5rem;
 				}	100% {
 					opacity: 1;
-					width: 10rem;
+					width: 10.5rem;
 				}
 			}
 

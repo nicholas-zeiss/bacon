@@ -8,7 +8,17 @@ import angular from 'angular';
 (() => {
  	angular.module('app.arrowRightLeft', [])
  	.directive('arrowRightLeft', () => {		
+
+ 		function getTransforms(transform) {
+
+ 			return {};
+ 		}
+
+
 		return {
+			controller: () => {
+
+			},
 			scope: {
 				movie: '=movie',
 				type: '=type'
