@@ -26,9 +26,6 @@ import InputController from './controllers/InputController';
 
 //directives
 import './directives/Arrow';
-import './directives/ArrowDown';
-import './directives/ArrowRightLeft';
-import './directives/ArrowToCenter';
 import './directives/Hide';
 import './directives/ScrollLock';
 
@@ -52,9 +49,6 @@ angular.module('app', [
   'app.error',
   'app.jobs',
   'app.arrow',
-  'app.arrowDown',
-  'app.arrowRightLeft',
-  'app.arrowToCenter',
   'app.hide',
   'app.scrollLock',
   'app.arrowDetails',

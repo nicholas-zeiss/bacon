@@ -4,9 +4,6 @@
 
 import angular from 'angular';
 
-// import '../services/ArrowDetails';
-
-
 (() => {
  	angular.module('app.arrow', ['app.arrowDetails'])
  	.directive('arrow', ['arrowDetails', arrowDetails => {

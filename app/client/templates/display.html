@@ -11,13 +11,7 @@
 				
 				<actor-details class="actor-node" ng-if="node.type == 'actor'" actor="node.actorMovie"></actor-details>
 				
-				<arrow class="movie-node" ng-if="node.type == 'right'" type="node.type"></arrow>
-
-				<arrow-right-left class="movie-node" ng-if="node.type == 'left'" movie="node.actorMovie" type="node.type" foo="bar"></arrow-right-left>
-
-				<arrow-down class="movie-node" ng-if="node.type.includes('down')" movie="node.actorMovie" type="node.type.slice(6)"></arrow-down>
-
-				<arrow-to-center class="movie-node" ng-if="node.type.includes('Center')" movie="node.actorMovie" type="node.type == 'rightCenter' ? 'right' : 'left'"></arrow-to-center>
+				<arrow class="movie-node" ng-if="node.type != 'actor'" type="node.type"></arrow>
 			</div>
 		</div>
 	</div>
