@@ -25,6 +25,7 @@ import DisplayController from './controllers/DisplayController';
 import InputController from './controllers/InputController';
 
 //directives
+import './directives/Arrow';
 import './directives/ArrowDown';
 import './directives/ArrowRightLeft';
 import './directives/ArrowToCenter';
@@ -38,6 +39,7 @@ import './filters/Error';
 import './filters/Jobs';
 
 //services
+import './services/arrowDetails';
 import './services/nodeTypes';
 import './services/serverCalls';
 
@@ -49,11 +51,13 @@ angular.module('app', [
   'app.displayHeader',
   'app.error',
   'app.jobs',
+  'app.arrow',
   'app.arrowDown',
   'app.arrowRightLeft',
   'app.arrowToCenter',
   'app.hide',
   'app.scrollLock',
+  'app.arrowDetails',
   'app.nodeTypes',
 	'app.serverCalls',
   'ngRoute'

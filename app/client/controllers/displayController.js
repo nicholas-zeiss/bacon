@@ -4,8 +4,8 @@
  * All nodes take a duration of vm.duration to have an opacity animation, nodes in the first row also take vm.duration to do a width
  * animation before hand.
  *
- * On loading of a new row, jquery is used to scroll the display container to that position. User scrolling is disabled while nodes
- * are loading
+ * On loading of a new row jquery is used to scroll the display container to that position. User scrolling is disabled while nodes
+ * are loading.
  */
 
 import $ from 'jquery';
