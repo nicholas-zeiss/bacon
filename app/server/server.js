@@ -133,5 +133,5 @@ app.post('/images', (req, res) => {
 
 const port = process.env.PORT || 4000;
 
-app.listen(port, () => console.log('Listening on port ', port));
+app.listen(4080, () => console.log('Listening on port ', 4080));
 
