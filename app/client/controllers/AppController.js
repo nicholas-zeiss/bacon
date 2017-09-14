@@ -8,6 +8,7 @@
 function AppController($scope, $location, serverCalls) {	
 	let vm = this;
 	
+	vm.viewportWidth = document.getElementsByTagName('body')[0].offsetWidth
 
 	//these variables hold all stateful information for the app (not including the views)
 	vm.pathToBacon = null;     //format [ actor1, movie1, ... , Kevin Bacon ]
