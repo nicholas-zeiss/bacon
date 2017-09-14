@@ -149,6 +149,7 @@
 				}
 			}
 
+
 			@keyframes expandMovie {
 				0% {
 					opacity: 0;
@@ -159,6 +160,20 @@
 				} 100% {
 					opacity: 1;
 					width: 15.5rem;
+				}
+			}
+
+
+			@keyframes expandMovieShort {
+				0% {
+					opacity: 0;
+					width: 0;
+				}	50% { 
+					opacity: 0;
+					width: 8.5rem;
+				} 100% {
+					opacity: 1;
+					width: 8.5rem;
 				}
 			}
 
@@ -234,6 +249,10 @@
 					}
 
 
+					.actor-node .jobs {
+						font-size: .8rem;
+					}
+
 						.actor-node > div {
 							display: flex;
 							flex-direction: column;
@@ -270,10 +289,14 @@
 
 
 @media (min-width: 800px) {
-	.row.arrow-row > .movie-node-container {
+	.movie-node-container {
+		width: 8.5rem;
+	} .row.arrow-row > .movie-node-container {
 		width: 50rem;
-	} .movie-node-container {
-		/*width:;*/
+	} .row.first-row > .movie-node-container.fade-in {
+		animation: 1s ease-in expandMovieShort;
+	} .row:nth-child(0n+2) arrow {
+		float: right;
 	}
 }
 

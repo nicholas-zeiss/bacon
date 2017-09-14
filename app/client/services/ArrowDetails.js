@@ -1,5 +1,5 @@
 /**
- * This service provides the various coordinates/data our arrow template requires for each arrow type
+ * This service provides the various coordinates/data our arrow svg template requires for each arrow type
  **/
 
 
@@ -9,6 +9,7 @@ import angular from 'angular';
 	angular.module('app.arrowDetails', [])
 	.factory('arrowDetails', () => type => {
 		let out = {};
+
 
 		if (type == 'right') {
 			Object.assign(out, {
@@ -35,6 +36,8 @@ import angular from 'angular';
 					align: 'center'
 				}
 			});
+
+
 		} else if (type == 'left') {
 			Object.assign(out, {
 				width: 248,
@@ -60,6 +63,8 @@ import angular from 'angular';
 					align: 'center'
 				}
 			});
+
+
 		} else if (type == 'downOnLeft') {
 			Object.assign(out, {
 				width: 600,
@@ -85,6 +90,8 @@ import angular from 'angular';
 					align: 'left'
 				}
 			});
+
+
 		} else if (type == 'downOnRight') {
 			Object.assign(out, {
 				width: 600,
@@ -110,12 +117,14 @@ import angular from 'angular';
 					align: 'right'
 				}
 			});
+
+
 		} else if (type == 'leftCenter') {
 			Object.assign(out, {
 				width: 600,
 				height: 240,
 				lineStart: {
-					x: 100, 
+					x: 176, 
 					y: 5
 				},
 				lineEnd: {
@@ -123,24 +132,26 @@ import angular from 'angular';
 					y: 228
 				},
 				year: {
-					x: 110,
+					x: 180,
 					y: 90,
 					anchor: 'middle'
 				},
 				title: {
-					x: 0,
+					x: 60,
 					y: 100,
 					width: 150,
 					height: 140,
 					align: 'right'
 				}
 			});
+
+
 		} else if (type == 'rightCenter') {
 			Object.assign(out, {
 				width: 600,
 				height: 240,
 				lineStart: {
-					x: 500, 
+					x: 424, 
 					y: 5
 				},
 				lineEnd: {
@@ -148,19 +159,155 @@ import angular from 'angular';
 					y: 228
 				},
 				year: {
-					x: 490,
+					x: 420,
 					y: 90,
 					anchor: 'middle'
 				},
 				title: {
-					x: 450,
+					x: 395,
 					y: 100,
 					width: 150,
 					height: 140,
 					align: 'left'
 				}
 			});
+
+
+		} else if (type == 'leftShort') {
+			Object.assign(out, {
+				width: 136,
+				height: 304,
+				lineStart: {
+					x: 131, 
+					y: 152
+				},
+				lineEnd: {
+					x: 12,
+					y: 152
+				},
+				year: {
+					x: 84,
+					y: 140,
+					anchor: 'middle'
+				},
+				title: {
+					x: 32,
+					y: 160,
+					width: 104,
+					height: 144,
+					align: 'center'
+				}
+			});
+
+
+		} else if (type == 'rightShort') {
+			Object.assign(out, {
+				width: 136,
+				height: 304,
+				lineStart: {
+					x: 5, 
+					y: 152
+				},
+				lineEnd: {
+					x: 124,
+					y: 152
+				},
+				year: {
+					x: 52,
+					y: 140,
+					anchor: 'middle'
+				},
+				title: {
+					x: 0,
+					y: 160,
+					width: 104,
+					height: 144,
+					align: 'center'
+				}
+			});
+
+
+		} else if (type == 'leftCenterLong') {
+			Object.assign(out, {
+				width: 800,
+				height: 240,
+				lineStart: {
+					x: 176, 
+					y: 5
+				},
+				lineEnd: {
+					x: 325,
+					y: 228
+				},
+				year: {
+					x: 190,
+					y: 80,
+					anchor: 'middle'
+				},
+				title: {
+					x: 0,
+					y: 90,
+					width: 225,
+					height: 140,
+					align: 'right'
+				}
+			});
+
+
+		} else if (type == 'rightCenterShort') {
+			Object.assign(out, {
+				width: 800,
+				height: 240,
+				lineStart: {
+					x: 675, 
+					y: 5
+				},
+				lineEnd: {
+					x: 575,
+					y: 228
+				},
+				year: {
+					x: 675,
+					y: 80,
+					anchor: 'middle'
+				},
+				title: {
+					x: 650,
+					y: 90,
+					width: 150,
+					height: 150,
+					align: 'left'
+				}
+			});
+
+
+		} else if (type == 'rightCenterLong') {
+			Object.assign(out, {
+				width: 800,
+				height: 240,
+				lineStart: {
+					x: 624, 
+					y: 5
+				},
+				lineEnd: {
+					x: 475,
+					y: 228
+				},
+				year: {
+					x: 610,
+					y: 80,
+					anchor: 'middle'
+				},
+				title: {
+					x: 575,
+					y: 90,
+					width: 225,
+					height: 140,
+					align: 'left'
+				}
+			});
 		}
+
 
 		let width = out.lineEnd.x - out.lineStart.x;
 		let height = out.lineStart.y - out.lineEnd.y;
@@ -168,6 +315,8 @@ import angular from 'angular';
 		let theta = Math.atan(height / width);
 
 		let sign = width >= 0 ? 1 : -1;
+
+
 
 		return Object.assign(out, {
 			tipPoints: [
