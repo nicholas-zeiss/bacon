@@ -5,8 +5,9 @@
   "main": "app/server/server.js",
   "scripts": {
     "lint": "eslint app/client/** app/server/**",
+    "install": "webpack",
     "prestart": "webpack",
-    "start": "node app/server/server.js",
+    "start": "node app/server/server.js 4080",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Nicholas Zeiss",

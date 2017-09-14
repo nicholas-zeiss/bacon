@@ -1,4 +1,8 @@
+
+
 let path = require('path');
+
+console.log('creating bundle.js');
 
 module.exports = {
 	entry: './app/client/App.js',

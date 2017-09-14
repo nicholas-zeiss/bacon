@@ -11,7 +11,6 @@ const baconPath = require('./baconController');
 const db = require('./db');
 const getImages = require('./imageFinder');
 
-
 const app = express();
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '../../app')));
@@ -131,7 +130,13 @@ app.post('/images', (req, res) => {
 });
 
 
-const port = process.env.PORT || 4000;
+//when run locally server.js is supplied an argument for the port number, if it exists 
+//assign app to the port, otherwise app is being used as a sub app in a different package
+if (process.argv.length == 3) {
+	let port = parseInt(process.argv[2]);
+	app.listen(port, () => console.log('bacon is listening to port ', port));
+}
 
-app.listen(4080, () => console.log('Listening on port ', 4080));
+
+module.exports = app;
 
