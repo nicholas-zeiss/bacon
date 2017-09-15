@@ -74,6 +74,7 @@ import angular from 'angular';
 			})
 			.then(res => {
 				let path = res.data;
+				console.log(res)
 
 				getImages(path, success, failure);
 			}, failure);

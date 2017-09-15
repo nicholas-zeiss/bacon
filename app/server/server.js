@@ -12,6 +12,10 @@ const db = require('./db');
 const getImages = require('./imageFinder');
 
 const app = express();
+
+app.use('*', (req, res, next) => {
+	console.log('in bacon server, ', req.baseUrl, ' : ', req.url, ' : ', req.path, ' : ', req.method);
+})
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '../../app')));
 
