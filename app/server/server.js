@@ -29,6 +29,7 @@ app.get('*', (req, res) => {
 function sendBaconPath(nconst, number, res) {
 	baconPath(nconst, number, [])
 	.then(path => {
+		console.log('baconPath succesful:\n', path);
 		res.status(200).json(path)
 	})
 	.catch(error => {
@@ -48,6 +49,8 @@ app.post('/name', (req, res) => {
 		return;
 	}
 
+	console.log(req.body);
+
 	//as names are not unique in our db we return all matches and respond according to the number of matches
 	db.getActorReferences(req.body.name)
 	.then(actors => {
@@ -56,7 +59,7 @@ app.post('/name', (req, res) => {
 		
 		} else if (actors.length == 1) {
 			sendBaconPath(actors[0].nconst, actors[0].number, res);
-		
+			
 		//if name not unique send all matched actors and await a call to /nconst
 		} else {
 			actors.forEach(actor => {
