@@ -6,8 +6,8 @@
   "scripts": {
     "lint": "eslint app/client/** app/server/**",
     "install": "webpack",
-    "prestart": "webpack",
-    "start": "node app/server/server.js 4080",
+    "prestart": "webpack --watch &",
+    "start": "nodemon app/server/server.js 4080",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Nicholas Zeiss",
@@ -24,6 +24,7 @@
     "express": "^4.15.4",
     "jquery": "^3.2.1",
     "mongodb": "^2.2.30",
+    "nodemon": "^1.12.1",
     "webpack": "^3.5.1"
   }
 }

@@ -1,13 +1,14 @@
 /**
- * This module handles creating and manipulating our MongoDB database which we use to store the Bacon tree.
  *
- * Our database is composed of 8 collections:
+ *  This module handles creating and manipulating our MongoDB database which we use to store the Bacon tree.
+ *
+ *  Our database is composed of 8 collections:
  *	actorReference - indexed by nconst and name, holds general information about the actors and which ordinal table they are found in
  *  movieReference - indexed by tconst, holds general information about the movies
  *
  *  ordinal tables: first, second, third, fourth, fifth, sixth
- *   These tables are indexed by nconst and for each nconst record the parent actor and movie they were both in.
- *   Think of these tables as the different depths of the Bacon tree.
+ *  These tables are indexed by nconst and for each nconst record the parent actor and movie they were both in.
+ *  Think of these tables as the different depths of the Bacon tree.
  *
  *	Collection formats:
  *
@@ -26,7 +27,7 @@
  *   ii. movieReference - {
  *			  tconst: int,           -  numerical index as specified in the IMDb dataset
  *			  tile: str,				     -  primary title of the movie
- *        year: int              -  year the movie was released
+ *        year: int              -  year the movie was released (0 if not in dataset)
  *		  }
  *
  *
@@ -36,14 +37,13 @@
  *        tconst: int            -  tconst of the movie in which both appeared
  *		  }
  *
- */
+**/
 
 
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
 
-
-const url = 'mongodb://kevinbacon:kevinbacon@ds135382.mlab.com:35382/bacon';
+const url = require('./dbLogin');
 
 
 // Connects to the database and executes a callback. It returns a promise that resolves/rejects according to the callback.
@@ -60,8 +60,8 @@ function connectToDb(cb) {
 // Use this to clear the database and recreate our collections and insert Kevin Bacon
 exports.resetDb = function() {
 	return connectToDb((db, resolve, reject) => {
-		db
-			.dropDatabase()
+		
+		db.dropDatabase()
 			.then(() => {
 				db.collection('movieReference').createIndex({ tconst: 1 }, { unique: true });
 				db.collection('actorReference').createIndex({ nconst: 1 }, { unique: true });
@@ -73,8 +73,7 @@ exports.resetDb = function() {
 				db.collection('fifth').createIndex({ nconst: 1 }, { unique: true });
 				db.collection('sixth').createIndex({ nconst: 1 }, { unique: true });
 
-				db
-					.collection('actorReference')
+				db.collection('actorReference')
 					.insertOne({
 						name:'Kevin Bacon',
 						nconst: 102,
@@ -92,12 +91,12 @@ exports.resetDb = function() {
 						console.log('error inserting Kevin Bacon:\n', error.message);			
 						db.close(false, reject.bind(null, error));
 					});
-			
 			})
 			.catch(error => {
 				console.log('error dropping database:\n', error.message);	
 				db.close(false, reject.bind(null, error));
 			});
+			
 	});
 };
 
@@ -115,11 +114,9 @@ exports.resetDb = function() {
 
 
 exports.addActorReferences = function(documents) {
-	console.log('sending ', documents.length, ' actor references');
-
 	return connectToDb((db, resolve, reject) => {
-		db
-			.collection('actorReference')
+
+		db.collection('actorReference')
 			.insertMany(documents)
 			.then(result => {				
 				db.close(false, resolve.bind(null, result));
@@ -135,8 +132,8 @@ exports.addActorReferences = function(documents) {
 
 exports.addActorImageUrl = function(nconst, { imgUrl, imgInfo }) {
 	return connectToDb((db, resolve, reject) => {
-		db
-			.collection('actorReference')
+		
+		db.collection('actorReference')
 			.updateOne(
 				{ nconst },
 				{ $set: { imgUrl, imgInfo }}
@@ -155,8 +152,8 @@ exports.addActorImageUrl = function(nconst, { imgUrl, imgInfo }) {
 
 exports.addMovieReferences = function(documents) {
 	return connectToDb((db, resolve, reject) => {
-		db
-			.collection('movieReference')
+		
+		db.collection('movieReference')
 			.insertMany(documents)
 			.then(result => {
 				db.close(false, resolve.bind(null, result));
@@ -174,8 +171,8 @@ exports.addTreeLevel = function(documents, number) {
 	let collection = [ 'first', 'second', 'third', 'fourth', 'fifth', 'sixth' ][number];
 
 	return connectToDb((db, resolve, reject) => {
-		db
-			.collection(collection)
+		
+		db.collection(collection)
 			.insertMany(documents)
 			.then(result => {
 				db.close(false, resolve.bind(null, result));
@@ -203,8 +200,8 @@ exports.addTreeLevel = function(documents, number) {
 
 exports.getActorReferences = function(name) {
 	return connectToDb((db, resolve, reject) => {
-		db
-			.collection('actorReference')
+		
+		db.collection('actorReference')
 			.find({ name: { $regex: '^' + name + '$', $options: 'i' }})
 			.toArray()
 			.then(result => {
@@ -221,8 +218,8 @@ exports.getActorReferences = function(name) {
 
 exports.getActorNames = function(nconsts) {
 	return connectToDb((db, resolve, reject) => {
-		db
-			.collection('actorReference')
+		
+		db.collection('actorReference')
 			.find({ nconst: { $in: nconsts }})
 			.toArray()
 			.then(result => {
@@ -239,8 +236,8 @@ exports.getActorNames = function(nconsts) {
 
 exports.getActorParent = function(nconst, table) {
 	return connectToDb((db, resolve, reject) => {
-		db
-			.collection(table)
+		
+		db.collection(table)
 			.findOne({ nconst })
 			.then(result => {
 				db.close(false, resolve.bind(null, result));
@@ -256,8 +253,8 @@ exports.getActorParent = function(nconst, table) {
 
 exports.getMovieNames = function(tconsts) {
 	return connectToDb((db, resolve, reject) => {
-		db
-			.collection('movieReference')
+		
+		db.collection('movieReference')
 			.find({ tconst: { $in: tconsts }})
 			.toArray()
 			.then(result => {

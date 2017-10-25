@@ -63,7 +63,6 @@ function AppController($scope, $location, serverCalls) {
 
 	//reroute as appropriate on reload
 	if ($location.path() !== '/home') {
-		console.log($location.path());
 		let url = $location.path().match(URL_PARSER);
 
 		if (url && url[1] == 'display' && url[3]) {
@@ -82,7 +81,6 @@ function AppController($scope, $location, serverCalls) {
 	$scope.$on('$locationChangeStart', (event, newUrl, prevUrl) => {
 		prevUrl = prevUrl.match(URL_PARSER);
 	  newUrl = newUrl.match(URL_PARSER);
-	  console.log(prevUrl, newUrl);
 
 		//prevent the user moving back/forward while a page is loading	
 		if (prevUrl && newUrl && prevUrl[1] == 'loading' && newUrl[1] == 'home' && !vm.serverError) {

@@ -1,19 +1,23 @@
 /**
- * This module handles the logic of finding the path of an actor to Kevin Bacon by reading the database.
- * It does not handle cases where it is supplied an actor outside of the database, this is verified elsewhere.
- */
+ *
+ *	This module handles the logic of finding the path of an actor to Kevin Bacon by reading the database.
+ *	It does not handle cases where it is supplied an actor outside of the database, this is verified elsewhere.
+ *
+**/
 
 
 const db = require('./db');
 
 
 /**
- * This function takes the generated path to Kevin Bacon and decorates it with all the pertinent data in our db.
  *
- * inputs:
- * path: [ { nconst: nconst1, tconst: tconst1 }, ... ]		(nconst and tconst are numbers)
+ *	This function takes the generated path to Kevin Bacon and decorates it with all the pertinent data in our db.
  *
- * return: [ [ actorInfo1, movieInfo1 ], ... ]
+ *	inputs:
+ *	path: [ { nconst: nconst1, tconst: tconst1 }, ... ]		(nconst and tconst are numbers)
+ *
+ *	return: [ [ actorInfo1, movieInfo1 ], ... ]
+ *
 **/
 function getNamesTitles(path) {
 	return new Promise((resolve, reject) => {
@@ -73,34 +77,32 @@ function getNamesTitles(path) {
 				console.log('error getting actor names or movie names from db:\n', error);
 				reject(error);
 			});
-
 	});
 }
 
 
 /**
- * This function generates the path to Kevin Bacon, decorates it with pertinent data, and returns it.
- * Given the nconst input it looks it up in the table defined by number, adds itself to the path we 
- * eventually decorate and return, and then recurses on the parent nconst of that nconst. Kevin Bacon
- * himself is not included in this path.
  *
- * inputs:
- * nconst: number
- * tconst: number
- * path: [ { nconst: number nconst1, tconst: number tconst1 }, ... ]
+ *	This function generates the path to Kevin Bacon, decorates it with pertinent data, and returns it.
+ *	Given the nconst input it looks it up in the table defined by number, adds itself to the path we 
+ *	eventually decorate and return, and then recurses on the parent nconst of that nconst. Kevin Bacon
+ *	himself is not included in this path.
  *
- * return: [  [ actorInfo1, movieInfo1 ], ... ]
- */
+ *	inputs:
+ *	nconst: number
+ *	tconst: number
+ *	path: [ { nconst: number nconst1, tconst: number tconst1 }, ... ]
+ *
+ *	return: [  [ actorInfo1, movieInfo1 ], ... ]
+ *
+**/
 module.exports = function getBaconPath(nconst, number, path) {
 	let collection = [ 'first', 'second', 'third', 'fourth', 'fifth', 'sixth' ];
 
 	return new Promise((resolve, reject) => {	
-		//base case
-		if (number > 6 || number < 0) {
-			
+		if (number > 6 || number < 0) {			
 			reject('invalid bacon number');
 		
-		//base case
 		} else if (number == 0) {
 			getNamesTitles(path)
 				.then(path => resolve(path))
@@ -132,6 +134,5 @@ module.exports = function getBaconPath(nconst, number, path) {
 				});
 		}
 	});
-
 };
 

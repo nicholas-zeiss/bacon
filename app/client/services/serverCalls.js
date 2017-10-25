@@ -17,7 +17,9 @@ import angular from 'angular';
 			let getImagesFor = [];
 
 			path.forEach(([actor, movie]) => {
-				if (actor.imgUrl === null) {
+				// change to actor.imgUrl === null when db updated
+				console.log(actor.name, actor.imgUrl, !actor.imgUrl)
+				if (!actor.imgUrl) {
 					getImagesFor.push({ name: actor.name, nconst: actor.nconst });
 				}
 			});
@@ -74,8 +76,6 @@ import angular from 'angular';
 			})
 			.then(res => {
 				let path = res.data;
-				console.log(res);
-
 				getImages(path, success, failure);
 			}, failure);
 		}
@@ -93,7 +93,6 @@ import angular from 'angular';
 			})
 			.then(res => {
 				let path = res.data;
-
 				getImages(path, success, failure);			
 			}, failure);
 		}

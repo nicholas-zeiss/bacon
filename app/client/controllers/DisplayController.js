@@ -26,7 +26,6 @@ function DisplayController($scope, $timeout, $window, nodeTypes) {
 	vm.rows = [];
 	vm.rowHidden = [];
 
-
 	$scope.app.pathToBacon.forEach((node, i) => {
 		let type = nodeType[i];
 		let row = getRowIndex(i);

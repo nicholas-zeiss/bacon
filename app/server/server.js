@@ -1,6 +1,6 @@
 /**
  *
- * This module sets up the server for our web app using express and the utilities in baconController.js, db.js, and imageFinder.js
+ *  This module sets up the server for our web app using express and the utilities in baconController.js, db.js, and imageFinder.js
  *
 **/
 
@@ -48,21 +48,15 @@ app.post('/name', (req, res) => {
 	}
 
 	// as names are not unique in our db we return all matches and respond according to the number of matches
-	db
-		.getActorReferences(req.body.name)
+	db.getActorReferences(req.body.name)
 		.then(actors => {
 			if (!actors.length) {
 				res.sendStatus(404);
-			
 			} else if (actors.length == 1) {
 				sendBaconPath(actors[0].nconst, actors[0].number, res);		
-			
 			} else {
 				// if name not unique send all matched actors and await a call to /nconst
-				actors.forEach(actor => {
-					delete actor._id;
-				});
-
+				actors.forEach(actor => delete actor._id);
 				res.status(300).json(actors);	
 			}
 		})
@@ -75,14 +69,13 @@ app.post('/name', (req, res) => {
 // when the web app has searched for a non unique name clarification by nconst is required and handled here
 // req.body should be number nconst
 app.post('/nconst', (req, res) => {
-	// validate request
+
 	if (!req.body || !req.body.nconst || typeof req.body.nconst !== 'number') {
 		res.sendStatus(400);
 		return;
 	}
 
-	db
-		.getActorNames([req.body.nconst])
+	db.getActorNames([req.body.nconst])
 		.then(result => {
 			if (!result.length) {
 				res.sendStatus(404);
@@ -97,7 +90,7 @@ app.post('/nconst', (req, res) => {
 });
 
 
-// once the web app has received a path it immediately requests for images of the actors in it who do not already have images in the db
+// once the web app has received a path it immediately requests images of the actors in it who do not already have images in the db
 // we gather those image urls, send them, and add them to the db here
 // req.body should be [ { name: str, nconst: int }, ... ]
 app.post('/images', (req, res) => {
@@ -117,12 +110,13 @@ app.post('/images', (req, res) => {
 
 	getImages(names)
 		.then(imageUrls => {
+
 			for (let name in imageUrls) {
-				db.addActorImageUrl(nameToNconst[name], imageUrls[name]);
+				if (imageUrls[name]) {
+					db.addActorImageUrl(nameToNconst[name], imageUrls[name]);
+				}
 			}
 			
-			console.log('getImages returned this in server.js:\n', imageUrls);
-
 			res.status(200).json(imageUrls);
 		})
 		.catch(error => {

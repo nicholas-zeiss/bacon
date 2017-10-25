@@ -4,5 +4,4 @@
 	<h1 ng-if="app.serverError">{{ [ app.serverError, app.searchName ] | error }}</h1>
 	<p ng-if="app.serverError == 404">If this does not seem correct, please make sure you are using the same spelling as <a href="http://imdb.com">IMDb</a>.</p>
 	<button ng-if="app.serverError" ng-click="app.resetError()">New Search</button>
-	<p>{{ app.viewportWidth }}</p>
 </div>
