@@ -48,35 +48,35 @@ function findImageTitles(actors) {
 		method: 'get',
 		url: searchNamesUrl(actors)
 	})
-	.then(result => {
-		let redirectMap = {};
-		let redirects = result.data.query.redirects || [];
+		.then(result => {
+			let redirectMap = {};
+			let redirects = result.data.query.redirects || [];
 
-		let output = {};
-		let pages = result.data.query.pages;
+			let output = {};
+			let pages = result.data.query.pages;
 
-		redirects.forEach(redirect => redirectMap[redirect.to] = redirect.from);
+			redirects.forEach(redirect => redirectMap[redirect.to] = redirect.from);
 
-		for (let page in pages) {
-			let name = redirectMap[pages[page].title] || pages[page].title;
+			for (let page in pages) {
+				let name = redirectMap[pages[page].title] || pages[page].title;
 
-			if (pages[page].images && pages[page].images.length) {
-				let images = pages[page].images.filter(img => img.title.match(/jpg$|png$/i));
-				output[name] = images.length ? images[0].title : null;
+				if (pages[page].images && pages[page].images.length) {
+					let images = pages[page].images.filter(img => img.title.match(/jpg$|png$/i));
+					output[name] = images.length ? images[0].title : null;
+				}
 			}
-		}
 
-		//if an actor didn't get returned a page we add them to output here
-		actors.forEach(actor => {
-			output[actor] = output[actor] || null;
+			//if an actor didn't get returned a page we add them to output here
+			actors.forEach(actor => {
+				output[actor] = output[actor] || null;
+			});
+
+			return output;
+		})
+		.catch(error => {
+			console.log('error getting image titles:\n', error);
+			throw error;
 		});
-
-		return output;
-	})
-	.catch(error => {
-		console.log('error getting image titles:\n', error);
-		throw error;
-	});
 }
 
 
@@ -110,27 +110,29 @@ function findImageUrls(images) {
 		method: 'get',
 		url: searchImagesUrl(titlesToSearch)
 	})
-	.then(result => {
-		let pages = result.data.query.pages;
+		.then(result => {
+			let pages = result.data.query.pages;
 
-		for (let pageid in pages) {
-			let page = pages[pageid];
-			let name = titleToName[page.title]
-			let url = null;
+			for (let pageid in pages) {
+				let page = pages[pageid];
+				let name = titleToName[page.title];
+				let url = '';
+				let infoUrl = '';
 
-			if (page.imageinfo && page.imageinfo.length) {
-				url = page.imageinfo[0].thumburl;
+				if (page.imageinfo && page.imageinfo.length) {
+					url = page.imageinfo[0].thumburl;
+					infoUrl = page.imageinfo[0].descriptionshorturl;
+				}
+
+				output[name] = { image: url, info: infoUrl };
 			}
 
-			output[name] = url;
-		}
-
-		return output;
-	})
-	.catch(error => {
-		console.log('error getting image urls:\n', error);
-		throw error;
-	});
+			return output;
+		})
+		.catch(error => {
+			console.log('error getting image urls:\n', error);
+			throw error;
+		});
 }
 
 
@@ -143,12 +145,11 @@ function findImageUrls(images) {
  * return: A promise resolving to { name1: str fileUrl1 OR null }, ... }
  */
 module.exports = function(actors) {
-	return findImageTitles(actors).then(imageTitles => {
-		return findImageUrls(imageTitles);
-	})
-	.catch(error => {
-		console.log('error getting images:\n', error);
-		throw error;
-	});
-}
+	return findImageTitles(actors)
+		.then(imageTitles => findImageUrls(imageTitles))
+		.catch(error => {
+			console.log('error getting images:\n', error);
+			throw error;
+		});
+};
 

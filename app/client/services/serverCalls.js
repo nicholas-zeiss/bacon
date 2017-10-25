@@ -8,7 +8,7 @@ import angular from 'angular';
 
 (() => {
 	angular.module('app.serverCalls', [])
-	.factory('serverCalls', ['$http', '$rootScope', ($http, $rootScope) => {
+	.factory('serverCalls', [ '$http', '$rootScope', ($http, $rootScope) => {
 
 
 		//helper function that handles getting image Urls for a path returned
@@ -17,7 +17,7 @@ import angular from 'angular';
 			let getImagesFor = [];
 
 			path.forEach(([actor, movie]) => {
-				if (actor.imgUrl === '') {
+				if (actor.imgUrl === null) {
 					getImagesFor.push({ name: actor.name, nconst: actor.nconst });
 				}
 			});

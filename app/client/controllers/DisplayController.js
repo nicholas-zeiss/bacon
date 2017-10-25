@@ -48,7 +48,7 @@ function DisplayController($scope, $timeout, $window, nodeTypes) {
 		reseting = true;
 		timeoutPromises.forEach(promise => $timeout.cancel(promise));
 		$scope.app.resetApp();
-	}
+	};
 	
 
 	timeoutPromises.push($timeout(showNodes.bind(null, 0), 100));
@@ -68,7 +68,7 @@ function DisplayController($scope, $timeout, $window, nodeTypes) {
 			timeoutPromises.push($timeout(showNodes.bind(null, index + 1), 2 * vm.duration + 100));
 		} else {
 			$scope.$emit('displayFinishedLoading');
-			$scope.$broadcast('scrollable')
+			$scope.$broadcast('scrollable');
 		}
 	}
 
@@ -103,11 +103,12 @@ function DisplayController($scope, $timeout, $window, nodeTypes) {
 			lastScrollPos = scrollTo;
 
 			$('#display-content-container').animate({
-      	scrollTop: scrollTo
-      }, 900);
+				scrollTop: scrollTo
+			}, 900);
 		}
 	}
 }
+
 
 export default DisplayController;
 

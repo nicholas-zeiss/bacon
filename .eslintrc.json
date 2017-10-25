@@ -28,6 +28,13 @@
             "error",
             "always"
         ],
+        "spaced-comment": [
+            "error",
+            "always",
+            {
+                "exceptions": [ "-", "*" ]
+            }
+        ],
         "no-console": "off"
     }
 }

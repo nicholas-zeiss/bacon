@@ -14,7 +14,7 @@ const db = require('./db');
  * path: [ { nconst: nconst1, tconst: tconst1 }, ... ]		(nconst and tconst are numbers)
  *
  * return: [ [ actorInfo1, movieInfo1 ], ... ]
- */
+**/
 function getNamesTitles(path) {
 	return new Promise((resolve, reject) => {
 		let nconsts = [];
@@ -29,48 +29,51 @@ function getNamesTitles(path) {
 			db.getActorNames(nconsts),
 			db.getMovieNames(tconsts)
 		])
-		.then(([names, titles]) => {
-			let nameMap = new Map();
-			let titleMap = new Map();
+			.then(([names, titles]) => {
+				let nameMap = new Map();
+				let titleMap = new Map();
 
-			names.forEach(actor => {
-				nameMap.set(actor.nconst, {
-					nconst: actor.nconst,
-					name: actor.name,
-					number: actor.number,
-					dob: actor.dob,
-					dod: actor.dod,
-					jobs: actor.jobs.split(',').sort((a,b) => b.length - a.length).join(','),
-					imgUrl: actor.imgUrl
+				names.forEach(actor => {
+					nameMap.set(actor.nconst, {
+						nconst: actor.nconst,
+						name: actor.name,
+						number: actor.number,
+						dob: actor.dob,
+						dod: actor.dod,
+						jobs: actor.jobs.split(',').sort((a,b) => b.length - a.length).join(','),
+						imgUrl: actor.imgUrl,
+						imgInfo: actor.imgInfo
+					});
 				});
+
+				titles.forEach(title => {
+					titleMap.set(title.tconst, {
+						tconst: title.tconst,
+						title: title.title,
+						year: title.year
+					});
+				});
+
+				path = path.map(node => [ nameMap.get(node.nconst), titleMap.get(node.tconst) ]);
+
+				path.push([{
+					nconst: 102,
+					name: 'Kevin Bacon',
+					number: 0,
+					dob: 1958,
+					dod: 0,
+					jobs: 'soundtrack,producer,actor',
+					imgUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Kevinbacongfdl.PNG/428px-Kevinbacongfdl.PNG',
+					imgInfo: 'https://commons.wikimedia.org/wiki/File:Kevinbacongfdl.PNG'
+				}, null ]);
+
+				resolve(path);
+			})
+			.catch(error => {
+				console.log('error getting actor names or movie names from db:\n', error);
+				reject(error);
 			});
 
-			titles.forEach(title => {
-				titleMap.set(title.tconst, {
-					tconst: title.tconst,
-					title: title.title,
-					year: title.year
-				});
-			});
-
-			path = path.map(node => [ nameMap.get(node.nconst), titleMap.get(node.tconst) ]);
-
-			path.push([{
-				nconst: 102,
-				name: "Kevin Bacon",
-				number: 0,
-				dob: 1958,
-				dod: 0,
-				jobs: 'soundtrack,producer,actor',
-				imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Kevinbacongfdl.PNG/428px-Kevinbacongfdl.PNG"
-			}, null ]);
-
-			resolve(path);
-		})
-		.catch(error => {
-			console.log('error getting actor names or movie names from db:\n', error);
-			reject(error);
-		});
 	});
 }
 
@@ -100,32 +103,35 @@ module.exports = function getBaconPath(nconst, number, path) {
 		//base case
 		} else if (number == 0) {
 			getNamesTitles(path)
-			.then(path => resolve(path))
-			.catch(error => {
-				console.log('error decorating path in getNamesTitles:\n', error);
-				reject(error);
-			});
+				.then(path => resolve(path))
+				.catch(error => {
+					console.log('error decorating path in getNamesTitles:\n', error);
+					reject(error);
+				});
 
 		} else {
-			db.getActorParent(nconst, collection[number - 1])
-			.then(result => {		
-				if (!result) {
-					reject('nconst ', nconst, ' does not exist in the db');
-				
-				} else {
-					path.push({ 
-						nconst: nconst, 
-						tconst: result.tconst
-					});
+			db
+				.getActorParent(nconst, collection[number - 1])
+				.then(result => {		
+					if (!result) {
+						reject('nconst ', nconst, ' does not exist in the db');
+					
+					} else {
+						path.push({ 
+							nconst: nconst, 
+							tconst: result.tconst
+						});
 
-					getBaconPath(result.parent, number - 1, path).then(path => resolve(path));
-				}
-			})
-			.catch(error => {	
-				console.log('error getting actor parent in db:\n', error);
-				reject(error);
-			});
+						getBaconPath(result.parent, number - 1, path)
+							.then(path => resolve(path));
+					}
+				})
+				.catch(error => {	
+					console.log('error getting actor parent in db:\n', error);
+					reject(error);
+				});
 		}
 	});
-}
+
+};
 
