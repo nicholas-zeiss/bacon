@@ -58,7 +58,7 @@ function AppController($scope, $location, serverCalls) {
 	 *																								*
 	 * ---------------------------------------------- **/
 
-	const URL_PARSER = /(?:projects\/bacon\/)?([a-z]+)\/?([a-zA-Z-]+)?([0-9]+)?$/;
+	const URL_PARSER = /([a-z]+)\/?([a-zA-Z-]+)?([0-9]+)?$/;
 	
 
 	//reroute as appropriate on reload
