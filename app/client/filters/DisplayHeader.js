@@ -1,16 +1,18 @@
 /**
- * This filter formats an array of [ str name, int number] into an easy to read header for the display view
- */
+ *
+ *  This filter formats an array of [ str name, int number] into an easy to read text for the header at the top of the page.
+ *
+**/
 
-//TODO - does this need to be a filter? just put in displayController
 
 import angular from 'angular';
 
 
 (() => {
-	angular.module('app.displayHeader', [])
-	.filter('displayHeader', () => ([name, number]) => {		
-		return `${name} is ${number} degree${number > 1 ? 's' : ''} from Kevin Bacon`;
-	});
+	angular
+		.module('app.displayHeader', [])
+		.filter('displayHeader', () => (
+			([name, number]) => `${name} is ${number} degree${number > 1 ? 's' : ''} from Kevin Bacon`)
+		);
 })();
 

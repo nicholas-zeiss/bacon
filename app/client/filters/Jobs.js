@@ -1,13 +1,18 @@
 /**
- * This filter formats an comma separated string of jobs into an easy to read string
- */
+ *
+ *  This filter formats an comma separated string of jobs into an easy to read string
+ *
+**/
 
 
- import angular from 'angular';
+import angular from 'angular';
 
 
 (() => {
-	angular.module('app.jobs', [])
-	.filter('jobs', () => (jobs => jobs ? jobs.split(',').join(', ') : ''));
+	angular
+		.module('app.jobs', [])
+		.filter('jobs', () => (
+			jobs => jobs ? jobs.split(',').join(', ') : ''
+		));
 })();
 

@@ -1,20 +1,23 @@
 /**
- * This is the directive used to display left and right movie arrows
- */
+ *
+ *  This is the directive used to prevent a user scrolling the display view while it is autoscrolling.
+ *
+**/
 
 import angular from 'angular';
 
 
 (() => {
- 	angular.module('app.scrollLock', [])
- 	.directive('scrollLock', () => ($scope, $element) => {		
-		$element.on('wheel', e => {
-			e.preventDefault();
-		});
+	angular
+		.module('app.scrollLock', [])
+		.directive('scrollLock', () => ($scope, $element) => {		
+			$element.on('wheel', e => {
+				e.preventDefault();
+			});
 
-		$scope.$on('scrollable', () => {
-			$element.off('wheel');
-		})
-	});
+			$scope.$on('scrollable', () => {
+				$element.off('wheel');
+			});
+		});
 })();
 
