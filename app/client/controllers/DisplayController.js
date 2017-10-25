@@ -1,12 +1,14 @@
 /**
- * This is controller is responsible for the Display view which occurs when a path to Kevin Bacon has been loaded
- * and must be shown to the user. Actor and movie information nodes are all loaded and then made visible into the DOM one by one.
- * All nodes take a duration of vm.duration to have an opacity animation, nodes in the first row also take vm.duration to do a width
- * animation before hand.
  *
- * On loading of a new row jquery is used to scroll the display container to that position. User scrolling is disabled while nodes
- * are loading.
- */
+ *	This is controller is responsible for the Display view which occurs when a path to Kevin Bacon has been loaded
+ *	and must be shown to the user. Actor and movie information elements are loaded simultaneously and then made visible in the DOM one by one.
+ *	All nodes take a duration of vm.duration to have an opacity animation, nodes in the first row also take vm.duration to do a width
+ *	animation before hand.
+ *
+ *	On loading of a new row jquery is used to scroll the display container to that position. User scrolling is disabled while this occurs.
+ *
+**/
+
 
 import $ from 'jquery';
 
@@ -14,21 +16,29 @@ import $ from 'jquery';
 function DisplayController($scope, $timeout, $window, nodeTypes) {
 	let vm = this;
 
-	let timeoutPromises = [];				//unresolved timeouts need to be cleared on reset
-	let reseting = false;
-	let lastScrollPos = 0;					//current scrollTop of the #display-content-container element
-	let device = $window.innerWidth < 1000 ? $window.innerWidth < 800 ? 'small' : 'medium' : 'large';
+	let lastScrollPos = 0;					// current scrollTop of the #display-content-container element
+	let timeoutPromises = [];				// unresolved timeouts that need to be cleared on reset
+	
+	// maps each actor/movie by its index in pathToBacon to [ rowIndex, indexInRow ], specifiying its row in vm.rows and 
+	// the actor/movie's index in that row
+	let nodeRowIndex = [];				
+	
+	// depending on device size and number of actors to display, we use different svg arrows to show the connections graphically
+	// which arrows those are is determined here
+	let device = $window.innerWidth < 800 ? 'small' : 'medium';
 	let nodeType = nodeTypes(device, $scope.app.pathToBacon.length);
-	let nodeRowIndex = [];
 
 
-	vm.duration = 500;							//IMPT if you change this also change values in display.css
+	// Actors are displayed across several rows, each row stored in rows. Booleans of whether 
+	// a row is hidden or not are stored in rowHidden
 	vm.rows = [];
 	vm.rowHidden = [];
+	vm.duration = 500;		// IMPT if you change this also change values in display.css
+
 
 	$scope.app.pathToBacon.forEach((node, i) => {
 		let type = nodeType[i];
-		let row = getRowIndex(i);
+		let row = getRowIndex(i);				// get corresponding row index, depends on device size
 
 		vm.rows[row] = vm.rows[row] || [];
 		vm.rowHidden[row] = true;
@@ -44,12 +54,12 @@ function DisplayController($scope, $timeout, $window, nodeTypes) {
 
 
 	vm.reset = function() {
-		reseting = true;
 		timeoutPromises.forEach(promise => $timeout.cancel(promise));
 		$scope.app.resetApp();
 	};
 	
 
+	// make first actor node visible, initiating cascade
 	timeoutPromises.push($timeout(showNodes.bind(null, 0), 100));
 
 
@@ -72,23 +82,19 @@ function DisplayController($scope, $timeout, $window, nodeTypes) {
 	}
 
 
-	//where index references pathToBacon not rows
+	// different device sizes have different numbers of actors per row, get index here
 	function getRowIndex(index) {
 		if (device == 'small') {
 			return 2 * Math.floor(index / 4) + Math.floor((index % 4) / 3);
 		} else if (device == 'medium') {
 			return 2 * Math.floor(index / 6) + Math.floor((index % 6) / 5);
 		} else {
-			return largeRowIndex(index);
+			// return largeRowIndex(index);
 		}
 	}
 
 
-	function largeRowIndex(index) {
-		
-	}
-
-
+	// use jquery to scroll to a row
 	function scrollToNode(nodeId) {
 		let node = $(nodeId);
 

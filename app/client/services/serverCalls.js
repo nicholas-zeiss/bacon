@@ -29,6 +29,7 @@ import angular from 'angular';
 				return;
 			}
 
+			console.log(getImagesFor)
 
 			$http({
 				method: 'POST',
@@ -40,10 +41,10 @@ import angular from 'angular';
 			})
 			.then(res => {
 				let imgUrls = res.data;
-
+				console.log(imgUrls)
 				path.forEach(([actor, movie]) => {
 					if (!actor.imgUrl && imgUrls[actor.name]) {
-						actor.imgUrl = imgUrls[actor.name];
+						actor.imgUrl = imgUrls[actor.name].imgUrl;
 					}
 				});
 

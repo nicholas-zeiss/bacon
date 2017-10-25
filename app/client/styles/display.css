@@ -301,7 +301,7 @@
 }
 
 
-@media (min-width: 1000px) {
+/*@media (min-width: 1000px) {
 	.actor-node-container {
 		height: 14rem;
 		width: 14rem;
@@ -324,5 +324,5 @@
 		overflow-wrap: break-word;
 		hyphens: auto;
 	}
-}
+}*/
 

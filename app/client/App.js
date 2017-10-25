@@ -14,98 +14,97 @@
 import angular from 'angular';
 import ngRoute from 'angular-route';
 
-//components
+// components
 import './components/actorDetails';
 import './components/actorChoice';
 
-//controllers
+// controllers
 import AppController from './controllers/AppController';
 import ChooseController from './controllers/ChooseController';
 import DisplayController from './controllers/DisplayController';
 import InputController from './controllers/InputController';
 
-//directives
+// directives
 import './directives/Arrow';
 import './directives/Hide';
 import './directives/ScrollLock';
 
-//filters
+// filters
 import './filters/BirthDeath';
 import './filters/DisplayHeader';
 import './filters/Error';
 import './filters/Jobs';
 
-//services
+// services
 import './services/arrowDetails';
 import './services/nodeTypes';
 import './services/serverCalls';
 
 
 angular.module('app', [
-  'app.actorDetails',
-  'app.actorChoice',
-  'app.birthDeath',
-  'app.displayHeader',
-  'app.error',
-  'app.jobs',
-  'app.arrow',
-  'app.hide',
-  'app.scrollLock',
-  'app.arrowDetails',
-  'app.nodeTypes',
+	'app.actorDetails',
+	'app.actorChoice',
+	'app.birthDeath',
+	'app.displayHeader',
+	'app.error',
+	'app.jobs',
+	'app.arrow',
+	'app.hide',
+	'app.scrollLock',
+	'app.arrowDetails',
+	'app.nodeTypes',
 	'app.serverCalls',
-  'ngRoute'
+	'ngRoute'
 ])
-.controller('AppController', [
-	'$scope',
-	'$location',
-  'serverCalls',
-	AppController
-])
-.controller('ChooseController', [
-  '$scope',
-  ChooseController
-])
-.controller('DisplayController', [
-  '$scope',
-  '$timeout',
-  '$window',
-  'nodeTypes',
-  DisplayController
-])
-.controller('InputController', [
-	'$scope',
-  '$timeout',
-	'serverCalls',
-	InputController
-])
-.config($routeProvider => {
-  $routeProvider
-    .when('/home', {
-      templateUrl: 'client/templates/home.html'
-    })
-    .when('/loading', {
-      templateUrl: 'client/templates/loading.html'
-    })
-    .when('/choose/:name', {
-      templateUrl: 'client/templates/choose.html',
-      controller: 'ChooseController',
-      controllerAs: 'choice'
-    })
-    .when('/display/:nconst', {
-      templateUrl: 'client/templates/display.html',
-      controller: 'DisplayController',
-      controllerAs: 'display'
-    })
-    .otherwise({
-      redirectTo:'/home'
-    });
-})
-.config($locationProvider => {
-  $locationProvider.html5Mode({
-    enabled: true,
-    requireBase: true,
-    rewriteLinks: true
-  });
-})
+	.controller('AppController', [
+		'$scope',
+		'$location',
+		'serverCalls',
+		AppController
+	])
+	.controller('ChooseController', [
+		'$scope',
+		ChooseController
+	])
+	.controller('DisplayController', [
+		'$scope',
+		'$timeout',
+		'$window',
+		'nodeTypes',
+		DisplayController
+	])
+	.controller('InputController', [
+		'$scope',
+		'$timeout',
+		InputController
+	])
+	.config($routeProvider => {
+		$routeProvider
+			.when('/home', {
+				templateUrl: 'client/templates/home.html'
+			})
+			.when('/loading', {
+				templateUrl: 'client/templates/loading.html'
+			})
+			.when('/choose/:name', {
+				templateUrl: 'client/templates/choose.html',
+				controller: 'ChooseController',
+				controllerAs: 'choice'
+			})
+			.when('/display/:nconst', {
+				templateUrl: 'client/templates/display.html',
+				controller: 'DisplayController',
+				controllerAs: 'display'
+			})
+			.otherwise({
+				redirectTo:'/home'
+			});
+	})
+	.config($locationProvider => {
+		$locationProvider.html5Mode({
+			enabled: true,
+			requireBase: true,
+			rewriteLinks: true
+		});
+	});
 
