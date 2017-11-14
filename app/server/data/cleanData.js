@@ -16,7 +16,7 @@ function cleanBasics() {
 	let basicsInput = {
 		file: 'title.basics.tsv',
 		matches: new Set(),
-		cb: function(row) {
+		cb(row) {
 			let movie = row.match(/^(tt\d{7})\t([^\t]+)\t[^\t]+\t[^\t]+\t([^\t])+\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t\n]+\n$/);
 
 			if (movie && movie[2] == 'movie' && movie[3] == '0') {
@@ -28,7 +28,7 @@ function cleanBasics() {
 
 	let basicsOutput = {
 		file: 'movie.basics.tsv',
-		cb: function(row, stream) {
+		cb(row, stream) {
 			let movie = row.match(/^(tt\d{7})\t([^\t]+)\t([^\t]+)\t[^\t]+\t([^\t])+\t([^\t]+)\t[^\t]+\t[^\t]+\t[^\t\n]+\n$/);
 
 			if (movie && movie[2] == 'movie' && movie[4] == '0') {
@@ -50,14 +50,14 @@ function cleanPrincipals(tconsts) {
 	let principalsInput = {
 		file: 'title.principals.tsv',
 		matches: null,
-		cb: function() {}
+		cb() {}
 	};
 
 
 	let principalsOutput = {
 		file: 'movie.principals.tsv',
 		tconsts: tconsts,
-		cb: function(row, stream) {
+		cb(row, stream) {
 			let tconst = row.match(/^(tt\d{7})\t[^\t\n]+\n$/);
 
 			if (tconst && this.tconsts.has(tconst[1])) {
@@ -78,13 +78,13 @@ function cleanNames() {
 	let namesInput = {
 		file: 'name.basics.tsv',
 		matches: null,
-		cb: function() {}
+		cb() {}
 	};
 
 
 	let namesOutput = {
 		file: 'names.tsv',
-		cb: function(row, stream) {
+		cb(row, stream) {
 			let clipped = row.match(/^(nm\d{7}\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+)\t[^\t\n]+\n$/);
 			
 			if (clipped && (row.includes('actor') || row.includes('actress'))) {

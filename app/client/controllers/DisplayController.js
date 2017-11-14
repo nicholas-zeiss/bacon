@@ -1,9 +1,9 @@
 /**
  *
  *	This is controller is responsible for the Display view which occurs when a path to Kevin Bacon has been loaded
- *	and must be shown to the user. Actor and movie information elements are loaded simultaneously and then made visible in the DOM one by one.
+ *	and must be shown to the user. Actor and movie information elements are added to DOM simultaneously and then made visible one by one.
  *	All nodes take a duration of vm.duration to have an opacity animation, nodes in the first row also take vm.duration to do a width
- *	animation before hand.
+ *	animation beforehand.
  *
  *	On loading of a new row jquery is used to scroll the display container to that position. User scrolling is disabled while this occurs.
  *
@@ -17,7 +17,7 @@ function DisplayController($scope, $timeout, $window, nodeTypes) {
 	let vm = this;
 
 	let lastScrollPos = 0;					// current scrollTop of the #display-content-container element
-	let timeoutPromises = [];				// unresolved timeouts that need to be cleared on reset
+	let timeoutPromises = [];				// unresolved timeouts that need to be cleared when we exit this view
 	
 	// maps each actor/movie by its index in pathToBacon to [ rowIndex, indexInRow ], specifiying its row in vm.rows and 
 	// the actor/movie's index in that row
@@ -37,19 +37,18 @@ function DisplayController($scope, $timeout, $window, nodeTypes) {
 
 
 	$scope.app.pathToBacon.forEach((node, i) => {
-		let type = nodeType[i];
-		let row = getRowIndex(i);				// get corresponding row index, depends on device size
+		let rowIndex = getRowIndex(i);				// get corresponding row index, depends on device size
 
-		vm.rows[row] = vm.rows[row] || [];
-		vm.rowHidden[row] = true;
+		vm.rows[rowIndex] = vm.rows[rowIndex] || [];
+		vm.rowHidden[rowIndex] = true;
 
-		let length = vm.rows[row].push({
-			type: type,
+		let length = vm.rows[rowIndex].push({
+			actorMovie: node,
 			hidden: true,
-			actorMovie: node
+			type: nodeType[i]
 		});
 
-		nodeRowIndex[i] = [row, length - 1];
+		nodeRowIndex[i] = [rowIndex, length - 1];
 	});
 
 
@@ -60,18 +59,19 @@ function DisplayController($scope, $timeout, $window, nodeTypes) {
 	
 
 	// make first actor node visible, initiating cascade
+	// small timeout to ensure image has loaded
 	timeoutPromises.push($timeout(showNodes.bind(null, 0), 100));
 
 
 	function showNodes(index) {
-		let [ row, rowPos ] = nodeRowIndex[index];
+		let [ rowIndex, indexInRow ] = nodeRowIndex[index];
 
-		if (vm.rowHidden[row]) {
-			timeoutPromises.push($timeout(scrollToNode.bind(null, '#row-' + row), 100));
+		if (vm.rowHidden[rowIndex]) {
+			timeoutPromises.push($timeout(scrollToNode.bind(null, '#row-' + rowIndex), 100));
 		}
 
-		vm.rowHidden[row] = false;
-		vm.rows[row][rowPos].hidden = false;
+		vm.rowHidden[rowIndex] = false;
+		vm.rows[rowIndex][indexInRow].hidden = false;
 
 		if (index < nodeRowIndex.length - 1) {
 			timeoutPromises.push($timeout(showNodes.bind(null, index + 1), 2 * vm.duration + 100));

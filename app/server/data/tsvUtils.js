@@ -74,7 +74,7 @@ exports.getActorsNconsts = function(names) {
 	return exports.traverseTSV({
 		file: 'names.tsv',
 		matches: new Map(),
-		cb: function(row) {
+		cb(row) {
 			let actor = row.match(NAME_ROW);
 			
 			if (actor && names.has(actor[2])) {

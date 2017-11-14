@@ -54,7 +54,8 @@ function findImageTitles(actors) {
 		url: searchNamesUrl(actors)
 	})
 		.then(result => {
-			// redirects occur when eg we search wikipedia for charlie chaplin and it redirects to charles chaplin
+
+			// redirects occur when eg we search wikipedia for charles chaplin and it redirects to charlie chaplin
 			let redirectMap = {};
 			let output = {};
 
@@ -62,7 +63,6 @@ function findImageTitles(actors) {
 			let pages = result.data.query.pages;
 
 			redirects.forEach(redirect => redirectMap[redirect.to] = redirect.from);
-
 
 			for (let page in pages) {
 				let name = redirectMap[pages[page].title] || pages[page].title;
@@ -74,8 +74,6 @@ function findImageTitles(actors) {
 				}
 			}
 
-
-			// if an actor didn't get returned a page we add them to output here
 			actors.forEach(actor => {
 				output[actor] = output[actor] || null;
 			});

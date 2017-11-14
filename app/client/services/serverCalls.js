@@ -20,8 +20,9 @@ import angular from 'angular';
 
 				let getImagesFor = [];
 
+				// if imgUrl is null server has never tried to find an image for that actor
 				path.forEach(([actor, movie]) => {
-					if (!actor.imgUrl) {			// change to actor.imgUrl === null when db updated
+					if (actor.imgUrl === null) {
 						getImagesFor.push({ name: actor.name, nconst: actor.nconst });
 					}
 				});
@@ -43,6 +44,7 @@ import angular from 'angular';
 						path.forEach(([actor, movie]) => {
 							if (!actor.imgUrl && imgUrls[actor.name]) {
 								actor.imgUrl = imgUrls[actor.name].imgUrl;
+								actor.imgInfo = imgUrls[actor.name].imgInfo;
 							}
 						});
 
@@ -64,7 +66,6 @@ import angular from 'angular';
 			}
 
 
-			// handles a post to /name
 			function getPathByName(name) {
 				$http({
 					method: 'POST',
@@ -79,7 +80,6 @@ import angular from 'angular';
 			}
 
 
-			// handles a post to /nconst
 			function getPathByNconst(nconst) {
 				$http({
 					method: 'POST',
