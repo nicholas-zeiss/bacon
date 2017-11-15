@@ -111,7 +111,7 @@ function expand(parents, alreadyIndexed, baconNumber) {
 
 			return Promise.all([
 				nextParents,
-				db.addTreeLevel(dbTree, baconNumber - 1),
+				db.addTreeLevel(dbTree, baconNumber),
 				db.addActorReferences(dbNames),
 				db.addMovieReferences(dbMovies)
 			]);

@@ -33,8 +33,8 @@ function getNamesTitles(path) {
 			db.getMovieNames(tconsts)
 		])
 			.then(([names, titles]) => {
-				let nameMap = new Map();
-				let titleMap = new Map();
+				const nameMap = new Map();
+				const titleMap = new Map();
 
 				names.forEach(actor => {
 					nameMap.set(actor.nconst, {
@@ -43,9 +43,12 @@ function getNamesTitles(path) {
 						number: actor.number,
 						dob: actor.dob,
 						dod: actor.dod,
-						jobs: actor.jobs.split(',').sort((a,b) => b.length - a.length).join(','),
 						imgUrl: actor.imgUrl,
-						imgInfo: actor.imgInfo
+						imgInfo: actor.imgInfo,
+						jobs: actor.jobs
+							.split(',')
+							.sort((a,b) => b.length - a.length)
+							.join(',')
 					});
 				});
 
@@ -57,18 +60,24 @@ function getNamesTitles(path) {
 					});
 				});
 
-				path = path.map(node => [ nameMap.get(node.nconst), titleMap.get(node.tconst) ]);
+				path = path.map(node => ({ 
+					actor: nameMap.get(node.nconst),
+					movie: titleMap.get(node.tconst) 
+				}));
 
-				path.push([{
-					nconst: 102,
-					name: 'Kevin Bacon',
-					number: 0,
-					dob: 1958,
-					dod: 0,
-					jobs: 'soundtrack,producer,actor',
-					imgUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Kevinbacongfdl.PNG/428px-Kevinbacongfdl.PNG',
-					imgInfo: 'https://commons.wikimedia.org/wiki/File:Kevinbacongfdl.PNG'
-				}, null ]);
+				path.push({
+					actor: {
+						nconst: 102,
+						name: 'Kevin Bacon',
+						number: 0,
+						dob: 1958,
+						dod: 0,
+						jobs: 'soundtrack,producer,actor',
+						imgUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Kevinbacongfdl.PNG/428px-Kevinbacongfdl.PNG',
+						imgInfo: 'https://commons.wikimedia.org/wiki/File:Kevinbacongfdl.PNG'
+					},
+					movie: null
+				});
 
 				resolve(path);
 			})
@@ -89,7 +98,7 @@ function getNamesTitles(path) {
  *	inputs:
  *	nconst: number
  *
- *	return: [  [ actorInfo1, movieInfo1 ], ... ]
+ *	return: [  { actor: actorInfo1, movie: movieInfo1 }, ... ]
  *
 **/
 module.exports = function getBaconPath(nconst, number) {

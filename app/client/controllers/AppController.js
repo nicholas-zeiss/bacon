@@ -144,8 +144,8 @@ function AppController($scope, $location, serverCalls) {
 
 	// path found, switch to Display view
 	$scope.$on('reqSuccess', (event, path) => {
-		// path returned by server is [[actor1, movie1], ... [Kevin Bacon, null]], we must flatten it
-		vm.pathToBacon = path.reduce((path, actorMovie) => path.concat(actorMovie), []).slice(0, -1);		
+		// path returned by server is [{ actor: actor1Info, movie: movie1Info }, ... ], we must flatten it
+		vm.pathToBacon = path.reduce((path, node) => path.concat(node.actor, node.movie), []).slice(0, -1);		
 		
 		vm.pathToBacon.forEach((actor, i) => {
 			// skip movies

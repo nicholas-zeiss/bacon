@@ -44,6 +44,14 @@ const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
 
 const url = require('./dbLogin');
+const ordinalCollections = [
+	'first',
+	'second',
+	'third',
+	'fourth',
+	'fifth',
+	'sixth'
+];
 
 
 // Connects to the database and executes a callback. It returns a promise that resolves/rejects according to the callback.
@@ -160,10 +168,8 @@ function addMovieReferences(documents) {
 
 
 function addTreeLevel(documents, number) {
-	let collection = [ 'first', 'second', 'third', 'fourth', 'fifth', 'sixth' ][number];
-
 	return connectToDb((db, resolve, reject) => {
-		db.collection(collection)
+		db.collection(ordinalCollections[number - 1])
 			.insertMany(documents)
 			.then(result => db.close(false, resolve.bind(null, result)))
 			.catch(error => {
@@ -215,13 +221,11 @@ function getActorNames(nconsts) {
 
 
 function getBaconPath(nconst, number) {
-	const collections = [ 'first', 'second', 'third', 'fourth', 'fifth', 'sixth' ];
-
 	return connectToDb((db, resolve, reject) => {
 		getParent(nconst, number, []);
 
 		function getParent(nconst, number, path) {
-			db.collection(collections[number - 1])
+			db.collection(ordinalCollections[number - 1])
 				.findOne({ nconst })
 				.then(result => {
 					if (result) {
@@ -232,7 +236,6 @@ function getBaconPath(nconst, number) {
 						} else {
 							getParent(result.parent, number - 1, path);
 						}
-
 					} else {
 						db.close(false, reject.bind(null, `nconst ${nconst} does not exist in the db`));
 					}

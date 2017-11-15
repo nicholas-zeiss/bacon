@@ -1,8 +1,8 @@
 /**
  *
- *	This module allows us to find images for a list of actors. It uses the mediawiki php api
- *	to first query wikipedia for an image from an actor's article, should one exist, and find
- *	the file name. It then retreives the direct url for that file from wikimedia commons.
+ *	This module allows us to find images for a list of actors. It uses the mediawiki php api to first query wikipedia
+ *  for an image from an actor's article, should one exist, and finds the file name. It then retreives the url for 
+ *  that file's page and the url to the file iteself from wikimedia commons.
  *
 **/
 
@@ -48,7 +48,6 @@ function searchImagesUrl(files) {
  *
 **/
 function findImageTitles(actors) {
-	
 	return axios({
 		method: 'get',
 		url: searchNamesUrl(actors)
@@ -56,30 +55,29 @@ function findImageTitles(actors) {
 		.then(result => {
 
 			// redirects occur when eg we search wikipedia for charles chaplin and it redirects to charlie chaplin
-			let redirectMap = {};
-			let output = {};
+			const redirectMap = {};
+			const output = {};
 
-			let redirects = result.data.query.redirects || [];
-			let pages = result.data.query.pages;
+			const redirects = result.data.query.redirects || [];
+			const pages = result.data.query.pages;
 
 			redirects.forEach(redirect => redirectMap[redirect.to] = redirect.from);
 
 			for (let page in pages) {
-				let name = redirectMap[pages[page].title] || pages[page].title;
+				const name = redirectMap[pages[page].title] || pages[page].title;
 
 				if (pages[page].images && pages[page].images.length) {
 					// wikipedia pages are full of svg logos/icons, filter those out
-					let images = pages[page].images.filter(img => img.title.match(/jpg$|png$/i));
+					const images = pages[page].images
+						.filter(img => img.title.match(/jpg$|png$/i));
+
 					output[name] = images.length ? images[0].title : null;
 				}
 			}
 
-			actors.forEach(actor => {
-				output[actor] = output[actor] || null;
-			});
+			actors.forEach(actor => output[actor] = output[actor] || null);
 
 			return output;
-
 		})
 		.catch(error => {
 			console.log('error getting image titles:\n', error);
@@ -93,45 +91,41 @@ function findImageTitles(actors) {
  *	Given an object of actor names and file titles, find a url for each file title or null if none exist.
  *
  *	inputs:
- *	images: { name1: str fileTitle1 OR null, ... }
+ *	imageTitles: { actorName1: str fileTitle1 OR null, ... }
  *
  *	return: A promise resolving to { name1: { imgUrl: str/null, imgInfo: str/null }, ... }
  *
 **/
-function findImageUrls(imageUrls) {
-	
-	let titlesToSearch = [];
-	let titleToName = {};
-	let output = {};
+function findImageUrls(imageTitles) {
+	const titlesToSearch = [];
+	const titleToName = {};
+	const output = {};
 
-
-	for (let name in imageUrls) {
-		if (imageUrls[name]) {
-			titlesToSearch.push(imageUrls[name]);
-			titleToName[imageUrls[name]] = name;
+	for (let name in imageTitles) {
+		if (imageTitles[name]) {
+			titlesToSearch.push(imageTitles[name]);
+			titleToName[imageTitles[name]] = name;
 		} else {
 			output[name] = { imgUrl: '', imgInfo: '' };
 		}
 	}
 
-
 	if (!titlesToSearch.length) {
 		return output;
 	}
-
 
 	return axios({
 		method: 'get',
 		url: searchImagesUrl(titlesToSearch)
 	})
 		.then(result => {
-			let pages = result.data.query.pages;
+			const pages = result.data.query.pages;
 
 			for (let pageid in pages) {
+				const page = pages[pageid];
+				const name = titleToName[page.title];
 				let imgUrl = '';
 				let imgInfo = '';
-				let page = pages[pageid];
-				let name = titleToName[page.title];
 
 				if (page.imageinfo && page.imageinfo.length) {
 					imgUrl = page.imageinfo[0].thumburl;
@@ -142,7 +136,6 @@ function findImageUrls(imageUrls) {
 			}
 
 			return output;
-			
 		})
 		.catch(error => {
 			console.log('error getting image urls:\n', error);
@@ -163,9 +156,7 @@ function findImageUrls(imageUrls) {
 **/
 module.exports = function(actors) {
 	return findImageTitles(actors)
-		.then(imageTitles => {
-			return findImageUrls(imageTitles);
-		})
+		.then(findImageUrls)
 		.catch(error => {
 			console.log('error getting images:\n', error);
 			throw error;

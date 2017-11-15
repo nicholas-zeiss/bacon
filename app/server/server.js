@@ -28,8 +28,52 @@ app.get('*', (req, res) => {
 // helper for /name and /nconst post requests
 function sendBaconPath(nconst, number, res) {
 	baconPath(nconst, number)
-		.then(path => res.status(200).json(path))
+		.then(path => {
+			if (path.some(node => node.actor.imgUrl === null)) {
+				addImages(path, res);
+			} else {
+				res.status(200).json(path);
+			}
+		})
 		.catch(error => res.sendStatus(500));
+}
+
+
+// helper for sendBaconPath
+function addImages(path, res) {
+	const names = [];
+	const nameToNconst = {};
+
+	path.forEach(node => {
+		if (node.actor.imgUrl === null) {
+			names.push(node.actor.name);
+			nameToNconst[node.actor.name] = node.actor.nconst;
+		}
+	});
+
+	getImages(names)
+		.then(imageUrls => {
+			const nconstToUrl = {};
+
+			for (let name in imageUrls) {
+				nconstToUrl[nameToNconst[name]] = imageUrls[name];
+			}
+
+			path.forEach(node => {
+				if (node.actor.imgUrl === null) {
+					const urls = imageUrls[node.actor.name];
+					node.actor.imgUrl = urls.imgUrl;
+					node.actor.imgInfo = urls.imgInfo;
+				}
+			});
+
+			db.addActorImageUrls(nconstToUrl);
+			res.status(200).json(path);
+		})
+		.catch(error => {
+			console.log('getImages threw error:\n', error);
+			res.sendStatus(500);
+		});
 }
 
 
@@ -41,7 +85,7 @@ app.post('/name', (req, res) => {
 		return;
 	}
 
-	// as names are not unique in our db we return all matches and respond according to the number of matches
+	// as names are not guaranteed unique in our db we find all matches and respond according to the number of matches
 	db.getActorReferences(req.body.name)
 		.then(actors => {
 			if (!actors.length) {
@@ -60,7 +104,6 @@ app.post('/name', (req, res) => {
 // when the web app has searched for a non unique name clarification by nconst is required and handled here
 // req.body should be number nconst
 app.post('/nconst', (req, res) => {
-
 	if (!req.body || !req.body.nconst || typeof req.body.nconst !== 'number') {
 		res.sendStatus(400);
 		return;
@@ -76,42 +119,6 @@ app.post('/nconst', (req, res) => {
 		})
 		.catch(error => {
 			console.log('getActorNames threw error:\n', error);
-			res.sendStatus(500);
-		});
-});
-
-
-// once the web app has received a path it immediately requests images of the actors in it who do not already have images in the db
-// we gather those image urls, send them, and add them to the db here
-// req.body should be [ { name: str, nconst: int }, ... ]
-app.post('/images', (req, res) => {
-	
-	if (!req.body || !(req.body instanceof Array) || !req.body.length) {
-		res.sendStatus(400);
-		return;
-	}
-
-	const names = [];
-	const nameToNconst = {};
-
-	req.body.forEach(actor => {
-		names.push(actor.name);
-		nameToNconst[actor.name] = actor.nconst;
-	});
-
-	getImages(names)
-		.then(imageUrls => {
-			const nconstToUrl = {};
-
-			for (let name in imageUrls) {
-				nconstToUrl[nameToNconst[name]] = imageUrls[name];
-			}
-
-			db.addActorImageUrls(nconstToUrl);
-			res.status(200).json(imageUrls);
-		})
-		.catch(error => {
-			console.log('getImages threw error:\n', error);
 			res.sendStatus(500);
 		});
 });
