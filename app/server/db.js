@@ -19,8 +19,8 @@
  *			  dob: int,              -  birth year (0 if not in dataset)
  *        dod: int,              -  death year (0 if not in dataset or actor is still alive)
  *        jobs: str, 						 -  comma separated string of their three top professions as according to IMDb dataset
- *        imgUrl: str,					 -  url to the image generated for them (null if image not yet generated, empy string if no image could be found)
- * 				imgPage: str 					 -  url to the wikimedia commons page for the image (null if image not yet generated, empy string if no image could be found)
+ *        imgUrl: str,					 -  url to the image generated for them (null if image not yet generated, empty string if no image could be found)
+ * 				imgInfo: str 					 -  url to the wikimedia commons page for the image (null if image not yet generated, empty string if no image could be found)
  *		  }
  *
  *
@@ -58,9 +58,8 @@ function connectToDb(cb) {
 
 
 // Use this to clear the database and recreate our collections and insert Kevin Bacon
-exports.resetDb = function() {
+function resetDb() {
 	return connectToDb((db, resolve, reject) => {
-		
 		db.dropDatabase()
 			.then(() => {
 				db.collection('movieReference').createIndex({ tconst: 1 }, { unique: true });
@@ -84,9 +83,7 @@ exports.resetDb = function() {
 						imgUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Kevinbacongfdl.PNG/428px-Kevinbacongfdl.PNG',
 						imgInfo: 'https://commons.wikimedia.org/wiki/File:Kevinbacongfdl.PNG'
 					})
-					.then(result => {
-						db.close(false, resolve.bind(null, result));
-					})
+					.then(result => db.close(false, resolve.bind(null, result)))
 					.catch(error => {
 						console.log('error inserting Kevin Bacon:\n', error.message);			
 						db.close(false, reject.bind(null, error));
@@ -96,9 +93,8 @@ exports.resetDb = function() {
 				console.log('error dropping database:\n', error.message);	
 				db.close(false, reject.bind(null, error));
 			});
-			
 	});
-};
+}
 
 
 /**
@@ -106,84 +102,76 @@ exports.resetDb = function() {
  *		SECTION - SETTERS
  *
  *			i. addActorReferences  -  add documents to collection actorReference
- *		 ii. addActorImageUrl    -  add imgUrlto a document specified by nconst in actorReference
+ *		 ii. addActorImageUrls   -  add imgage urls to documents specified by nconst in actorReference
  *    iii. addMovieReferences  -  add documents to collection movieReference
  *     iv. addTreeLevel				 -  add documents to an ordinal collection
  *
  */
 
 
-exports.addActorReferences = function(documents) {
+function addActorReferences(documents) {
 	return connectToDb((db, resolve, reject) => {
-
 		db.collection('actorReference')
 			.insertMany(documents)
-			.then(result => {				
-				db.close(false, resolve.bind(null, result));
-			})
+			.then(result => db.close(false, resolve.bind(null, result)))
 			.catch(error => {
 				console.log('failed to send actor references:\n', error.message);
 				db.close(false, reject.bind(null, error));
 			});
-
 	});
-};
+}
 
 
-exports.addActorImageUrl = function(nconst, { imgUrl, imgInfo }) {
-	return connectToDb((db, resolve, reject) => {
-		
-		db.collection('actorReference')
-			.updateOne(
-				{ nconst },
-				{ $set: { imgUrl, imgInfo }}
-			)
-			.then(result => {
-				db.close(false, resolve.bind(null, result));
-			})
-			.catch(error => {
-				console.log('error adding url to database for ', nconst, ':\n', error.message);
-				db.close(false, reject.bind(null, error));
-			});
+function addActorImageUrls(nconstToUrl) {
+	return connectToDb((db, resolve) => {
+		const updates = [];
 
+		for (let nconst in nconstToUrl) {
+			updates.push(db.collection('actorReference')
+				.updateOne(
+					{ nconst: Number(nconst) },
+					{ $set: {
+						imgUrl: nconstToUrl[nconst].imgUrl,
+						imgInfo: nconstToUrl[nconst].imgInfo 
+					}}
+				)
+			);
+		}
+
+		Promise.all(updates)
+			.catch(error => console.log('error adding urls to database:\n', error.message));
+			
+		db.close(false, resolve);
 	});
-};
+}
 
 
-exports.addMovieReferences = function(documents) {
+function addMovieReferences(documents) {
 	return connectToDb((db, resolve, reject) => {
-		
 		db.collection('movieReference')
 			.insertMany(documents)
-			.then(result => {
-				db.close(false, resolve.bind(null, result));
-			})
+			.then(result => db.close(false, resolve.bind(null, result)))
 			.catch(error => {
 				console.log('failed to send movie references:\n', error.message);
 				db.close(false, reject.bind(null, error));
 			});
-
 	});
-};
+}
 
 
-exports.addTreeLevel = function(documents, number) {
+function addTreeLevel(documents, number) {
 	let collection = [ 'first', 'second', 'third', 'fourth', 'fifth', 'sixth' ][number];
 
 	return connectToDb((db, resolve, reject) => {
-		
 		db.collection(collection)
 			.insertMany(documents)
-			.then(result => {
-				db.close(false, resolve.bind(null, result));
-			})
+			.then(result => db.close(false, resolve.bind(null, result)))
 			.catch(error => {
 				console.log('failed to send actor tree:\n', error.message);
 				db.close(false, reject.bind(null, error));
 			});
-
 	});
-};
+}
 
 
 /**
@@ -192,79 +180,95 @@ exports.addTreeLevel = function(documents, number) {
  *
  *			i. getActorReferences  -  retreive all documents in actorReference that match the given name (case insensitive)
  *		 ii. getActorNames       -  retreive all documents in actorReference whose nconst is in the supplied array
- *    iii. getActorParent      -  given an nconst and an ordinal collection return the document in that collection matching the nconst
+ *    iii. getBaconPath        -  given an nconst and number of the ordinal collection containg the nconst return the bacon path
  *     iv. getMovieNames			 -  retreive all documents in movieReference whose tconst is in the supplied array
  *
  */
 
 
-exports.getActorReferences = function(name) {
+function getActorReferences(name) {
 	return connectToDb((db, resolve, reject) => {
-		
 		db.collection('actorReference')
 			.find({ name: { $regex: '^' + name + '$', $options: 'i' }})
 			.toArray()
-			.then(result => {
-				db.close(false, resolve.bind(null, result));
-			})
+			.then(result => db.close(false, resolve.bind(null, result)))
 			.catch(error => {
 				console.log('error finding ', name, ':\n', error.message);
 				db.close(false, reject.bind(null, error.message));
 			});
-
 	}); 
-};
+}
 
 
-exports.getActorNames = function(nconsts) {
+function getActorNames(nconsts) {
 	return connectToDb((db, resolve, reject) => {
-		
 		db.collection('actorReference')
 			.find({ nconst: { $in: nconsts }})
 			.toArray()
-			.then(result => {
-				db.close(false, resolve.bind(null, result));
-			})
+			.then(result => db.close(false, resolve.bind(null, result)))
 			.catch(error => {
 				console.log('error in getActorNames:\n', error.message);
 				db.close(false, reject.bind(null, error.message));
 			});
-
 	});
-};
+}
 
 
-exports.getActorParent = function(nconst, table) {
+function getBaconPath(nconst, number) {
+	const collections = [ 'first', 'second', 'third', 'fourth', 'fifth', 'sixth' ];
+
 	return connectToDb((db, resolve, reject) => {
-		
-		db.collection(table)
-			.findOne({ nconst })
-			.then(result => {
-				db.close(false, resolve.bind(null, result));
-			})
-			.catch(error => {
-				console.log('error in getActorParent finding ', nconst, ':\n', error.message);
-				db.close(false, reject.bind(null, error.message));
-			});
+		getParent(nconst, number, []);
 
+		function getParent(nconst, number, path) {
+			db.collection(collections[number - 1])
+				.findOne({ nconst })
+				.then(result => {
+					if (result) {
+						path.push({ nconst, tconst: result.tconst });
+						
+						if (number == 1) {
+							db.close(false, resolve.bind(null, path));
+						} else {
+							getParent(result.parent, number - 1, path);
+						}
+
+					} else {
+						db.close(false, reject.bind(null, `nconst ${nconst} does not exist in the db`));
+					}
+				})
+				.catch(error => {
+					console.log('error in getBaconPath finding ', nconst, ':\n', error.message);
+					db.close(false, reject.bind(null, error.message));
+				});
+		}
 	});
-};
+}
 
 
-exports.getMovieNames = function(tconsts) {
+function getMovieNames(tconsts) {
 	return connectToDb((db, resolve, reject) => {
-		
 		db.collection('movieReference')
 			.find({ tconst: { $in: tconsts }})
 			.toArray()
-			.then(result => {
-				db.close(false, resolve.bind(null, result));
-			})
+			.then(result => db.close(false, resolve.bind(null, result)))
 			.catch(error => {
 				console.log('error in getMovieNames:\n', error.message);
 				db.close(false, reject.bind(null, error.message));
 			});
-
 	});
+}
+
+
+module.exports = {
+	resetDb,
+	addActorReferences,
+	addActorImageUrls,
+	addMovieReferences,
+	addTreeLevel,
+	getActorReferences,
+	getActorNames,
+	getBaconPath,
+	getMovieNames
 };
 

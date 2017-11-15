@@ -95,7 +95,7 @@ function findImageTitles(actors) {
  *	inputs:
  *	images: { name1: str fileTitle1 OR null, ... }
  *
- *	return: A promise resolving to { name1: str fileUrl1 OR null, ... }
+ *	return: A promise resolving to { name1: { imgUrl: str/null, imgInfo: str/null }, ... }
  *
 **/
 function findImageUrls(imageUrls) {
@@ -110,7 +110,7 @@ function findImageUrls(imageUrls) {
 			titlesToSearch.push(imageUrls[name]);
 			titleToName[imageUrls[name]] = name;
 		} else {
-			output[name] = null;
+			output[name] = { imgUrl: '', imgInfo: '' };
 		}
 	}
 
@@ -128,17 +128,17 @@ function findImageUrls(imageUrls) {
 			let pages = result.data.query.pages;
 
 			for (let pageid in pages) {
-				let url = '';
-				let infoUrl = '';
+				let imgUrl = '';
+				let imgInfo = '';
 				let page = pages[pageid];
 				let name = titleToName[page.title];
 
 				if (page.imageinfo && page.imageinfo.length) {
-					url = page.imageinfo[0].thumburl;
-					infoUrl = page.imageinfo[0].descriptionshorturl;
+					imgUrl = page.imageinfo[0].thumburl;
+					imgInfo = page.imageinfo[0].descriptionshorturl;
 				}
 
-				output[name] = { imgUrl: url, imgInfo: infoUrl };
+				output[name] = { imgUrl, imgInfo };
 			}
 
 			return output;
@@ -158,7 +158,7 @@ function findImageUrls(imageUrls) {
  *	inputs:
  *	actors: [ str name1, ... ]
  *
- *	return: A promise resolving to { name1: str fileUrl1 OR null }, ... }
+ *	return: A promise resolving to { name1: { imgUrl: str, imgInfo: str }, ... }
  *
 **/
 module.exports = function(actors) {

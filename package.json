@@ -7,7 +7,9 @@
     "lint": "eslint app/client/** app/server/**",
     "install": "webpack",
     "prestart": "webpack --watch &",
-    "start": "nodemon app/server/server.js 4080",
+    "start": "nodemon app/server/server.js",
+    "preproduction": "webpack --optimize-minimize",
+    "production": "node app/server/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Nicholas Zeiss",

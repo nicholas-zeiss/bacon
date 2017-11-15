@@ -1,7 +1,6 @@
 /**
  *
  *	This module handles the logic of finding the path of an actor to Kevin Bacon by reading the database.
- *	It does not handle cases where it is supplied an actor outside of the database, this is verified elsewhere.
  *
 **/
 
@@ -21,8 +20,8 @@ const db = require('./db');
 **/
 function getNamesTitles(path) {
 	return new Promise((resolve, reject) => {
-		let nconsts = [];
-		let tconsts = [];
+		const nconsts = [];
+		const tconsts = [];
 
 		path.forEach(node => {
 			nconsts.push(node.nconst);
@@ -85,51 +84,25 @@ function getNamesTitles(path) {
  *
  *	This function generates the path to Kevin Bacon, decorates it with pertinent data, and returns it.
  *	Given the nconst input it looks it up in the table defined by number, adds itself to the path we 
- *	eventually decorate and return, and then recurses on the parent nconst of that nconst. Kevin Bacon
- *	himself is not included in this path.
+ *	eventually decorate and return, and then recurses on the parent nconst of that nconst.
  *
  *	inputs:
  *	nconst: number
- *	tconst: number
- *	path: [ { nconst: number nconst1, tconst: number tconst1 }, ... ]
  *
  *	return: [  [ actorInfo1, movieInfo1 ], ... ]
  *
 **/
-module.exports = function getBaconPath(nconst, number, path) {
-	let collection = [ 'first', 'second', 'third', 'fourth', 'fifth', 'sixth' ];
-
+module.exports = function getBaconPath(nconst, number) {
 	return new Promise((resolve, reject) => {	
 		if (number > 6 || number < 0) {			
 			reject('invalid bacon number');
 		
-		} else if (number == 0) {
-			getNamesTitles(path)
-				.then(path => resolve(path))
-				.catch(error => {
-					console.log('error decorating path in getNamesTitles:\n', error);
-					reject(error);
-				});
-
 		} else {
-			db
-				.getActorParent(nconst, collection[number - 1])
-				.then(result => {		
-					if (!result) {
-						reject('nconst ', nconst, ' does not exist in the db');
-					
-					} else {
-						path.push({ 
-							nconst: nconst, 
-							tconst: result.tconst
-						});
-
-						getBaconPath(result.parent, number - 1, path)
-							.then(path => resolve(path));
-					}
-				})
+			db.getBaconPath(nconst, number)
+				.then(getNamesTitles)
+				.then(path => resolve(path))
 				.catch(error => {	
-					console.log('error getting actor parent in db:\n', error);
+					console.log('error getting bacon path:\n', error);
 					reject(error);
 				});
 		}

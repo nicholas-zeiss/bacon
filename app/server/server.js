@@ -27,21 +27,15 @@ app.get('*', (req, res) => {
 
 // helper for /name and /nconst post requests
 function sendBaconPath(nconst, number, res) {
-	baconPath(nconst, number, [])
-		.then(path => {
-			res.status(200).json(path);
-		})
-		.catch(error => {
-			console.log('baconPath threw error:\n', error);
-			res.sendStatus(500);
-		});
+	baconPath(nconst, number)
+		.then(path => res.status(200).json(path))
+		.catch(error => res.sendStatus(500));
 }
 
 
 // posts to name are requests for the path between name and Kevin Bacon, find one if one exists
 // and send it, or send an appropriate error
 app.post('/name', (req, res) => {
-
 	if (!req.body || !req.body.name || (typeof req.body.name != 'string')) {
 		res.sendStatus(400);
 		return;
@@ -55,14 +49,11 @@ app.post('/name', (req, res) => {
 			} else if (actors.length == 1) {
 				sendBaconPath(actors[0].nconst, actors[0].number, res);		
 			} else {
-				// if name not unique send all matched actors and await a call to /nconst
 				actors.forEach(actor => delete actor._id);
 				res.status(300).json(actors);	
 			}
 		})
-		.catch(error => {
-			res.sendStatus(500);
-		});
+		.catch(error => res.sendStatus(500));
 });
 
 
@@ -100,8 +91,8 @@ app.post('/images', (req, res) => {
 		return;
 	}
 
-	let names = [];
-	let nameToNconst = {};
+	const names = [];
+	const nameToNconst = {};
 
 	req.body.forEach(actor => {
 		names.push(actor.name);
@@ -110,13 +101,13 @@ app.post('/images', (req, res) => {
 
 	getImages(names)
 		.then(imageUrls => {
+			const nconstToUrl = {};
 
 			for (let name in imageUrls) {
-				if (imageUrls[name]) {
-					db.addActorImageUrl(nameToNconst[name], imageUrls[name]);
-				}
+				nconstToUrl[nameToNconst[name]] = imageUrls[name];
 			}
-			
+
+			db.addActorImageUrls(nconstToUrl);
 			res.status(200).json(imageUrls);
 		})
 		.catch(error => {
@@ -126,12 +117,9 @@ app.post('/images', (req, res) => {
 });
 
 
-// when run locally server.js is supplied an argument for the port number, if it exists 
-// assign app to the port, otherwise app is being used as a sub app in a different package
-if (process.argv.length == 3) {
-	let port = parseInt(process.argv[2]);
-	app.listen(port, () => console.log('bacon is listening to port ', port));
-}
+const port = process.argv[2] ? Number(process.argv[2]) : 4080;
+app.listen(port, () => console.log('bacon is listening to port ', port));
+
 
 
 module.exports = app;

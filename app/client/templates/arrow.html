@@ -2,7 +2,7 @@
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" ng-attr-width="{{arrow.width}}" ng-attr-height="{{arrow.height}}">
 	<line ng-attr-x1="{{arrow.lineStart.x}}" ng-attr-y1="{{arrow.lineStart.y}}" ng-attr-x2="{{arrow.lineEnd.x}}" ng-attr-y2="{{arrow.lineEnd.y}}" stroke-width="10" stroke="#272727" stroke-linecap="butt"/>
 	<polyline ng-attr-points="{{arrow.tipPoints}}" fill="none" stroke-width="10" stroke="#272727" stroke-linejoin="miter"/>
-	<text style="fill:#272727;font-size:12px;" ng-attr-x="{{arrow.year.x}}" ng-attr-y="{{arrow.year.y}}" ng-attr-text-anchor="{{arrow.year.anchor}}">{{ node.actorMovie.year }}</text>
+	<text style="fill:#272727;font-size:12px;" ng-attr-x="{{arrow.year.x}}" ng-attr-y="{{arrow.year.y}}" ng-attr-text-anchor="{{arrow.year.anchor}}">{{ node.actorMovie.year || '' }}</text>
 	<foreignObject ng-attr-x="{{arrow.title.x}}" ng-attr-y="{{arrow.title.y}}" ng-attr-width="{{arrow.title.width}}" ng-attr-height="{{arrow.title.height}}">
 		<p style="width:100%;
 							height:100%;

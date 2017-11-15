@@ -78,7 +78,7 @@ angular.module('app', [
 		'$timeout',
 		InputController
 	])
-	.config($routeProvider => {
+	.config(['$routeProvider', $routeProvider => {
 		$routeProvider
 			.when('/home', {
 				templateUrl: 'client/templates/home.html'
@@ -99,12 +99,12 @@ angular.module('app', [
 			.otherwise({
 				redirectTo:'/home'
 			});
-	})
-	.config($locationProvider => {
+	}])
+	.config(['$locationProvider', $locationProvider => {
 		$locationProvider.html5Mode({
 			enabled: true,
 			requireBase: true,
 			rewriteLinks: true
 		});
-	});
+	}]);
 
