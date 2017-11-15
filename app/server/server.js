@@ -127,7 +127,3 @@ app.post('/nconst', (req, res) => {
 const port = process.argv[2] ? Number(process.argv[2]) : 4080;
 app.listen(port, () => console.log('bacon is listening to port ', port));
 
-
-
-module.exports = app;
-

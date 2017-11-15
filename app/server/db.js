@@ -88,7 +88,7 @@ function resetDb() {
 						dob: 1958,
 						dod: 0,
 						jobs: 'actor,producer,soundtrack',
-						imgUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Kevinbacongfdl.PNG/428px-Kevinbacongfdl.PNG',
+						imgUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Kevinbacongfdl.PNG/400px-Kevinbacongfdl.PNG',
 						imgInfo: 'https://commons.wikimedia.org/wiki/File:Kevinbacongfdl.PNG'
 					})
 					.then(result => db.close(false, resolve.bind(null, result)))
@@ -100,6 +100,25 @@ function resetDb() {
 			.catch(error => {
 				console.log('error dropping database:\n', error.message);	
 				db.close(false, reject.bind(null, error));
+			});
+	});
+}
+
+
+function resetImages() {
+	return connectToDb((db, resolve, reject) => {
+		db.collection('actorReference')
+			.updateMany(
+				{ nconst: { $ne: 102 }},
+				{ $set: { imgUrl: null, imgInfo: null }}
+			)
+			.then(() => {
+				console.log('Reset images');
+				db.close(false, resolve);
+			})
+			.catch(error => {
+				console.log('Error resetting images:\n', error);
+				db.close(false, reject);
 			});
 	});
 }
@@ -265,6 +284,7 @@ function getMovieNames(tconsts) {
 
 module.exports = {
 	resetDb,
+	resetImages,
 	addActorReferences,
 	addActorImageUrls,
 	addMovieReferences,

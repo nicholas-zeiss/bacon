@@ -16,7 +16,7 @@ const db = require('../db');
 /**
  *
  *	Formats data collected in the expand function for the database. actorTree holds the links between a parent and child actor
- *	and ends up in one of the cardinal collections ("first", "second", etc). names and movies map nconsts/tconsts to actor/movie
+ *	and ends up in one of the ordinal collections ("first", "second", etc). names and movies map nconsts/tconsts to actor/movie
  *	information and end up in actorReference/movieReference.
  *
  *	inputs:
@@ -25,31 +25,29 @@ const db = require('../db');
  *	movies: Map(str tconst => { title: str title, year: number year })
  *	baconNumber: number
  *
- *	return: [dbTree, dbNames, dbMovies, nextParents]
- *	dbTree: [ { nconst: number nconst, parent: number nconst, tconst: number tconst}, ... ]
- *	dbNames: [ { nconst: number nconst, number: number degreeOfSeparation, imgUrl: null, imgPath: null, name: str name, dob: number birthYear, dod: number deathYear, jobs: str professions }, ... ]
+ *	return: [ dbTree, dbNames, dbMovies, nextParents ]
+ *	dbTree: [{ nconst: number nconst, parent: number nconst, tconst: number tconst}, ... ]
+ *	dbNames: [{ nconst: number nconst, number: number degreeOfSeparation, imgUrl: null, imgInfo: null, name: str name, dob: number birthYear, dod: number deathYear, jobs: str professions }, ... ]
  *	(imgUrl/Path are default value at this point, these are created by actually using the app)
- *	dbMovies: [ { tconst: number tconst, title: str title, year: number year }, ... ]
+ *	dbMovies: [{ tconst: number tconst, title: str title, year: number year }, ... ]
  *	nextParents: Set( str nconst ) 
  *
 **/
 function prepData(actorTree, names, movies, baconNumber) {
-	let dbTree = [];
-	let dbNames = [];
-	let dbMovies = [];
+	const dbTree = [];
+	const dbNames = [];
+	const dbMovies = [];
+	const nextParents = new Set();
+	const validMovies = new Set();
 
-	let validMovies = new Set();
-	let nextParents = new Set();
-
-
-	for (let [childNconst, [ rootNconst, tconst]] of actorTree.entries()) {
+	for (let [childNconst, [ parentNconst, tconst]] of actorTree.entries()) {
 		if (names.has(childNconst) && movies.has(tconst)) {
 			nextParents.add(childNconst);
 			validMovies.add(tconst);
 
 			dbTree.push({
 				nconst: Number(childNconst.slice(2)),
-				parent: Number(rootNconst.slice(2)),
+				parent: Number(parentNconst.slice(2)),
 				tconst: Number(tconst.slice(2))
 			});
 
@@ -62,11 +60,9 @@ function prepData(actorTree, names, movies, baconNumber) {
 		}
 	}
 
-
 	for (let tconst of validMovies) {
 		dbMovies.push(Object.assign({ tconst: Number(tconst.slice(2)) }, movies.get(tconst)));
 	}
-
 
 	return [dbTree, dbNames, dbMovies, nextParents];
 }
@@ -81,33 +77,24 @@ function prepData(actorTree, names, movies, baconNumber) {
  *	inputs:
  *	parents: Set( str nconst1, ... ) 
  *	alreadyIndexed: Set( str nconst1, ... )
- *	baconNumber: number
+ *	baconNumber: int
  *	
  *	return: none
  *
 **/
 function expand(parents, alreadyIndexed, baconNumber) {
-
 	if (baconNumber == 7) {
 		return;
 	}
 
-	tsv.getCostars(parents, alreadyIndexed)
-		.then(costars => {
-			parents = null;
-
-			// costars.actorMap - map of costar nconst to [ parent nconst, linking tconst ]
-			// costars.movieSet - set of all tconsts of linking movies
-			// costars.actorSet - set of all costar nconsts
-			return Promise.all([
-				costars.actorMap,
-				tsv.getMoviesByTconsts(costars.movieSet),
-				tsv.getActorNames(costars.actorSet)
-			]);
-
-		}).then(([actorMap, titles, names]) => {
-
-			let [dbTree, dbNames, dbMovies, nextParents] = prepData(actorMap, names, titles, baconNumber);
+	tsv.getChildren(parents, alreadyIndexed)
+		.then(costars => Promise.all([
+			costars.childToParent,
+			tsv.getMoviesByTconsts(costars.movies),
+			tsv.getActorNames(costars.children)
+		]))
+		.then(([childToParent, titles, names]) => {
+			const [dbTree, dbNames, dbMovies, nextParents] = prepData(childToParent, names, titles, baconNumber);
 
 			return Promise.all([
 				nextParents,
@@ -115,16 +102,14 @@ function expand(parents, alreadyIndexed, baconNumber) {
 				db.addActorReferences(dbNames),
 				db.addMovieReferences(dbMovies)
 			]);
-
-		}).then(([nextParents, foo, bar, baz]) => {
-			expand(nextParents, alreadyIndexed, baconNumber + 1);
-		});
+		})
+		.then(results => expand(results[0], alreadyIndexed, baconNumber + 1));
 }
 
 
 // nm0000102 is the nconst for Kevin Bacon
-let parents = new Set(['nm0000102']);
-let alreadyIndexed = new Set(['nm0000102']);
+const parents = new Set(['nm0000102']);
+const alreadyIndexed = new Set(['nm0000102']);
 
 // clear db and generate Bacon tree
 db.resetDb().then(() => expand(parents, alreadyIndexed, 1));

@@ -7,7 +7,7 @@
 
 const AWS = require('aws-sdk');
 const s3 = new AWS.S3();
-const out = require('fs').createWriteStream('title.basics.tsv.gz', 'binary');
+const out = require('fs').createWriteStream('/data/title.basics.tsv.gz', 'binary');
 
 
 const params = {
@@ -17,5 +17,7 @@ const params = {
 };
 
 
-s3.getObject(params).createReadStream().pipe(out);
+s3.getObject(params)
+	.createReadStream()
+	.pipe(out);
 
