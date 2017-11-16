@@ -54,7 +54,7 @@
 #display-content-container {
 	flex: 0 0 auto;
 	width: 100%;
-	height: calc(100vh - 11.5rem);
+	height: calc(100% - 3.5rem);
 
 	overflow: scroll;
 }
@@ -275,20 +275,6 @@
 
 
 @media (max-width: 799px) {
-	#display-header {
-		height: 6rem;
-		margin-top: -1rem;
-		flex-direction: column;
-		justify-content: flex-start;
-	} #display-header > h2 {
-		margin: 0 1rem .5rem;
-	} #display-content-container {
-		height: calc(100% - 6rem);
-	}
-}
-
-
-@media (min-width: 800px) {
 	.movie-node-container {
 		width: 8.5rem;
 	} .row.arrow-row > .movie-node-container {
@@ -301,28 +287,16 @@
 }
 
 
-/*@media (min-width: 1000px) {
-	.actor-node-container {
-		height: 14rem;
-		width: 14rem;
-	} .actor-node > h2 {
-		width: 14rem;
-	} .actor-node > div {
-		width: 14rem;
-
-		flex-direction: row;
-	} .actor-node img {
-		max-height: 9rem;
-		max-width: 9rem;
-	} .actor-node .jobs {
-		flex-grow: 1;
-
-		margin: 0 .3rem;
-
-		font-size: .9rem;
-		text-align: left;
-		overflow-wrap: break-word;
-		hyphens: auto;
+@media (min-width: 800px) {
+	#display-header {
+		height: 6rem;
+		margin-top: -1rem;
+		flex-direction: column;
+		justify-content: flex-start;
+	} #display-header > h2 {
+		margin: 0 1rem .5rem;
+	} #display-content-container {
+		height: calc(100% - 6rem);
 	}
-}*/
+}
 

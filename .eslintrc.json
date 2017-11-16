@@ -35,9 +35,7 @@
         "spaced-comment": [
             "error",
             "always",
-            {
-                "exceptions": [ "-", "*" ]
-            }
+            { "exceptions": [ "-", "*" ] }
         ],
         "no-console": "off"
     }

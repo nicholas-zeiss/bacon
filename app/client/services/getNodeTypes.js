@@ -11,68 +11,69 @@ import angular from 'angular';
 
 (() => {
 	angular
-		.module('app.nodeTypes', [])
-		.factory('nodeTypes', () => {
+		.module('app.getNodeTypes', [])
+		.factory('getNodeTypes', () => {
 
+			return (size, length) => size == 'small' ? small(length) : medium(length);
 
 			function small(length) {
 				let types = {
 					3: [
 						'actor',
-						'right',
+						'rightShort',
 						'actor'
 					],
 					5: [
 						'actor',
-						'right',
+						'rightShort',
 						'actor',
 						'rightCenter',
 						'actor'
 					],
 					7: [
 						'actor',
-						'right',
+						'rightShort',
 						'actor',
 						'downOnRight',
 						'actor',
-						'left',
+						'leftShort',
 						'actor'
 					],
 					9: [
 						'actor',
-						'right',
+						'rightShort',
 						'actor',
 						'downOnRight',
 						'actor',
-						'left',
+						'leftShort',
 						'actor',
 						'leftCenter',
 						'actor'
 					],
 					11: [
 						'actor',
-						'right',
+						'rightShort',
 						'actor',
 						'downOnRight',
 						'actor',
-						'left',
+						'leftShort',
 						'actor',
 						'downOnLeft',
 						'actor',
-						'right',
+						'rightShort',
 						'actor'
 					],
 					13: [
 						'actor',
-						'right',
+						'rightShort',
 						'actor',
 						'downOnRight',
 						'actor',
-						'left',
+						'leftShort',
 						'actor',
 						'downOnLeft',
 						'actor',
-						'right',
+						'rightShort',
 						'actor',
 						'rightCenter',
 						'actor'
@@ -149,85 +150,6 @@ import angular from 'angular';
 
 				return types[length];
 			}
-
-
-			function large(length) {
-				let types = {
-					3: [
-						'actor',
-						'right',
-						'actor'
-					],
-					5: [
-						'actor',
-						'right',
-						'actor',
-						'right',
-						'actor'
-					],
-					7: [
-						'actor',
-						'curvedTop',
-						'actor',
-						'curvedTop',
-						'actor',
-						'curvedBottom',
-						'actor'
-					],
-					9: [
-						'actor',
-						'curvedTop',
-						'actor',
-						'curvedTop',
-						'actor',
-						'curvedBottom',
-						'actor',
-						'up',
-						'actor'
-					],
-					11: [
-						'actor',
-						'curvedTop',
-						'actor',
-						'curvedTop',
-						'actor',
-						'curvedBottom',
-						'actor',
-						'curvedBottom',
-						'actor',
-						'upRight',
-						'actor'
-					],
-					13: [
-						'actor',
-						'curvedTop',
-						'actor',
-						'curvedTop',
-						'actor',
-						'curvedTop',
-						'actor',
-						'curvedBottom',
-						'actor',
-						'curvedBottom',
-						'actor',
-						'upRight',
-						'actor'
-					]
-				};
-
-				return types[length];
-			}
-
-
-			return (size, length) => {
-				if (size == 'small') {
-					return small(length);
-				} else if (size == 'medium') {
-					return medium(length);
-				} else {
-					return large(length);
-				}
-			};
 			
 		});
 })();

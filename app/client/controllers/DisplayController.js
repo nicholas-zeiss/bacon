@@ -9,72 +9,65 @@
  *
 **/
 
-
 import $ from 'jquery';
 
 
-function DisplayController($scope, $timeout, $window, nodeTypes) {
-	let vm = this;
+function DisplayController($scope, $timeout, $window, getNodeTypes) {
+	const vm = this;
 
-	let lastScrollPos = 0;					// current scrollTop of the #display-content-container element
-	let timeoutPromises = [];				// unresolved timeouts that need to be cleared when we exit this view
-	
-	// maps each actor/movie by its index in pathToBacon to [ rowIndex, indexInRow ], specifiying its row in vm.rows and 
-	// the actor/movie's index in that row
-	let nodeRowIndex = [];				
-	
-	// depending on device size and number of actors to display, we use different svg arrows to show the connections graphically
-	// which arrows those are is determined here
-	let device = $window.innerWidth < 800 ? 'small' : 'medium';
-	let nodeType = nodeTypes(device, $scope.app.pathToBacon.length);
-
-
-	// Actors are displayed across several rows, each row stored in rows. Booleans of whether 
-	// a row is hidden or not are stored in rowHidden
 	vm.rows = [];
-	vm.rowHidden = [];
-	vm.duration = 500;		// IMPT if you change this also change values in display.css
+	vm.duration = 500;
+	
+	// maps each node by its index in pathToBacon to [ rowIndex, indexInRow ]
+	const nodeRowIndex = [];
+	const device = $window.innerWidth < 800 ? 'small' : 'medium';
+	const nodeTypes = getNodeTypes(device, $scope.app.pathToBacon.length);
+	const timeouts = [];
+	let scrollPos = 0;
 
 
+	// populate the rows to be displayed with the actor/movie nodes in the path to bacon
 	$scope.app.pathToBacon.forEach((node, i) => {
-		let rowIndex = getRowIndex(i);				// get corresponding row index, depends on device size
+		const rowIndex = getRowIndex(i);
 
-		vm.rows[rowIndex] = vm.rows[rowIndex] || [];
-		vm.rowHidden[rowIndex] = true;
+		vm.rows[rowIndex] = vm.rows[rowIndex] || { hidden: true, nodes: [] };
 
-		let length = vm.rows[rowIndex].push({
+		const rowLength = vm.rows[rowIndex].nodes.push({
 			actorMovie: node,
 			hidden: true,
-			type: nodeType[i]
+			type: nodeTypes[i]
 		});
 
-		nodeRowIndex[i] = [rowIndex, length - 1];
+		nodeRowIndex[i] = [ rowIndex, rowLength - 1 ];
 	});
 
+	// make first actor node visible, initiating cascade, after a small delay to ensure image has loaded
+	timeouts.push($timeout(showNode.bind(null, 0), 100));
+
+
+
+	//-------------------------------------------------------------------
+	// 															Helpers								
+	//-------------------------------------------------------------------
 
 	vm.reset = function() {
-		timeoutPromises.forEach(promise => $timeout.cancel(promise));
+		timeouts.forEach(timeout => $timeout.cancel(timeout));
 		$scope.app.resetApp();
 	};
 	
 
-	// make first actor node visible, initiating cascade
-	// small timeout to ensure image has loaded
-	timeoutPromises.push($timeout(showNodes.bind(null, 0), 100));
+	function showNode(index) {
+		const [ rowIndex, indexInRow ] = nodeRowIndex[index];
 
-
-	function showNodes(index) {
-		let [ rowIndex, indexInRow ] = nodeRowIndex[index];
-
-		if (vm.rowHidden[rowIndex]) {
-			timeoutPromises.push($timeout(scrollToNode.bind(null, '#row-' + rowIndex), 100));
+		if (vm.rows[rowIndex].hidden) {
+			timeouts.push($timeout(scrollToRow.bind(null, '#row-' + rowIndex), 100));
 		}
 
-		vm.rowHidden[rowIndex] = false;
-		vm.rows[rowIndex][indexInRow].hidden = false;
+		vm.rows[rowIndex].hidden = false;
+		vm.rows[rowIndex].nodes[indexInRow].hidden = false;
 
 		if (index < nodeRowIndex.length - 1) {
-			timeoutPromises.push($timeout(showNodes.bind(null, index + 1), 2 * vm.duration + 100));
+			timeouts.push($timeout(showNode.bind(null, index + 1), 2 * vm.duration + 100));
 		} else {
 			$scope.$emit('displayFinishedLoading');
 			$scope.$broadcast('scrollable');
@@ -84,32 +77,26 @@ function DisplayController($scope, $timeout, $window, nodeTypes) {
 
 	// different device sizes have different numbers of actors per row, get index here
 	function getRowIndex(index) {
-		if (device == 'small') {
-			return 2 * Math.floor(index / 4) + Math.floor((index % 4) / 3);
-		} else if (device == 'medium') {
-			return 2 * Math.floor(index / 6) + Math.floor((index % 6) / 5);
-		} else {
-			// return largeRowIndex(index);
-		}
+		const rowLength = device == 'small' ? 3 : 5;
+		return 2 * Math.floor(index / (rowLength + 1)) + Math.floor((index % (rowLength + 1)) / rowLength);
 	}
 
 
 	// use jquery to scroll to a row
-	function scrollToNode(nodeId) {
-		let node = $(nodeId);
+	function scrollToRow(rowID) {
+		const row = $(rowID);
 
-		if (!node.length) {
+		if (!row.length) {
 			return;
 		}
 
-		let scrollTo = node.position().top + node.height();
+		const scrollTo = row.position().top + row.height();
 
-		if (scrollTo > lastScrollPos) {
-			lastScrollPos = scrollTo;
+		if (scrollTo > scrollPos) {
+			scrollPos = scrollTo;
 
-			$('#display-content-container').animate({
-				scrollTop: scrollTo
-			}, 900);
+			$('#display-content-container')
+				.animate({ scrollTop: scrollTo }, 900);
 		}
 	}
 }

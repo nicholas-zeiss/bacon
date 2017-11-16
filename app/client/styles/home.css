@@ -29,7 +29,6 @@
 
 	#home-bacon-img {
 		opacity: 1;
-
 		box-sizing: border-box;
 		width: 30vw;
 		min-width: 360px;
@@ -47,8 +46,9 @@
 
 
   #home-bacon-img.toggle {
-  	animation: 5s toggle;
+  	animation: 2.5s toggle;
   }
+
 
 	#home > h1 {
 		margin: 0 1rem;

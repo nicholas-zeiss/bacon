@@ -4,7 +4,6 @@
  *
 **/
 
-
 import $ from 'jquery';
 
 
@@ -17,9 +16,13 @@ function InputController($scope, $timeout) {
 	// executes on user search
 	vm.submit = function() {
 		if (vm.name) {
+			const name = vm.name
+				.replace(/^\s+|\s+$/g, '')
+				.replace(/\s+/g, ' ');
+
 			// searching for kevin bacon on homepage has small easter egg
-			if (/kevin\sbacon/i.test(vm.name)) {
-				let bacon = $('#home-bacon-img');
+			if (/kevin\s+bacon/i.test(name)) {
+				const bacon = $('#home-bacon-img');
 
 				if (bacon.length && !bacon.attr('class').includes('toggle')) {
 					bacon.addClass('toggle');
@@ -28,11 +31,10 @@ function InputController($scope, $timeout) {
 						if (bacon.length) {
 							bacon.removeClass('toggle');
 						}
-					}, 5200);
+					}, 2700);
 				}
-
 			} else {
-				$scope.$emit('inputSubmission', vm.name);
+				$scope.$emit('inputSubmission', name);
 			}
 
 			vm.name = '';

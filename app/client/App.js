@@ -1,14 +1,9 @@
 /**
+ *
  * This is the root module for our web app. It simply imports all of our components, controllers, and services and injects them.
  * We also set up ngRoute in this file.
  *
- * The web app has three main sections:
- *   - Input, handled by the InputController, allows users to search for actors
- *   - Content varies depending on the state of the app according to the route controller
- *   - Footer is dumb html that displays a bit of information
- *
- * All three sections are children of the AppController which resides in the body element
- */
+**/
 
 
 import angular from 'angular';
@@ -37,7 +32,7 @@ import './filters/Jobs';
 
 // services
 import './services/arrowDetails';
-import './services/nodeTypes';
+import './services/getNodeTypes';
 import './services/serverCalls';
 
 
@@ -52,7 +47,7 @@ angular.module('app', [
 	'app.hide',
 	'app.scrollLock',
 	'app.arrowDetails',
-	'app.nodeTypes',
+	'app.getNodeTypes',
 	'app.serverCalls',
 	'ngRoute'
 ])
@@ -70,7 +65,7 @@ angular.module('app', [
 		'$scope',
 		'$timeout',
 		'$window',
-		'nodeTypes',
+		'getNodeTypes',
 		DisplayController
 	])
 	.controller('InputController', [
