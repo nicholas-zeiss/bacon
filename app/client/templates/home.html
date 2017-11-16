@@ -1,9 +1,13 @@
 
 <div id="home">
-	<a ng-if="!app.serverError" id="home-bacon-img" href="https://commons.wikimedia.org/wiki/File:Kevin_Bacon_by_David_Shankbone.jpg" target="_blank"></a>
-	<h1 ng-if="app.serverError">{{ [ app.serverError, app.searchName ] | error }}</h1>
+	<a href="https://commons.wikimedia.org/wiki/File:Kevin_Bacon_by_David_Shankbone.jpg"
+		id="home-bacon-img"
+		target="_blank"
+		ng-if="!app.serverError">
+	</a>
+	<h2 ng-if="app.serverError">{{ [ app.serverError, app.searchName ] | error }}</h2>
 	<p ng-if="app.serverError == 404">
 		If this does not seem correct, please make sure you are using the same spelling as <a href="http://imdb.com" target="_blank">IMDb</a>.
 	</p>
-	<button ng-if="app.serverError" ng-click="app.resetError()">New Search</button>
+	<button ng-click="app.resetError()" ng-if="app.serverError">New Search</button>
 </div>

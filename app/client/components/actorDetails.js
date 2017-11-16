@@ -13,9 +13,7 @@ import angular from 'angular';
 		.module('app.actorDetails', [])
 		.component('actorDetails', {
 			templateUrl: '/client/components/templates/actorDetails.html',
-			bindings: { 
-				actor: '<'
-			}
+			bindings: { actor: '<' }
 		});
 })();
 

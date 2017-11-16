@@ -22,13 +22,19 @@
 	<body ng-controller="AppController as app">
 		<header>
 			<h1>Six Degrees of Kevin Bacon</h1>
-			<form id="name-input" ng-controller="InputController as input">
-				<input type="text" placeholder="Search for an actor" ng-model="input.name" ng-disabled="app.inputDisabled">
-				<input type="submit" ng-click="input.submit()" ng-disabled="app.inputDisabled" value="">
+			<form ng-controller="InputController as input" id="name-input">
+				<input placeholder="Search for an actor" 
+					type="text" 
+					ng-disabled="app.inputDisabled"
+					ng-model="input.name"/>
+				<input type="submit" 
+					value=""
+					ng-click="input.submit()" 
+					ng-disabled="app.inputDisabled"/>
 			</form>
 		</header>
 		
-		<section id="view" ng-cloack ng-view autoscroll></section>
+		<section id="view" ng-cloak ng-view autoscroll></section>
 		
 		<div id="footer">
 			<div>

@@ -27,54 +27,46 @@
 		}
 	}
 
-
 	#home-bacon-img {
 		opacity: 1;
 		box-sizing: border-box;
-		width: 40vw;
 		min-width: 250px;
-		height: 40vw;
+		width: 40vw;
 		min-height: 250px;
+		height: 40vw;
 
 		border-radius: 50%;
 		box-shadow: 0px 0px 100px 30px #ffc800;
 
-		background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Kevin_Bacon_by_David_Shankbone.jpg/576px-Kevin_Bacon_by_David_Shankbone.jpg');
-		background-size: cover;
-		background-repeat: no-repeat;
+		background-image: url('/client/images/bacon-home.jpg');
 		background-position: 50% 10%;
+		background-repeat: no-repeat;
+		background-size: cover;
 	}
-
 
   #home-bacon-img.toggle {
   	animation: 2.5s toggle;
   }
 
 
-	#home > h1 {
+	#home > h2 {
 		margin: 0 1rem;
 		font-size: 30px;
-		text-shadow: 1px 1px 1px #d6d6d6;
 		text-align: center;
+		text-shadow: 1px 1px 1px #d6d6d6;
 	}
 
 
 	#home > p {
 		margin: 1.5rem 1rem 2rem;
-		text-align: center;
 		font-size: 20px;
+		text-align: center;
 	}
 
 
 	#home > p > a {
 		font-weight: 600;
-		text-decoration: none;
 		color: #3f35ff;
-	}
-
-
-	#home > p > a:hover {
-		text-decoration: underline;
 	}
 
 
@@ -94,7 +86,6 @@
 
 		cursor: pointer;
 	}
-
 
 	#home > button:hover {
 		background-color: #1b914a;
