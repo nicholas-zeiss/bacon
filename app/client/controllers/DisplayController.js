@@ -25,7 +25,6 @@ function DisplayController($scope, $timeout, $window, getNodeTypes) {
 	const timeouts = [];
 	let scrollPos = 0;
 
-
 	// populate the rows to be displayed with the actor/movie nodes in the path to bacon
 	$scope.app.pathToBacon.forEach((node, i) => {
 		const rowIndex = getRowIndex(i);
@@ -69,8 +68,8 @@ function DisplayController($scope, $timeout, $window, getNodeTypes) {
 		if (index < nodeRowIndex.length - 1) {
 			timeouts.push($timeout(showNode.bind(null, index + 1), 2 * vm.duration + 100));
 		} else {
-			$scope.$emit('displayFinishedLoading');
-			$scope.$broadcast('scrollable');
+			$scope.$emit('unlockInput');						// unlock user input
+			$scope.$broadcast('unlockScroll');			// unfreeze user scroll
 		}
 	}
 

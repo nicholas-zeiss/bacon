@@ -15,7 +15,7 @@
 
 	box-shadow: 0 5px 7px -5px black;
 
-	background-color: #3273db;
+	background: linear-gradient(0deg, #498fff, #3273db)
 }
 
 
@@ -55,13 +55,11 @@
 	flex: 0 0 auto;
 	width: 100%;
 	height: calc(100% - 3.5rem);
-
 	overflow: scroll;
 }
 
 
 	#display-content {
-		/* forces this element to be offset parent of actors/movies */
 		position: relative;
 		flex: 1 0 auto;
 		width: 100%;
@@ -97,7 +95,7 @@
 
 			.row.arrow-row > .movie-node-container {
 				width: 37.5rem;
-				height: 15rem;
+				/*height: 15rem;*/
 			}
 
 
@@ -131,8 +129,8 @@
 
 
 			.movie-node-container {
-				width: 15.5rem;
-				height: 19rem;
+				/*width: 15.5rem;*/
+				/*height: 19rem;*/
 			}
 			
 
@@ -269,16 +267,14 @@
 
 								border: 2px solid black;
 								border-radius: 10px;
-
-								transform: rotate(0deg);
 							}
 
 
 @media (max-width: 799px) {
 	.movie-node-container {
-		width: 8.5rem;
+		/*width: 8.5rem;*/
 	} .row.arrow-row > .movie-node-container {
-		width: 50rem;
+		/*width: 50rem;*/
 	} .row.first-row > .movie-node-container.fade-in {
 		animation: 1s ease-in expandMovieShort;
 	} .row:nth-child(0n+2) arrow {
@@ -290,13 +286,17 @@
 @media (min-width: 800px) {
 	#display-header {
 		height: 6rem;
-		margin-top: -1rem;
+		/*margin-top: -1rem;*/
 		flex-direction: column;
 		justify-content: flex-start;
 	} #display-header > h2 {
 		margin: 0 1rem .5rem;
 	} #display-content-container {
 		height: calc(100% - 6rem);
+	} .movie-node-container {
+		/*width: 8.5rem;*/
+	} .row.arrow-row > .movie-node-container {
+		width: 50rem;
 	}
 }
 

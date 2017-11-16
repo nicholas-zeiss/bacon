@@ -6,18 +6,17 @@
 
 import angular from 'angular';
 
+
 (() => {
 	angular
 		.module('app.arrow', ['app.arrowDetails'])
-		.directive('arrow', ['arrowDetails', arrowDetails => {
-			return {
-				controller: function($scope) {
-					Object.assign(this, arrowDetails($scope.node.type));
-				},
-				controllerAs: 'arrow',
-				scope: true,
-				templateUrl: '/client/templates/arrow.html'
-			};
-		}]);
+		.directive('arrow', ['arrowDetails', arrowDetails => ({
+			controller($scope) {
+				Object.assign(this, arrowDetails($scope.node.type));
+			},
+			controllerAs: 'arrow',
+			scope: true,
+			templateUrl: '/client/templates/arrow.html'
+		})]);
 })();
 

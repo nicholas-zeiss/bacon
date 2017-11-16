@@ -19,7 +19,7 @@
 		<script src="/dist/bundle.js"></script>
 	</head>
 	
-	<body ng-cloak ng-controller="AppController as app">
+	<body ng-controller="AppController as app">
 		<header>
 			<h1>Six Degrees of Kevin Bacon</h1>
 			<form id="name-input" ng-controller="InputController as input">
@@ -28,17 +28,16 @@
 			</form>
 		</header>
 		
-		<section id="view" ng-view autoscroll></section>
+		<section id="view" ng-cloack ng-view autoscroll></section>
 		
 		<div id="footer">
 			<div>
-				<p>Information courtesy of IMDb</p>
-				<p>(http://www.imdb.com).</p>
+				<p>Information courtesy of <a href="http://www.imdb.com" target="_blank">IMDb</a>.</p>
 				<p>Used with permission.</p>
 			</div>
 			<div>
-				<p>Images courtesy of <a href="https://commons.wikimedia.org/wiki/Main_Page" target="_blank">Wikimedia Commons</a></p>
-				<p>Click an image to see its source and attribution</p>
+				<p>Images courtesy of <a href="https://commons.wikimedia.org/wiki/Main_Page" target="_blank">Wikimedia Commons</a>.</p>
+				<p>Click an image for it's source.</p>
 			</div>
 		</div>
 	</body>

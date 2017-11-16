@@ -119,7 +119,7 @@ function AppController($scope, $location, serverCalls) {
 	$scope.$on('choiceMade', (event, nconst) => vm.search(nconst, false));
 
 	// display loaded all of the path into the dom, enable input
-	$scope.$on('displayFinishedLoading', () => vm.inputDisabled = false);
+	$scope.$on('unlockInput', () => vm.inputDisabled = false);
 
 
 

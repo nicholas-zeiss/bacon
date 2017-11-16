@@ -3,6 +3,9 @@
 <p class="dob">{{ [ $ctrl.actor.dob, $ctrl.actor.dod ] | birthDeath }}</p>
 
 <div>
-	<img ng-src="{{$ctrl.actor.imgUrl}}" alt="{{$ctrl.actor.name}}">
+	<a ng-if="$ctrl.actor.imgInfo" href="{{ $ctrl.actor.imgInfo }}" target="_blank">
+		<img ng-src="{{ $ctrl.actor.imgUrl }}" alt="{{ $ctrl.actor.name }}">
+	</a>
+	<img ng-if="!$ctrl.actor.imgInfo" ng-src="{{ $ctrl.actor.imgUrl }}" alt="{{ $ctrl.actor.name }}">
 	<p class="jobs" >{{ $ctrl.actor.jobs | jobs }}</p>
 </div>

@@ -37,7 +37,8 @@ import angular from 'angular';
 						width: 216,
 						height: 144,
 						align: 'center'
-					}
+					},
+					style: {}
 				});
 
 
@@ -64,7 +65,8 @@ import angular from 'angular';
 						width: 216,
 						height: 144,
 						align: 'center'
-					}
+					},
+					style: {}
 				});
 
 
@@ -91,7 +93,8 @@ import angular from 'angular';
 						width: 400,
 						height: 120,
 						align: 'left'
-					}
+					},
+					style: {}
 				});
 
 
@@ -118,7 +121,8 @@ import angular from 'angular';
 						width: 400,
 						height: 120,
 						align: 'right'
-					}
+					},
+					style: { float: 'right' }
 				});
 
 
@@ -145,7 +149,8 @@ import angular from 'angular';
 						width: 150,
 						height: 140,
 						align: 'right'
-					}
+					},
+					style: {}
 				});
 
 
@@ -172,7 +177,8 @@ import angular from 'angular';
 						width: 150,
 						height: 140,
 						align: 'left'
-					}
+					},
+					style: {}
 				});
 
 
@@ -199,7 +205,8 @@ import angular from 'angular';
 						width: 104,
 						height: 144,
 						align: 'center'
-					}
+					},
+					style: {}
 				});
 
 
@@ -226,7 +233,8 @@ import angular from 'angular';
 						width: 104,
 						height: 144,
 						align: 'center'
-					}
+					},
+					style: {}
 				});
 
 
@@ -253,7 +261,8 @@ import angular from 'angular';
 						width: 225,
 						height: 140,
 						align: 'right'
-					}
+					},
+					style: {}
 				});
 
 
@@ -280,7 +289,8 @@ import angular from 'angular';
 						width: 150,
 						height: 150,
 						align: 'left'
-					}
+					},
+					style: {}
 				});
 
 
@@ -307,7 +317,8 @@ import angular from 'angular';
 						width: 225,
 						height: 140,
 						align: 'left'
-					}
+					},
+					style: {}
 				});
 			}
 
