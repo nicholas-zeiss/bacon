@@ -11,8 +11,7 @@ import angular from 'angular';
 	angular
 		.module('app.arrowDetails', [])
 		.factory('arrowDetails', () => type => {
-			let out = {};
-
+			const out = {};
 
 			if (type == 'right') {
 				Object.assign(out, {
@@ -34,7 +33,7 @@ import angular from 'angular';
 					title: {
 						x: 0,
 						y: 160,
-						width: 216,
+						width: 212,
 						height: 144,
 						align: 'center'
 					},
@@ -62,7 +61,7 @@ import angular from 'angular';
 					title: {
 						x: 32,
 						y: 160,
-						width: 216,
+						width: 212,
 						height: 144,
 						align: 'center'
 					},
@@ -202,7 +201,7 @@ import angular from 'angular';
 					title: {
 						x: 32,
 						y: 160,
-						width: 104,
+						width: 100,
 						height: 144,
 						align: 'center'
 					},
@@ -230,7 +229,7 @@ import angular from 'angular';
 					title: {
 						x: 0,
 						y: 160,
-						width: 104,
+						width: 100,
 						height: 144,
 						align: 'center'
 					},

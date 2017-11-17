@@ -3,78 +3,79 @@
  */
 
 
-#display-header {
+#display {
 	z-index: 2;
-	flex: 0 0 auto;
 	width: 100%;
-	height: 3.5rem;
+	height: 100%;
 
 	display: flex;
-	justify-content: center;
+	flex-direction: column;
 	align-items: center;
-
-	box-shadow: 0 5px 7px -5px black;
-
-	background: linear-gradient(0deg, #498fff, #3273db)
 }
 
+	#display-header {
+		box-sizing: border-box;
+		flex: 0 0 auto;
+		width: 100%;
 
-	#display-header > h2 {
-		height: 2rem;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		align-items: center;
 
-		margin: 0 1rem .2rem;
+		padding: .5rem;
+		box-shadow: 0 5px 7px -5px black;
 
-		color: #f2f2f2;
-		text-shadow: 1px 1px 3px #143160;
+		background: linear-gradient(0deg, #498fff, #3273db)
 	}
 
+		#display-header > h2 {
+			margin: 0 1rem 0;
 
-	#display-header > button {
-		padding: .1rem .5rem .2rem;
-		border: none;
-		border-radius: 3px;
-		outline: none;
-		box-shadow: 0 0 3px 0px #333;
-		margin: 0;
+			color: #f2f2f2;
+			text-align: center;
+			text-shadow: 1px 1px 3px #143160;
+		}
 
-		font-size: 1.5rem;
-		text-shadow: 1px 1px 1px #13773b;
-		color: #f8f8f8;
-		background-color: #1eb55a;
+		#display-header > button {
+			padding: .1rem .5rem .2rem;
+			border: none;
+			border-radius: 3px;
+			outline: none;
+			box-shadow: 0 0 3px 0px #333;
+			margin: .5rem 0;
 
-		cursor: pointer;
-	}
+			font-size: 1.5rem;
+			text-shadow: 1px 1px 1px #13773b;
+			
+			color: #f8f8f8;
+			background-color: #1eb55a;
 
+			cursor: pointer;
+		}
 
-	#display-header > button:hover {
-		background-color: #198746;
-	}
-
-
-#display-content-container {
-	flex: 0 0 auto;
-	width: 100%;
-	height: calc(100% - 3.5rem);
-	overflow: scroll;
-}
+		#display-header > button:hover {
+			background-color: #198746;
+		}
 
 
 	#display-content {
 		position: relative;
-		flex: 1 0 auto;
+		box-sizing: border-box;
 		width: 100%;
-
-		margin: auto 0;
+		height: auto;
 
 		display: flex;
 		flex-direction: column;
-		justify-content: center;
 		align-items: center;
+
+		overflow: scroll;
 	}
 
-
 		.row {
-			width: 100%;
+			box-sizing: border-box;
+			flex-shrink: 0;
+			width: 50rem;
 			height: 19rem;
 
 			display: flex;
@@ -82,42 +83,16 @@
 			align-items: center;
 		}
 
-
 		.row.reverse-row {
 			flex-direction: row-reverse;
 		}
 
-
-			.row.arrow-row {
-				height: 15rem;
-			}
-
-
-			.row.arrow-row > .movie-node-container {
-				width: 37.5rem;
-				/*height: 15rem;*/
-			}
-
-
-			.actor-node-container, .movie-node-container {
-				box-sizing: border-box;
-			}
-
-
-			.row.first-row > .actor-node-container.hide,
-			.row.first-row > .movie-node-container.hide {
-				display: none;
-			}
-
-
-			.actor-node-container.hide, .movie-node-container.hide {
-				visibility: hidden;
-			}
-
+		.row.arrow-row {
+			height: 15rem;
+		}
 
 			.actor-node-container {
 				width: 10.5rem;
-				height: 18.5rem;
 
 				display: flex;
 				flex-direction: column;
@@ -127,10 +102,21 @@
 				margin: .25rem;
 			}
 
+			.actor-node-container, .movie-node-container {
+				box-sizing: border-box;
+			}
 
-			.movie-node-container {
-				/*width: 15.5rem;*/
-				/*height: 19rem;*/
+			.row.arrow-row > .movie-node-container {
+				width: 50rem;
+			}
+
+			.row.first-row > .actor-node-container.hide,
+			.row.first-row > .movie-node-container.hide {
+				display: none;
+			}
+
+			.actor-node-container.hide, .movie-node-container.hide {
+				visibility: hidden;
 			}
 			
 
@@ -147,7 +133,6 @@
 				}
 			}
 
-
 			@keyframes expandMovie {
 				0% {
 					opacity: 0;
@@ -160,7 +145,6 @@
 					width: 15.5rem;
 				}
 			}
-
 
 			@keyframes expandMovieShort {
 				0% {
@@ -175,7 +159,6 @@
 				}
 			}
 
-
 			@keyframes fadeIn {
 				0% {
 					opacity: 0;
@@ -184,18 +167,20 @@
 				}
 			}
 
-
 			.row.first-row > .actor-node-container.fade-in {
 				-webkit-animation: 1s ease-in expandActor;
 				animation: 1s ease-in expandActor;
 			}
-
 
 			.row.first-row > .movie-node-container.fade-in {
 				-webkit-animation: 1s ease-in expandMovie;
 				animation: 1s ease-in expandMovie;
 			}
 
+			.row.first-row > .movie-node-container.short.fade-in {
+				-webkit-animation: 1s ease-in expandMovieShort;
+				animation: 1s ease-in expandMovieShort;
+			}
 
 			.actor-node-container.fade-in,
 			.movie-node-container.fade-in {
@@ -205,8 +190,7 @@
 
 
 				.actor-node {
-					box-sizing: border-box;
-					width: 100%;
+					width: 10rem;
 
 					display: flex;
 					flex-direction: column;
@@ -221,82 +205,41 @@
 					background-color: lightblue;
 				}
 
-
-					.actor-node p {
-						margin:	0;
-
-						text-align: center;
-					}
-
-
 					.actor-node > h2 {
-						width: 10rem;
-
 						margin: .2rem 0 0;
-
 						font-size: 1.2rem;
 						font-weight: bold;
 						text-align: center;
 					}
 
+					.actor-node p {
+						margin:	0;
+						text-align: center;
+					}
 
 					.actor-node > .dob {
 						margin-top: -.2rem;
-
 						font-size: .8rem;
 					}
-
 
 					.actor-node .jobs {
 						font-size: .8rem;
 					}
 
-						.actor-node > div {
-							display: flex;
-							flex-direction: column;
-							align-items: center;
+					.actor-node > div {
+						display: flex;
+						flex-direction: column;
+						align-items: center;
 
-							margin-top: .2rem;
-						}
+						margin-top: .2rem;
+					}
 
+					.actor-node img {
+						box-sizing: border-box;
+						max-width: 10rem;
+						max-height: 10rem;
 
-							.actor-node img {
-								box-sizing: border-box;
-								max-height: 10rem;
-								max-width: 10rem;
-
-								border: 2px solid black;
-								border-radius: 10px;
-							}
-
-
-@media (max-width: 799px) {
-	.movie-node-container {
-		/*width: 8.5rem;*/
-	} .row.arrow-row > .movie-node-container {
-		/*width: 50rem;*/
-	} .row.first-row > .movie-node-container.fade-in {
-		animation: 1s ease-in expandMovieShort;
-	} .row:nth-child(0n+2) arrow {
-		float: right;
-	}
-}
-
-
-@media (min-width: 800px) {
-	#display-header {
-		height: 6rem;
-		/*margin-top: -1rem;*/
-		flex-direction: column;
-		justify-content: flex-start;
-	} #display-header > h2 {
-		margin: 0 1rem .5rem;
-	} #display-content-container {
-		height: calc(100% - 6rem);
-	} .movie-node-container {
-		/*width: 8.5rem;*/
-	} .row.arrow-row > .movie-node-container {
-		width: 50rem;
-	}
-}
+						border: 2px solid black;
+						border-radius: 10px;
+					}
 

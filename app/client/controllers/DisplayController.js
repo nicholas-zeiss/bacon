@@ -18,12 +18,14 @@ function DisplayController($scope, $timeout, $window, getNodeTypes) {
 	vm.rows = [];
 	vm.duration = 500;
 	
+
 	// maps each node by its index in pathToBacon to [ rowIndex, indexInRow ]
 	const nodeRowIndex = [];
 	const device = $window.innerWidth < 800 ? 'small' : 'medium';
 	const nodeTypes = getNodeTypes(device, $scope.app.pathToBacon.length);
 	const timeouts = [];
 	let scrollPos = 0;
+
 
 	// populate the rows to be displayed with the actor/movie nodes in the path to bacon
 	$scope.app.pathToBacon.forEach((node, i) => {
@@ -34,6 +36,7 @@ function DisplayController($scope, $timeout, $window, getNodeTypes) {
 		const rowLength = vm.rows[rowIndex].nodes.push({
 			actorMovie: node,
 			hidden: true,
+			short: /short/i.test(nodeTypes[i]),
 			type: nodeTypes[i]
 		});
 
@@ -93,9 +96,7 @@ function DisplayController($scope, $timeout, $window, getNodeTypes) {
 
 		if (scrollTo > scrollPos) {
 			scrollPos = scrollTo;
-
-			$('#display-content-container')
-				.animate({ scrollTop: scrollTo }, 900);
+			$('#display-content').animate({ scrollTop: scrollTo }, 900);
 		}
 	}
 }

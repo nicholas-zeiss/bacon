@@ -11,8 +11,6 @@ import angular from 'angular';
 (() => {
 	angular
 		.module('app.displayHeader', [])
-		.filter('displayHeader', () => (
-			([name, number]) => `${name} is ${number} degree${number > 1 ? 's' : ''} from Kevin Bacon`)
-		);
+		.filter('displayHeader', () => ([name, number]) => `${name} is ${number} degree${number > 1 ? 's' : ''} from Kevin Bacon`);
 })();
 

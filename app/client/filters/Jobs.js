@@ -11,8 +11,6 @@ import angular from 'angular';
 (() => {
 	angular
 		.module('app.jobs', [])
-		.filter('jobs', () => (
-			jobs => jobs ? jobs.split(',').join(', ') : ''
-		));
+		.filter('jobs', () => jobs => jobs ? jobs.split(',').join(', ') : '');
 })();
 

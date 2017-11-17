@@ -11,8 +11,6 @@ import angular from 'angular';
 (() => {
 	angular
 		.module('app.birthDeath', [])
-		.filter('birthDeath', () => (
-			([dob, dod]) => dob ? `${dob} - ${dod ? dod : 'present'}` : '')
-		);
+		.filter('birthDeath', () => ([dob, dod]) => dob ? `${dob} - ${dod ? dod : 'present'}` : '');
 })();
 

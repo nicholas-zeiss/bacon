@@ -14,10 +14,8 @@ import angular from 'angular';
 		.module('app.getNodeTypes', [])
 		.factory('getNodeTypes', () => {
 
-			return (size, length) => size == 'small' ? small(length) : medium(length);
-
-			function small(length) {
-				let types = {
+			const types = {
+				small: {
 					3: [
 						'actor',
 						'rightShort',
@@ -78,14 +76,8 @@ import angular from 'angular';
 						'rightCenter',
 						'actor'
 					]
-				};
-
-				return types[length];
-			}
-
-
-			function medium(length) {
-				let types = {
+				},
+				medium: {
 					3: [
 						'actor',
 						'right',
@@ -146,11 +138,10 @@ import angular from 'angular';
 						'leftCenterLong',
 						'actor'
 					]
-				};
+				}
+			};
 
-				return types[length];
-			}
-			
+			return (size, length) => [ ...types[size][length] ];
 		});
 })();
 
