@@ -10,7 +10,7 @@ import angular from 'angular';
 (() => {
 	angular
 		.module('app.scrollLock', [])
-		.directive('scrollLock', () => ($scope, $element) => {		
+		.directive('scrollLock', () => ($scope, $element) => {
 			$element.on('wheel', e => e.preventDefault());
 			$scope.$on('unlockScroll', () => $element.off('wheel'));
 		});

@@ -17,7 +17,6 @@ function DisplayController($scope, $timeout, $window, getNodeTypes) {
 
 	vm.rows = [];
 	vm.duration = 500;
-	
 
 	// maps each node by its index in pathToBacon to [ rowIndex, indexInRow ]
 	const nodeRowIndex = [];
@@ -62,10 +61,10 @@ function DisplayController($scope, $timeout, $window, getNodeTypes) {
 		const [ rowIndex, indexInRow ] = nodeRowIndex[index];
 
 		if (vm.rows[rowIndex].hidden) {
-			timeouts.push($timeout(scrollToRow.bind(null, '#row-' + rowIndex), 100));
+			vm.rows[rowIndex].hidden = false;
+			timeouts.push($timeout(scrollToRow.bind(null, '#row-' + rowIndex), 0));
 		}
 
-		vm.rows[rowIndex].hidden = false;
 		vm.rows[rowIndex].nodes[indexInRow].hidden = false;
 
 		if (index < nodeRowIndex.length - 1) {
@@ -84,19 +83,16 @@ function DisplayController($scope, $timeout, $window, getNodeTypes) {
 	}
 
 
+	const container = $('#display-content-container');
+
 	// use jquery to scroll to a row
 	function scrollToRow(rowID) {
 		const row = $(rowID);
-
-		if (!row.length) {
-			return;
-		}
-
-		const scrollTo = row.position().top + row.height();
+		const scrollTo = row[0].offsetTop + row.height() - container.innerHeight();
 
 		if (scrollTo > scrollPos) {
 			scrollPos = scrollTo;
-			$('#display-content').animate({ scrollTop: scrollTo }, 900);
+			container.animate({ scrollTop: scrollTo }, 900);
 		}
 	}
 }

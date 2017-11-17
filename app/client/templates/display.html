@@ -1,29 +1,30 @@
 
 <div id="display">
 	<div id="display-header">
-		<h2>{{ [ app.pathToBacon[0].name, app.pathToBacon[0].number ] | displayHeader }}</h2>
+		<h2>{{ app.pathToBacon[0].name }}</h2>
 		<button type="button" ng-click="display.reset()">Reset</button>
 	</div>
-
-	<div id="display-content" scroll-lock>
-		<div id="row-{{ $index }}"
-			ng-class="'row' + (!$index ? ' first-row' : '') + ($odd ? ' arrow-row' : '') + ($index == 2 ? ' reverse-row' : '')"
-			ng-hide="row.hidden"
-			ng-repeat="row in display.rows">
-			
-			<div hide="node.hidden"
-				ng-class="(node.type == 'actor' ? 'actor-node-container' : 'movie-node-container') + (node.short ? ' short' : '')"
-				ng-repeat="node in row.nodes">
+	<div id="display-content-container" scroll-lock>
+		<div id="display-content">
+			<div id="row-{{ $index }}"
+				ng-class="'row' + (!$index ? ' first-row' : '') + ($odd ? ' arrow-row' : '') + ($index == 2 ? ' reverse-row' : '')"
+				ng-hide="row.hidden"
+				ng-repeat="row in display.rows">
 				
-				<actor-details actor="node.actorMovie"		
-					class="actor-node"
-					ng-if="node.type == 'actor'">
-				</actor-details>
-				
-				<arrow class="movie-node"
-					type="node.type"
-					ng-if="node.type != 'actor'">
-				</arrow>
+				<div hide="node.hidden"
+					ng-class="(node.type == 'actor' ? 'actor-node-container' : 'movie-node-container') + (node.short ? ' short' : '')"
+					ng-repeat="node in row.nodes">
+					
+					<actor-details actor="node.actorMovie"		
+						class="actor-node"
+						ng-if="node.type == 'actor'">
+					</actor-details>
+					
+					<arrow class="movie-node"
+						type="node.type"
+						ng-if="node.type != 'actor'">
+					</arrow>
+				</div>
 			</div>
 		</div>
 	</div>
