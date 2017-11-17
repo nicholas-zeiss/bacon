@@ -5,10 +5,15 @@
 	<a href="{{ $ctrl.actor.imgInfo }}" 
 		target="_blank"
 		ng-if="$ctrl.actor.imgInfo">
-		<img alt="{{ $ctrl.actor.name }}" ng-src="{{ $ctrl.actor.imgUrl }}"/>
+
+		<img alt="{{ $ctrl.actor.name }}"
+			title="{{ $ctrl.actor.name }}"
+			ng-src="{{ $ctrl.actor.imgUrl }}"/>
 	</a>
 	<img alt="{{ $ctrl.actor.name }}"
+		title="{{ $ctrl.actor.name }}" 
 		ng-if="!$ctrl.actor.imgInfo"
 		ng-src="{{ $ctrl.actor.imgUrl }}"/>
+		
 	<p class="jobs" >{{ $ctrl.actor.jobs | jobs }}</p>
 </div>
