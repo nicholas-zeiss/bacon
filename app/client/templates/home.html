@@ -6,8 +6,8 @@
 		ng-if="!app.serverError">
 	</a>
 	<h2 ng-if="app.serverError">{{ [ app.serverError, app.searchName ] | error }}</h2>
-	<p ng-if="app.serverError == 404">
-		If this does not seem correct, please make sure you are using the same spelling as <a href="http://imdb.com" target="_blank">IMDb</a>.
+	<p ng-if="app.serverError == 404 && app.searchName.slice(0, 7) != 'index: '">
+		If this does not seem correct, please make sure you are using the same spelling as <a href="{{ app.searchName | imdbSearch }}" target="_blank">IMDb</a>.
 	</p>
 	<button ng-click="app.resetError()" ng-if="app.serverError">New Search</button>
 </div>

@@ -52,7 +52,7 @@
 
 
 	#home > h2 {
-		margin: 0 1rem;
+		margin: 0 1rem 1.5rem;
 		font-size: 30px;
 		text-align: center;
 		text-shadow: 1px 1px 1px #d6d6d6;
@@ -60,7 +60,7 @@
 
 
 	#home > p {
-		margin: 1.5rem 1rem 2rem;
+		margin: 0 1rem 2rem;
 		font-size: 20px;
 		text-align: center;
 	}

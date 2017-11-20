@@ -30,6 +30,7 @@ import './directives/ScrollOnShow';
 import './filters/BirthDeath';
 import './filters/DisplayHeader';
 import './filters/Error';
+import './filters/ImdbSearch';
 import './filters/Jobs';
 
 // services
@@ -44,6 +45,7 @@ angular.module('app', [
 	'app.birthDeath',
 	'app.displayHeader',
 	'app.error',
+	'app.imdbSearch',
 	'app.jobs',
 	'app.arrow',
 	'app.autoScroll',
