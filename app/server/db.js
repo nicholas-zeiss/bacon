@@ -26,7 +26,7 @@
  *
  *   ii. movieReference - {
  *			  tconst: int,           -  numerical index as specified in the IMDb dataset
- *			  tile: str,				     -  primary title of the movie
+ *			  title: str,				     -  primary title of the movie
  *        year: int              -  year the movie was released (0 if not in dataset)
  *		  }
  *
