@@ -60,6 +60,8 @@ function AppController($scope, $location, serverCalls) {
 	//-------------------------------------------------------------------
 
 	const URL_PARSER = /([a-z]+)\/?([a-zA-Z-]+)?([0-9]+)?$/;
+
+	let rerouteOnLoad = false;
 	
 	// reroute as appropriate on reload
 	if ($location.path() !== '/home') {
@@ -72,12 +74,19 @@ function AppController($scope, $location, serverCalls) {
 			vm.search(url[2].replace('-', ' '), true);
 		
 		} else {
+			rerouteOnLoad = true;
 			$location.path('/home').replace();
 		}
 	}
 
 	// handles browser moving back/forward through history by prepping app state as appropriate
 	$scope.$on('$locationChangeStart', (event, newUrl, prevUrl) => {
+		if (rerouteOnLoad) {
+			// ignore url change on page load
+			rerouteOnLoad = false;
+			return;
+		}
+
 		newUrl = newUrl.match(URL_PARSER);
 		prevUrl = prevUrl.match(URL_PARSER);
 
