@@ -3,27 +3,26 @@
  *	This is controller is responsible for the Display view which occurs when a path to Kevin Bacon has been loaded
  *	and must be shown to the user. Actor and movie information elements are added to DOM simultaneously and then made visible one by one.
  *	All nodes take a duration of vm.duration to have an opacity animation, nodes in the first row also take vm.duration to do a width
- *	animation beforehand.
+ *	animation beforehand. Total duration of each node becoming unhidden to next node starting its animation is 2 * vm.duration.
  *
  *	On loading of a new row jquery is used to scroll the display container to that position. User scrolling is disabled while this occurs.
  *
 **/
 
-import $ from 'jquery';
 
 
 function DisplayController($scope, $timeout, $window, getNodeTypes) {
 	const vm = this;
 
-	vm.rows = [];
 	vm.duration = 500;
+	vm.rows = [];
+	vm.userScrollLocked = true;
 
-	// maps each node by its index in pathToBacon to [ rowIndex, indexInRow ]
-	const nodeRowIndex = [];
 	const device = $window.innerWidth < 800 ? 'small' : 'medium';
+	const nodeToRowIndex = [];
+	const nodeToIndexInRow = [];
 	const nodeTypes = getNodeTypes(device, $scope.app.pathToBacon.length);
 	const timeouts = [];
-	let scrollPos = 0;
 
 
 	// populate the rows to be displayed with the actor/movie nodes in the path to bacon
@@ -39,7 +38,8 @@ function DisplayController($scope, $timeout, $window, getNodeTypes) {
 			type: nodeTypes[i]
 		});
 
-		nodeRowIndex[i] = [ rowIndex, rowLength - 1 ];
+		nodeToRowIndex[i] = rowIndex;
+		nodeToIndexInRow[i] = rowLength - 1;
 	});
 
 	// make first actor node visible, initiating cascade, after a small delay to ensure image has loaded
@@ -52,26 +52,23 @@ function DisplayController($scope, $timeout, $window, getNodeTypes) {
 	//-------------------------------------------------------------------
 
 	vm.reset = function() {
-		timeouts.forEach(timeout => $timeout.cancel(timeout));
+		timeouts.forEach(id => $timeout.cancel(id));
 		$scope.app.resetApp();
 	};
 	
 
-	function showNode(index) {
-		const [ rowIndex, indexInRow ] = nodeRowIndex[index];
+	function showNode(nodeIndex) {
+		const rowIndex = nodeToRowIndex[nodeIndex];
+		const indexInRow = nodeToIndexInRow[nodeIndex];
 
-		if (vm.rows[rowIndex].hidden) {
-			vm.rows[rowIndex].hidden = false;
-			timeouts.push($timeout(scrollToRow.bind(null, '#row-' + rowIndex), 0));
-		}
-
+		vm.rows[rowIndex].hidden = false;
 		vm.rows[rowIndex].nodes[indexInRow].hidden = false;
 
-		if (index < nodeRowIndex.length - 1) {
-			timeouts.push($timeout(showNode.bind(null, index + 1), 2 * vm.duration + 100));
+		if (nodeIndex < $scope.app.pathToBacon.length - 1) {
+			timeouts.push($timeout(showNode.bind(null, nodeIndex + 1), 2 * vm.duration));
 		} else {
-			$scope.$emit('unlockInput');						// unlock user input
-			$scope.$broadcast('unlockScroll');			// unfreeze user scroll
+			$scope.$emit('unlockInput');		// unlock user input to search bar
+			vm.userScrollLocked = false;
 		}
 	}
 
@@ -80,20 +77,6 @@ function DisplayController($scope, $timeout, $window, getNodeTypes) {
 	function getRowIndex(index) {
 		const rowLength = device == 'small' ? 3 : 5;
 		return 2 * Math.floor(index / (rowLength + 1)) + Math.floor((index % (rowLength + 1)) / rowLength);
-	}
-
-
-	const container = $('#display-content-container');
-
-	// use jquery to scroll to a row
-	function scrollToRow(rowID) {
-		const row = $(rowID);
-		const scrollTo = row[0].offsetTop + row.height() - container.innerHeight();
-
-		if (scrollTo > scrollPos) {
-			scrollPos = scrollTo;
-			container.animate({ scrollTop: scrollTo }, 900);
-		}
 	}
 }
 

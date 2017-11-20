@@ -21,8 +21,10 @@ import InputController from './controllers/InputController';
 
 // directives
 import './directives/Arrow';
+import './directives/AutoScroll';
 import './directives/Hide';
 import './directives/ScrollLock';
+import './directives/ScrollOnShow';
 
 // filters
 import './filters/BirthDeath';
@@ -44,8 +46,10 @@ angular.module('app', [
 	'app.error',
 	'app.jobs',
 	'app.arrow',
+	'app.autoScroll',
 	'app.hide',
 	'app.scrollLock',
+	'app.scrollOnShow',
 	'app.arrowDetails',
 	'app.getNodeTypes',
 	'app.serverCalls',
