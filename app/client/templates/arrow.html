@@ -24,7 +24,7 @@
 		ng-attr-x="{{ arrow.year.x }}"
 		ng-attr-y="{{ arrow.year.y }}">
 
-		{{ node.actorMovie.year || '' }}
+		{{ node.actorMovie.year != '0' ? node.actorMovie.year : '' }}
 	</text>
 
 	<foreignObject ng-attr-height="{{ arrow.title.height }}"
