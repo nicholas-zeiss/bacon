@@ -390,6 +390,10 @@ function getBaconPath(nconst) {
 // 	.then(res => console.log(res))
 // 	.catch(err => console.log(err));
 
+// resetImages()
+// 	.then(() => console.log('images deleted'))
+// 	.catch(err => console.log(err))
+
 
 module.exports = {
 	resetDb,

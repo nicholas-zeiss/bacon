@@ -37,6 +37,38 @@ function searchImagesUrl(files) {
 }
 
 
+function searchWikimedia(name, titles) {
+	return axios({
+		method: 'get',
+		url: searchImagesUrl(titles)
+	})
+		.then(results => {
+			const pages = results.data.query.pages;
+			const output = { 
+				name,
+				imgUrl: '',
+				imgInfo: ''
+			};
+
+			for (let pageid in pages) {
+				const page = pages[pageid];
+
+				if (page.imageinfo && page.imageinfo.length) {
+					output.imgUrl = page.imageinfo[0].thumburl;
+					output.imgInfo = page.imageinfo[0].descriptionshorturl;
+					break;
+				}
+			}
+
+			return output;
+		})
+		.catch(error => {
+			console.log('error getting image urls:\n', error);
+			throw error;
+		});
+}
+
+
 /**
  *
  *	Given an array of actor names, find an image title for each one or null if none exist.
@@ -54,10 +86,8 @@ function findImageTitles(actors) {
 	})
 		.then(result => {
 
-			// redirects occur when eg we search wikipedia for charles chaplin and it redirects to charlie chaplin
-			const redirectMap = {};
 			const output = {};
-
+			const redirectMap = {};
 			const redirects = result.data.query.redirects || [];
 			const pages = result.data.query.pages;
 
@@ -67,17 +97,17 @@ function findImageTitles(actors) {
 				const name = redirectMap[pages[page].title] || pages[page].title;
 
 				if (pages[page].images && pages[page].images.length) {
-					// wikipedia pages are full of svg logos/icons, filter those out
-					const images = pages[page].images
-						.filter(img => img.title.match(/jpg$|png$/i));
-
-					output[name] = images.length ? images[0].title : null;
+					output[name] = pages[page]
+						.images
+						.filter(img => img.title.match(/jpg$|png$/i))		// wikipedia pages are full of svg logos/icons, filter those out
+						.map(img => img.title);
 				}
 			}
 
-			actors.forEach(actor => output[actor] = output[actor] || null);
-
+			actors.forEach(actor => output[actor] = output[actor] || []);
+			console.log('findImageTitles output:\n', output)
 			return output;
+
 		})
 		.catch(error => {
 			console.log('error getting image titles:\n', error);
@@ -97,43 +127,29 @@ function findImageTitles(actors) {
  *
 **/
 function findImageUrls(imageTitles) {
-	const titlesToSearch = [];
-	const titleToName = {};
+	const searchesToMake = [];
 	const output = {};
 
 	for (let name in imageTitles) {
-		if (imageTitles[name]) {
-			titlesToSearch.push(imageTitles[name]);
-			titleToName[imageTitles[name]] = name;
+		if (imageTitles[name].length) {
+			searchesToMake.push(searchWikimedia(name, imageTitles[name]));
 		} else {
 			output[name] = { imgUrl: '', imgInfo: '' };
 		}
 	}
 
-	if (!titlesToSearch.length) {
+	if (!searchesToMake.length) {
 		return output;
 	}
 
-	return axios({
-		method: 'get',
-		url: searchImagesUrl(titlesToSearch)
-	})
-		.then(result => {
-			const pages = result.data.query.pages;
-
-			for (let pageid in pages) {
-				const page = pages[pageid];
-				const name = titleToName[page.title];
-				let imgUrl = '';
-				let imgInfo = '';
-
-				if (page.imageinfo && page.imageinfo.length) {
-					imgUrl = page.imageinfo[0].thumburl;
-					imgInfo = page.imageinfo[0].descriptionshorturl;
-				}
-
-				output[name] = { imgUrl, imgInfo };
-			}
+	return Promise.all(searchesToMake)
+		.then(results => {			
+			results.forEach(result => {
+				output[result.name] = {
+					imgUrl: result.imgUrl,
+					imgInfo: result.imgInfo
+				};
+			});
 
 			return output;
 		})
@@ -142,6 +158,14 @@ function findImageUrls(imageTitles) {
 			throw error;
 		});
 }
+
+// findImageTitles([ 'Heath ledger', 'Tom hanks' ])
+// 	.then(findImageUrls)
+// 	.then(res => console.log(res))
+// 	.catch(error => {
+// 		console.log('error getting images:\n', error);
+// 		throw error;
+// 	});
 
 
 /**
