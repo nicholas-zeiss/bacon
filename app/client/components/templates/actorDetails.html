@@ -1,6 +1,6 @@
 
 <h2>{{ $ctrl.actor.name }}</h2>
-<p class="dob">{{ [ $ctrl.actor.dob, $ctrl.actor.dod ] | birthDeath }}</p>
+<p class="dob">{{ $ctrl.actor.birthDeath }}</p>
 <div>
 	<a href="{{ $ctrl.actor.imgInfo }}" 
 		target="_blank"

@@ -9,7 +9,6 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const path = require('path');
 
-const baconPath = require('./baconController');
 const db = require('./dbController');
 const getImages = require('./imageFinder');
 
@@ -26,14 +25,16 @@ app.get('*', (req, res) => {
 
 
 // helper for /name and /nconst post requests
-function sendBaconPath(nconst, number, res) {
-	baconPath(nconst, number)
+function sendBaconPath(nconst, res) {
+	db.getBaconPath(nconst)
 		.then(path => {
+			
 			if (path.some(node => node.actor.imgUrl === null)) {
 				addImages(path, res);
 			} else {
 				res.status(200).json(path);
 			}
+		
 		})
 		.catch(error => res.sendStatus(500));
 }
@@ -47,7 +48,7 @@ function addImages(path, res) {
 	path.forEach(node => {
 		if (node.actor.imgUrl === null) {
 			names.push(node.actor.name);
-			nameToNconst[node.actor.name] = node.actor.nconst;
+			nameToNconst[node.actor.name] = node.actor._id;
 		}
 	});
 
@@ -67,7 +68,7 @@ function addImages(path, res) {
 				}
 			});
 
-			db.addActorImageUrls(nconstToUrl);
+			db.addActorImages(nconstToUrl);
 			res.status(200).json(path);
 		})
 		.catch(error => {
@@ -86,16 +87,17 @@ app.post('/name', (req, res) => {
 	}
 
 	// as names are not guaranteed unique in our db we find all matches and respond according to the number of matches
-	db.getActorReferences(req.body.name)
+	db.getActorInfoByName(req.body.name)
 		.then(actors => {
+
 			if (!actors.length) {
 				res.sendStatus(404);
 			} else if (actors.length == 1) {
-				sendBaconPath(actors[0].nconst, actors[0].number, res);		
+				sendBaconPath(actors[0]._id, res);		
 			} else {
-				actors.forEach(actor => delete actor._id);
 				res.status(300).json(actors);	
 			}
+		
 		})
 		.catch(error => res.sendStatus(500));
 });
@@ -109,18 +111,17 @@ app.post('/nconst', (req, res) => {
 		return;
 	}
 
-	db.getActorNames([req.body.nconst])
+	db.getActorInfoByNconst([req.body.nconst])
 		.then(result => {
+
 			if (!result.length) {
 				res.sendStatus(404);
 			} else {
-				sendBaconPath(result[0].nconst, result[0].number, res);
+				sendBaconPath(result[0]._id, res);
 			}
+		
 		})
-		.catch(error => {
-			console.log('getActorNames threw error:\n', error);
-			res.sendStatus(500);
-		});
+		.catch(error => res.sendStatus(500));
 });
 
 

@@ -81,8 +81,9 @@ function AppController($scope, $location, serverCalls) {
 
 	// handles browser moving back/forward through history by prepping app state as appropriate
 	$scope.$on('$locationChangeStart', (event, newUrl, prevUrl) => {
+		
+		// ignore url change on page load
 		if (rerouteOnLoad) {
-			// ignore url change on page load
 			rerouteOnLoad = false;
 			return;
 		}
@@ -106,7 +107,7 @@ function AppController($scope, $location, serverCalls) {
 				if (newUrl[1] == 'choose' && (!vm.choices || newUrl[2].replace('-', ' ') != vm.choices[0].name)) {
 					vm.search(newUrl[2].replace('-', ' '), true);	
 				
-				} else if (newUrl[1] == 'display' && (!vm.pathToBacon || newUrl[3] != vm.pathToBacon[0].nconst)) {
+				} else if (newUrl[1] == 'display' && (!vm.pathToBacon || newUrl[3] != vm.pathToBacon[0]._id)) {
 					vm.search(Number(newUrl[3]), true); 
 				}
 			} 
@@ -153,7 +154,7 @@ function AppController($scope, $location, serverCalls) {
 		vm.searchName = null;
 		
 		$location
-			.path(`/display/${vm.pathToBacon[0].nconst}`)
+			.path(`/display/${vm.pathToBacon[0]._id}`)
 			.replace();
 	});
 

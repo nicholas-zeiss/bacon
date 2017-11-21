@@ -4,7 +4,7 @@
 	<actor-choice actor="actor"
 		class="actor-choice"
 		actor="actor"
-		ng-click="choice.makeChoice(actor.nconst)"
+		ng-click="choice.makeChoice(actor._id)"
 		ng-repeat="actor in app.choices">
 	</actor-choice>
 	<button ng-click="app.resetApp()">New Search</button>

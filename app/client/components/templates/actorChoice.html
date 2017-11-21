@@ -1,6 +1,6 @@
 
 <div>
 	<h1>{{ $ctrl.actor.name }}</h1>
-	<p>{{ [ $ctrl.actor.dob, $ctrl.actor.dod ] | birthDeath }}</p>
+	<p>{{ $ctrl.actor.birthDeath }}</p>
 </div>
 <p>{{ $ctrl.actor.jobs }}</p>

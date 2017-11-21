@@ -47,10 +47,12 @@ const url = require('./dbLogin');
 // Connects to the database and executes a callback. It returns a promise that resolves/rejects according to the callback.
 function connectToDb(cb) {
 	return new Promise((resolve, reject) => {
+		
 		MongoClient.connect(url, (err, db) => {
 			assert.equal(null, err);
 			cb(db, resolve, reject);
 		});
+	
 	});
 }
 
@@ -59,7 +61,7 @@ function resetDb() {
 	return connectToDb((db, resolve, reject) => {
 		
 		db.dropDatabase()
-			.then(() => {
+			.then(() => {	
 				
 				db.collection('childToParent');
 				db.collection('movies');
@@ -80,11 +82,13 @@ function resetDb() {
 						console.log('Error inserting Kevin Bacon:\n', error.message);			
 						db.close(false, reject.bind(null, error));
 					});
-			
+
 			})
 			.catch(error => {
+			
 				console.log('Error dropping database:\n', error.message);	
 				db.close(false, reject.bind(null, error));
+			
 			});
 	
 	});
@@ -118,7 +122,7 @@ function resetImages() {
  *   iii. addChildParent			-  add documents to an childToParent
  *    iv. addMovieInfo			  -  add documents to movies collection
  *
- */
+**/
 
 function addActorImages(nconstToUrl) {
 	return connectToDb((db, resolve) => {
@@ -138,7 +142,9 @@ function addActorImages(nconstToUrl) {
 		}
 
 		Promise.all(updates)
-			.catch(error => console.log('error adding urls to database:\n', error.message));
+			.catch(error => {
+				console.log('error adding urls to database:\n', error.message);
+			});
 			
 		db.close(false, resolve);
 	
@@ -148,9 +154,9 @@ function addActorImages(nconstToUrl) {
 
 function addActorInfo(documents) {
 	return connectToDb((db, resolve, reject) => {
-		
+
 		console.log('Adding ' + documents.length + ' docs to actors');
-		
+				
 		db.collection('actors')
 			.insertMany(documents, { ordered: false })
 			.then(result => {
@@ -195,11 +201,11 @@ function addMovieInfo(documents) {
 			.insertMany(documents, { ordered: false })
 			.then(result => {
 				console.log('Added ' + result.insertedCount + ' docs to movies');
-				db.close(false, resolve);
+				db.close(false, resolve);		
 			})
-			.catch(error => {
+			.catch(error => {			
 				console.log('Error adding movie info:\n', error.message);
-				db.close(false, reject.bind(null, error));
+				db.close(false, reject.bind(null, error));			
 			});
 	
 	});
@@ -215,7 +221,7 @@ function addMovieInfo(documents) {
  *		 ii. getActorInfoByNconst     -  retreive all documents in collection actors whose nconst is in the supplied array
  *     iv. getMovieInfo			 				-  retreive all documents in collection movies whose tconst is in the supplied array
  *
- */
+**/
 
 function getActorInfoByName(name) {
 	return connectToDb((db, resolve, reject) => {
@@ -225,15 +231,16 @@ function getActorInfoByName(name) {
 		// an additional filter.
 
 		db.collection('actors')
-			.find({
-				$text: { $search: `"${name}"` }
-			})
+			.find({ $text: { $search: `"${name}"` }})
 			.toArray()
-			.filter(actor => (
-				actor.name.toLowerCase() == name.toLowerCase()
+			.then(array => (
+				array
+					.filter(actor => (
+						actor.name.toLowerCase() == name.toLowerCase()
+					))
 			))
 			.then(result => db.close(false, resolve.bind(null, result)))
-			.catch(error => {
+			.catch(error => {		
 				console.log('Error finding ', name, ':\n', error.message);
 				db.close(false, reject.bind(null, error.message));
 			});
@@ -264,9 +271,7 @@ function getMovieInfo(tconsts) {
 	return connectToDb((db, resolve, reject) => {
 		
 		db.collection('movies')
-			.find({ 
-				_id: { $in: tconsts }
-			})
+			.find({ _id: { $in: tconsts }})
 			.toArray()
 			.then(result => db.close(false, resolve.bind(null, result)))
 			.catch(error => {
@@ -278,6 +283,113 @@ function getMovieInfo(tconsts) {
 }
 
 
+/**
+ *
+ *		SECTION - Bacon Path
+ *		
+ *		This section contains the function we use to actually find a path from an actor to Kevin Bacon,
+ *		along with some helper functions for it.	
+ *			
+**/
+
+// given a nconst to start at this resolves to the path to bacon where every step on the path
+// is a parent actor nconst and movie nconst
+function findParents(nconst, db, path = []) {
+	return db.collection('childToParent')
+		.findOne({ _id: nconst })
+		.then(result => {			
+			path.push({
+				actor: result._id,
+				movie: result.movie_id
+			});
+
+			return result.parent_id == 102 ? path : findParents(result.parent_id, db, path);
+		});
+}
+
+
+// given an array of nconsts find the actor info for each from the actors collecton
+function findActorInfo(nconsts, db) {
+	return db.collection('actors')
+		.find({ _id: { $in: nconsts }})
+		.toArray()
+		.then(info => (
+			info.reduce((info, actor) => (
+				Object.assign(info, { [ actor._id ]: actor })
+			), {})
+		));
+}
+
+
+// given an array of tconsts find the movie info for each from the movies collection
+function findMovieInfo(tconsts, db) {
+	return db.collection('movies')
+		.find({ _id: { $in: tconsts }})
+		.toArray()
+		.then(info => (
+			info.reduce((info, movie) => (
+				Object.assign(info, { [ movie._id ]: movie })
+			), {})
+		));
+}
+
+// Function that puts it all together and gives us the full path. Note that
+// we assume nconst is a valid actor id, we verify this elsewhere.
+function getBaconPath(nconst) {
+	return connectToDb((db, resolve, reject) => {
+
+		findParents(nconst, db)
+			.then(path => {
+				
+				const nconsts = [];
+				const tconsts = [];
+
+				path.forEach(node => {
+					nconsts.push(node.actor);
+					tconsts.push(node.movie);
+				});
+
+				return Promise.all([
+					path,
+					findActorInfo(nconsts, db),
+					findMovieInfo(tconsts, db)
+				]);
+
+			})
+			.then(([ path, actorInfo, movieInfo ]) => {
+				
+				path.forEach(node => { 
+					node.actor = actorInfo[node.actor];
+					node.movie = movieInfo[node.movie];
+				});
+
+				path.push({
+					actor: {
+						_id: 102,
+						name: 'Kevin Bacon',
+						birthDeath: '1958 - present',
+						jobs: 'actor, producer, soundtrack',
+						imgUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Kevinbacongfdl.PNG/400px-Kevinbacongfdl.PNG',
+						imgInfo: 'https://commons.wikimedia.org/wiki/File:Kevinbacongfdl.PNG'
+					},
+					movie: null
+				});
+
+				db.close(false, resolve.bind(null, path));
+			
+			})
+			.catch(error => {
+				console.log('error getting bacon path:\n', error.message);
+				db.close(false, reject.bind(null, error.message));
+			});
+	});
+}
+
+
+// getBaconPath(1011210)
+// 	.then(res => console.log(res))
+// 	.catch(err => console.log(err));
+
 
 module.exports = {
 	resetDb,
@@ -288,6 +400,7 @@ module.exports = {
 	addChildParent,
 	getActorInfoByName,
 	getActorInfoByNconst,
-	getMovieInfo
+	getMovieInfo,
+	getBaconPath
 };
 

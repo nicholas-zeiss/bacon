@@ -56,7 +56,7 @@ exports.traverseTSV = function(input, output) {
 
 
 
-// given a set of nconsts to search for, return a set of documents for the actors collection
+// given a set of nconsts to search for, return a map of nconst to actor info
 exports.getActorInfoByNconst = function(nconsts) {
 	return exports.traverseTSV({
 		file: 'names.tsv',
@@ -67,6 +67,7 @@ exports.getActorInfoByNconst = function(nconsts) {
 
 			if (actor && nconsts.has(actor[1])) {
 				this.matches.set(actor[1], {
+					_id: Number(actor[1].slice(2)),
 					birthDeath: actor[3] != 'null' ? actor[3] : '',
 					imgUrl: null,
 					imgInfo: null,
@@ -91,6 +92,7 @@ exports.getMovieInfoByTconst = function(tconsts) {
 
 			if (movie && tconsts.has(movie[1])) {
 				this.matches.set(movie[1], {
+					_id: Number(movie[1].slice(2)),
 					title: movie[2],
 					year: movie[3] == '\\N' ? 0 : Number(movie[3])
 				});
@@ -140,7 +142,7 @@ exports.getChildActors = function(parentActors, indexedActors, indexedMovies) {
 					.forEach(nconst => {
 						if (parentActors.has(nconst) && parentActor === null) {		// we only need to record one parent per movie
 							parentActor = nconst;
-						} else if (!indexedActors.has(nconst)) {
+						} else if (!indexedActors.has(nconst) && !this.matches.childActors.has(nconst)) {
 							children.push(nconst);
 						}
 					});
@@ -151,10 +153,10 @@ exports.getChildActors = function(parentActors, indexedActors, indexedMovies) {
 					}
 
 					children.forEach(child => {
-						indexedActors.add(child);
 						this.matches.childActors.set(child, {
+							_id: Number(child.slice(2)),
 							movie_id: tconst,
-							parent_id: parentActor
+							parent_id: Number(parentActor.slice(2))
 						});
 					});
 				}

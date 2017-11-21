@@ -27,7 +27,6 @@ import './directives/ScrollLock';
 import './directives/ScrollOnShow';
 
 // filters
-import './filters/BirthDeath';
 import './filters/DisplayHeader';
 import './filters/Error';
 import './filters/ImdbSearch';
@@ -41,7 +40,6 @@ import './services/serverCalls';
 angular.module('app', [
 	'app.actorDetails',
 	'app.actorChoice',
-	'app.birthDeath',
 	'app.displayHeader',
 	'app.error',
 	'app.imdbSearch',

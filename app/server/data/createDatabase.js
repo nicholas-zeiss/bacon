@@ -41,19 +41,20 @@ function buildDatabase(parentActors, indexedActors, indexedMovies, depth) {
 			const actorDocs = [];
 			const movieDocs = [];
 
-			for (let [ childNconst, { movie_id, parent_id } ] of childToParent) {
-				if (actorInfo.has(childNconst) && (movieInfo.has(movie_id) || indexedMovies.has(movie_id))) {
-					childParentDocs.push({
-						_id: Number(childNconst.slice(2)),
-						movie_id: Number(movie_id.slice(2)),
-						parent_id: Number(parent_id.slice(2))
-					});
+			for (let [ nconst, { _id, movie_id, parent_id } ] of childToParent) {
+				if (actorInfo.has(nconst) && (movieInfo.has(movie_id) || indexedMovies.has(movie_id))) {
 
-					actorDocs.push(Object.assign(actorInfo.get(childNconst), { _id: Number(childNconst.slice(2)) }));
+					indexedActors.add(nconst);
+					actorDocs.push(actorInfo.get(nconst));
+					childParentDocs.push({
+						_id,
+						parent_id,
+						movie_id: Number(movie_id.slice(2))
+					});
 
 					if (!indexedMovies.has(movie_id)) {
 						indexedMovies.add(movie_id);
-						movieDocs.push(Object.assign(movieInfo.get(movie_id), { _id: Number(movie_id.slice(2)) }));
+						movieDocs.push(movieInfo.get(movie_id));
 					}
 				}
 			}

@@ -11,7 +11,7 @@ const tsv  = require('./tsvUtils');
 
 
 // Takes title.basics.tsv, which holds all movies/tv shows/episodes etc in the dataset, and output only non pornographic movie rows to movie.basics.tsv.
-// It resolves to a set of tconsts for such movies which we need to clean title.principals.tsv. Converts tconst to a number.
+// It resolves to a set of tconsts for such movies which we need to clean title.principals.tsv.
 function cleanBasics() {
 	const basicsInput = {
 		file: 'title.basics.tsv',
@@ -46,7 +46,7 @@ function cleanBasics() {
 
 // Cleans name.basics.tsv to name.tsv, preserving only rows where actor/actress is one of the professions
 // and filtering out everything but nconst name dob dod professions. It resolves to the set of all nconsts
-// of actors/actresses which we need for cleanPrincipals. Converts nconst to a number.
+// of actors/actresses which we need for cleanPrincipals.
 function cleanNames() {
 	const namesInput = {
 		file: 'name.basics.tsv',
