@@ -24,7 +24,6 @@ import './directives/Arrow';
 import './directives/AutoScroll';
 import './directives/Hide';
 import './directives/ScrollLock';
-import './directives/ScrollOnShow';
 
 // filters
 import './filters/DisplayHeader';
@@ -47,7 +46,6 @@ angular.module('app', [
 	'app.autoScroll',
 	'app.hide',
 	'app.scrollLock',
-	'app.scrollOnShow',
 	'app.arrowDetails',
 	'app.getNodeTypes',
 	'app.serverCalls',
