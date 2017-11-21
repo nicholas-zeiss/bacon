@@ -1,8 +1,8 @@
 /**
  *
  *	This module allows us to find images for a list of actors. It uses the mediawiki php api to first query wikipedia
- *  for an image from an actor's article, should one exist, and finds the file name. It then retreives the url for 
- *  that file's page and the url to the file iteself from wikimedia commons.
+ *  for images from an actor's article, should they exist, and finds the file names. It then retreives the url for 
+ *  the first image title it can find that is hosted on wikimedia commons.
  *
 **/
 
@@ -37,12 +37,57 @@ function searchImagesUrl(files) {
 }
 
 
+// Given an array of actor names, find all the image titles on their wikipedia page,
+// should they exist
+function findImageTitles(actors) {
+	return axios({
+		method: 'get',
+		url: searchNamesUrl(actors)
+	})
+		.then(result => {
+
+			const nameToImageTitles = {};
+			const pages = result.data.query.pages;
+			const redirects = result.data.query.redirects || [];
+			
+			// maps a name we are redirected to by wikipedia to the original name in input
+			// eg, nameRedirectMap['Charlie Chaplin'] = 'charles      chaplin'
+			const nameRedirectMap = {};
+
+			redirects.forEach(redirect => nameRedirectMap[redirect.to] = redirect.from);
+
+			for (let page in pages) {
+				const name = nameRedirectMap[pages[page].title] || pages[page].title;
+
+				if (pages[page].images && pages[page].images.length) {
+					nameToImageTitles[name] = pages[page].images
+						.filter(img => img.title.match(/jpg$|png$/i))		// wikipedia pages are full of svg logos/icons, filter those out
+						.map(img => img.title);
+				}
+			}
+
+			actors.forEach(actor => nameToImageTitles[actor] = nameToImageTitles[actor] || []);
+
+			return nameToImageTitles;
+
+		})
+		.catch(error => {
+			console.log('error getting image titles:\n', error);
+			throw error;
+		});
+}
+
+
+// Given an array of image titles and the name of the corresponding actor, find the first
+// title that is hosted on wikimedia and return its direct url and info page url along with
+// the actor name
 function searchWikimedia(name, titles) {
 	return axios({
 		method: 'get',
 		url: searchImagesUrl(titles)
 	})
 		.then(results => {
+			
 			const pages = results.data.query.pages;
 			const output = { 
 				name,
@@ -61,97 +106,45 @@ function searchWikimedia(name, titles) {
 			}
 
 			return output;
+
 		})
 		.catch(error => {
-			console.log('error getting image urls:\n', error);
+			console.log('Error searching wikimedia:\n', error);
 			throw error;
 		});
 }
 
 
-/**
- *
- *	Given an array of actor names, find an image title for each one or null if none exist.
- *
- *	inputs:
- *	actors: [ str name1, ... ]
- *
- *	return: A promise resolving to { name1: str fileTitle1 OR null, ... }
- *
-**/
-function findImageTitles(actors) {
-	return axios({
-		method: 'get',
-		url: searchNamesUrl(actors)
-	})
-		.then(result => {
-
-			const output = {};
-			const redirectMap = {};
-			const redirects = result.data.query.redirects || [];
-			const pages = result.data.query.pages;
-
-			redirects.forEach(redirect => redirectMap[redirect.to] = redirect.from);
-
-			for (let page in pages) {
-				const name = redirectMap[pages[page].title] || pages[page].title;
-
-				if (pages[page].images && pages[page].images.length) {
-					output[name] = pages[page]
-						.images
-						.filter(img => img.title.match(/jpg$|png$/i))		// wikipedia pages are full of svg logos/icons, filter those out
-						.map(img => img.title);
-				}
-			}
-
-			actors.forEach(actor => output[actor] = output[actor] || []);
-			console.log('findImageTitles output:\n', output)
-			return output;
-
-		})
-		.catch(error => {
-			console.log('error getting image titles:\n', error);
-			throw error;
-		});
-}
-
-
-/**
- *
- *	Given an object of actor names and file titles, find a url for each file title or null if none exist.
- *
- *	inputs:
- *	imageTitles: { actorName1: str fileTitle1 OR null, ... }
- *
- *	return: A promise resolving to { name1: { imgUrl: str/null, imgInfo: str/null }, ... }
- *
-**/
+// Given the map of actor names to arrays of image titles created above, search for those titles
+// on wikimedia commons and return urls if any titles are found
 function findImageUrls(imageTitles) {
 	const searchesToMake = [];
-	const output = {};
+	const nameToImageUrl = {};
 
 	for (let name in imageTitles) {
 		if (imageTitles[name].length) {
 			searchesToMake.push(searchWikimedia(name, imageTitles[name]));
 		} else {
-			output[name] = { imgUrl: '', imgInfo: '' };
+			nameToImageUrl[name] = { imgUrl: '', imgInfo: '' };
 		}
 	}
 
 	if (!searchesToMake.length) {
-		return output;
+		return nameToImageUrl;
 	}
 
 	return Promise.all(searchesToMake)
 		.then(results => {			
+			
 			results.forEach(result => {
-				output[result.name] = {
+				nameToImageUrl[result.name] = {
 					imgUrl: result.imgUrl,
 					imgInfo: result.imgInfo
 				};
 			});
 
-			return output;
+			return nameToImageUrl;
+
 		})
 		.catch(error => {
 			console.log('error getting image urls:\n', error);
@@ -159,25 +152,10 @@ function findImageUrls(imageTitles) {
 		});
 }
 
-// findImageTitles([ 'Heath ledger', 'Tom hanks' ])
-// 	.then(findImageUrls)
-// 	.then(res => console.log(res))
-// 	.catch(error => {
-// 		console.log('error getting images:\n', error);
-// 		throw error;
-// 	});
 
-
-/**
- *
- *	Put it all together...
- *
- *	inputs:
- *	actors: [ str name1, ... ]
- *
- *	return: A promise resolving to { name1: { imgUrl: str, imgInfo: str }, ... }
- *
-**/
+// Joins the above logic together and given an array of actor names this returns a promise
+// resolving to a map of actor names to an object holding an image url and info page url
+// (urls are empty strings if no image found)
 module.exports = function(actors) {
 	return findImageTitles(actors)
 		.then(findImageUrls)

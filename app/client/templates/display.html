@@ -9,8 +9,7 @@
 			<div id="row-{{ $index }}"
 				ng-class="'row' + (!$index ? ' first-row' : '') + ($odd ? ' arrow-row' : '') + ($index == 2 ? ' reverse-row' : '')"
 				ng-hide="row.hidden"
-				ng-repeat="row in display.rows"
-				scroll-on-show>
+				ng-repeat="row in display.rows">
 				
 				<div hide="node.hidden"
 					ng-class="(node.type == 'actor' ? 'actor-node-container' : 'movie-node-container') + (node.short ? ' short' : '')"

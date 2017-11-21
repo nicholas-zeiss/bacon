@@ -16,7 +16,7 @@
  *			  _id: nconst (int),     -  their numerical index as specified in the IMDb dataset
  *			  name: str,				     -  name of the actor
  *			  birthDeath: str,       -  '' if no info, 'birthYear - deathYear' or 'birthYear - present' otherwise
- *        jobs: str, 						 -  top three professions according to dataset joined by ', '
+ *        jobs: str, 						 -  top three professions according to IMDb joined by ', '
  *        imgUrl: str,					 -  url to the image generated for them (null if image not yet generated, empty string if no image could be found)
  * 				imgInfo: str 					 -  url to the wikimedia commons page for the image (null if image not yet generated, empty string if no image could be found)
  *		  }
@@ -44,71 +44,63 @@ const assert = require('assert');
 const url = require('./dbLogin');
 
 
+const KevinBaconInfo = {
+	_id: 102,
+	name: 'Kevin Bacon',
+	birthDeath: '1958 - present',
+	jobs: 'actor, producer, soundtrack',
+	imgUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Kevinbacongfdl.PNG/400px-Kevinbacongfdl.PNG',
+	imgInfo: 'https://commons.wikimedia.org/wiki/File:Kevinbacongfdl.PNG'
+};
+
+function success(db, resolve, result) {
+	db.close(false, resolve.bind(null, result));
+}
+
+function failure(db, reject, error) {
+	console.log('Error in db controller:\n', error.message);
+	db.close(false, reject.bind(null, error));
+}
+
+
 // Connects to the database and executes a callback. It returns a promise that resolves/rejects according to the callback.
 function connectToDb(cb) {
 	return new Promise((resolve, reject) => {
-		
 		MongoClient.connect(url, (err, db) => {
 			assert.equal(null, err);
 			cb(db, resolve, reject);
 		});
-	
 	});
 }
 
 
 function resetDb() {
-	return connectToDb((db, resolve, reject) => {
-		
+	return connectToDb((db, resolve, reject) => {		
 		db.dropDatabase()
-			.then(() => {	
-				
+			.then(() => {		
+				db.collection('actors').createIndex({ name: 'text' });
 				db.collection('childToParent');
 				db.collection('movies');
-				db.collection('actors')
-					.createIndex({ name: 'text' });
 
 				db.collection('actors')
-					.insertOne({
-						_id: 102,
-						name: 'Kevin Bacon',
-						birthDeath: '1958 - present',
-						jobs: 'actor, producer, soundtrack',
-						imgUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Kevinbacongfdl.PNG/400px-Kevinbacongfdl.PNG',
-						imgInfo: 'https://commons.wikimedia.org/wiki/File:Kevinbacongfdl.PNG'
-					})
-					.then(result => db.close(false, resolve.bind(null, result)))
-					.catch(error => {
-						console.log('Error inserting Kevin Bacon:\n', error.message);			
-						db.close(false, reject.bind(null, error));
-					});
-
+					.insertOne(KevinBaconInfo)
+					.then(success.bind(null, db, resolve))
+					.catch(failure.bind(null, db, reject));
 			})
-			.catch(error => {
-			
-				console.log('Error dropping database:\n', error.message);	
-				db.close(false, reject.bind(null, error));
-			
-			});
-	
+			.catch(failure.bind(null, db, reject));	
 	});
 }
 
 
 function resetImages() {
-	return connectToDb((db, resolve, reject) => {
-		
+	return connectToDb((db, resolve, reject) => {		
 		db.collection('actors')
 			.updateMany(
 				{ _id: { $ne: 102 }},
 				{ $set: { imgUrl: null, imgInfo: null }}
 			)
-			.then(() => db.close(false, resolve))
-			.catch(error => {
-				console.log('Error resetting images:\n', error);
-				db.close(false, reject);
-			});
-	
+			.then(success.bind(null, db, resolve))
+			.catch(failure.bind(null, db, reject));	
 	});
 }
 
@@ -125,8 +117,7 @@ function resetImages() {
 **/
 
 function addActorImages(nconstToUrl) {
-	return connectToDb((db, resolve) => {
-		
+	return connectToDb((db, resolve, reject) => {		
 		const updates = [];
 
 		for (let nconst in nconstToUrl) {
@@ -142,72 +133,38 @@ function addActorImages(nconstToUrl) {
 		}
 
 		Promise.all(updates)
-			.catch(error => {
-				console.log('error adding urls to database:\n', error.message);
-			});
-			
-		db.close(false, resolve);
-	
+			.then(success.bind(null, db, resolve))
+			.catch(failure.bind(null, db, reject));
 	});
 }
 
 
 function addActorInfo(documents) {
-	return connectToDb((db, resolve, reject) => {
-
-		console.log('Adding ' + documents.length + ' docs to actors');
-				
+	return connectToDb((db, resolve, reject) => {		
 		db.collection('actors')
 			.insertMany(documents, { ordered: false })
-			.then(result => {
-				console.log('Added ' + result.insertedCount + ' docs to actors');
-				db.close(false, resolve);
-			})
-			.catch(error => {
-				error.writeErrors.forEach(err => console.log(String(err)));
-				db.close(false, reject.bind(null, error));
-			});
-
+			.then(success.bind(null, db, resolve))
+			.catch(failure.bind(null, db, reject));	
 	});
 }
 
 
 function addChildParent(documents) {
-	return connectToDb((db, resolve, reject) => {
-
-		console.log('Adding ' + documents.length + ' docs to childToParent');
-		
+	return connectToDb((db, resolve, reject) => {		
 		db.collection('childToParent')
 			.insertMany(documents, { ordered: false })
-			.then(result => {
-				console.log('Added ' + result.insertedCount + ' docs to childToParent');
-				db.close(false, resolve);
-			})
-			.catch(error => {
-				console.log('Error adding childToParent documents:\n', error.message);
-				db.close(false, reject.bind(null, error));
-			});
-	
+			.then(success.bind(null, db, resolve))
+			.catch(failure.bind(null, db, reject));	
 	});
 }
 
 
 function addMovieInfo(documents) {
-	return connectToDb((db, resolve, reject) => {
-
-		console.log('Adding ' + documents.length + ' docs to movies');
-		
+	return connectToDb((db, resolve, reject) => {	
 		db.collection('movies')
 			.insertMany(documents, { ordered: false })
-			.then(result => {
-				console.log('Added ' + result.insertedCount + ' docs to movies');
-				db.close(false, resolve);		
-			})
-			.catch(error => {			
-				console.log('Error adding movie info:\n', error.message);
-				db.close(false, reject.bind(null, error));			
-			});
-	
+			.then(success.bind(null, db, resolve))
+			.catch(failure.bind(null, db, reject));
 	});
 }
 
@@ -233,52 +190,33 @@ function getActorInfoByName(name) {
 		db.collection('actors')
 			.find({ $text: { $search: `"${name}"` }})
 			.toArray()
-			.then(array => (
-				array
-					.filter(actor => (
-						actor.name.toLowerCase() == name.toLowerCase()
-					))
-			))
-			.then(result => db.close(false, resolve.bind(null, result)))
-			.catch(error => {		
-				console.log('Error finding ', name, ':\n', error.message);
-				db.close(false, reject.bind(null, error.message));
-			});
-	
+			.then(array => array.filter(actor => (
+				actor.name.toLowerCase() == name.toLowerCase()
+			)))
+			.then(success.bind(null, db, resolve))
+			.catch(failure.bind(null, db, reject));
 	}); 
 }
 
 
 function getActorInfoByNconst(nconsts) {
-	return connectToDb((db, resolve, reject) => {
-		
+	return connectToDb((db, resolve, reject) => {	
 		db.collection('actors')
-			.find({ 
-				_id: { $in: nconsts }
-			})
+			.find({  _id: { $in: nconsts }})
 			.toArray()
-			.then(result => db.close(false, resolve.bind(null, result)))
-			.catch(error => {
-				console.log('Error finding actors by nconsts:\n', error.message);
-				db.close(false, reject.bind(null, error.message));
-			});
-	
+			.then(success.bind(null, db, resolve))
+			.catch(failure.bind(null, db, reject));
 	});
 }
 
 
 function getMovieInfo(tconsts) {
-	return connectToDb((db, resolve, reject) => {
-		
+	return connectToDb((db, resolve, reject) => {	
 		db.collection('movies')
 			.find({ _id: { $in: tconsts }})
 			.toArray()
-			.then(result => db.close(false, resolve.bind(null, result)))
-			.catch(error => {
-				console.log('error in getMovieNames:\n', error.message);
-				db.close(false, reject.bind(null, error.message));
-			});
-	
+			.then(success.bind(null, db, resolve))
+			.catch(failure.bind(null, db, reject));
 	});
 }
 
@@ -303,7 +241,11 @@ function findParents(nconst, db, path = []) {
 				movie: result.movie_id
 			});
 
-			return result.parent_id == 102 ? path : findParents(result.parent_id, db, path);
+			if (result.parent_id == 102) {
+				return path;
+			} else {
+				return findParents(result.parent_id, db, path);
+			}
 		});
 }
 
@@ -315,7 +257,7 @@ function findActorInfo(nconsts, db) {
 		.toArray()
 		.then(info => (
 			info.reduce((info, actor) => (
-				Object.assign(info, { [ actor._id ]: actor })
+				Object.assign(info, { [actor._id]: actor })
 			), {})
 		));
 }
@@ -328,7 +270,7 @@ function findMovieInfo(tconsts, db) {
 		.toArray()
 		.then(info => (
 			info.reduce((info, movie) => (
-				Object.assign(info, { [ movie._id ]: movie })
+				Object.assign(info, { [movie._id]: movie })
 			), {})
 		));
 }
@@ -339,60 +281,33 @@ function getBaconPath(nconst) {
 	return connectToDb((db, resolve, reject) => {
 
 		findParents(nconst, db)
-			.then(path => {
-				
+			.then(pathToBacon => {		
 				const nconsts = [];
 				const tconsts = [];
 
-				path.forEach(node => {
+				pathToBacon.forEach(node => {
 					nconsts.push(node.actor);
 					tconsts.push(node.movie);
 				});
 
 				return Promise.all([
-					path,
+					pathToBacon,
 					findActorInfo(nconsts, db),
 					findMovieInfo(tconsts, db)
 				]);
-
 			})
-			.then(([ path, actorInfo, movieInfo ]) => {
-				
-				path.forEach(node => { 
-					node.actor = actorInfo[node.actor];
-					node.movie = movieInfo[node.movie];
-				});
-
-				path.push({
-					actor: {
-						_id: 102,
-						name: 'Kevin Bacon',
-						birthDeath: '1958 - present',
-						jobs: 'actor, producer, soundtrack',
-						imgUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Kevinbacongfdl.PNG/400px-Kevinbacongfdl.PNG',
-						imgInfo: 'https://commons.wikimedia.org/wiki/File:Kevinbacongfdl.PNG'
-					},
-					movie: null
-				});
-
-				db.close(false, resolve.bind(null, path));
-			
-			})
-			.catch(error => {
-				console.log('error getting bacon path:\n', error.message);
-				db.close(false, reject.bind(null, error.message));
-			});
+			.then(([ pathToBacon, actorInfo, movieInfo ]) => (
+				pathToBacon
+					.map(node => ({
+						actor: actorInfo[node.actor],
+						movie: movieInfo[node.movie]
+					}))
+					.concat({ actor: KevinBaconInfo, movie: null })
+			))
+			.then(success.bind(null, db, resolve))
+			.catch(failure.bind(null, db, reject));
 	});
 }
-
-
-// getBaconPath(1011210)
-// 	.then(res => console.log(res))
-// 	.catch(err => console.log(err));
-
-// resetImages()
-// 	.then(() => console.log('images deleted'))
-// 	.catch(err => console.log(err))
 
 
 module.exports = {

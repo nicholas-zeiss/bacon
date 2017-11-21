@@ -24,7 +24,7 @@ const path = require('path');
  *
 **/
 exports.traverseTSV = function(input, output) {
-	return new Promise((resolve, reject) => {
+	return new Promise(resolve => {
 		let outStream;
 		const inStream = fs.createReadStream(path.join(__dirname, 'data/' + input.file), 'utf8');
 		
@@ -62,18 +62,22 @@ exports.getActorInfoByNconst = function(nconsts) {
 		file: 'names.tsv',
 		matches: new Map(),
 		cb(row) {
+
 			// parentheses correspond to nconst, name, 'birth year - death year', professions
 			const actor = row.match(/^(nm\d+)\t([^\t]+)\t([^\t]+)\t([^\t\n]+)\n$/);
 
-			if (actor && nconsts.has(actor[1])) {
-				this.matches.set(actor[1], {
-					_id: Number(actor[1].slice(2)),
-					birthDeath: actor[3] != 'null' ? actor[3] : '',
-					imgUrl: null,
-					imgInfo: null,
-					jobs: actor[4],
-					name: actor[2]
-				});
+			if (actor && nconsts.has(actor[1])) {		
+				this.matches.set(
+					actor[1],
+					{
+						_id: Number(actor[1].slice(2)),
+						birthDeath: actor[3] != 'null' ? actor[3] : '',
+						imgUrl: null,
+						imgInfo: null,
+						jobs: actor[4],
+						name: actor[2]
+					}
+				);
 			}
 		}
 	});
@@ -87,15 +91,19 @@ exports.getMovieInfoByTconst = function(tconsts) {
 		file: 'movie.basics.tsv',
 		matches: new Map(),
 		cb(row) {
+
 			// parentheses correspond to tconst, title, year released
 			const movie = row.match(/^(tt\d+)\t([^\t]+)\t([^\t\n]+)\n$/);
 
-			if (movie && tconsts.has(movie[1])) {
-				this.matches.set(movie[1], {
-					_id: Number(movie[1].slice(2)),
-					title: movie[2],
-					year: movie[3] == '\\N' ? 0 : Number(movie[3])
-				});
+			if (movie && tconsts.has(movie[1])) {			
+				this.matches.set(
+					movie[1],
+					{
+						_id: Number(movie[1].slice(2)),
+						title: movie[2],
+						year: movie[3] == '\\N' ? 0 : Number(movie[3])
+					}
+				);
 			} 
 		}
 	});
@@ -106,8 +114,8 @@ exports.getMovieInfoByTconst = function(tconsts) {
 /**
  *
  *	This function is used to build our Bacon tree. It gets the all child actors of the parent actors specified by the parentActors set, so long as that
- *	child actor is not already in the indexedActors set (this holds all nconsts of actors already in the tree). If the movie linking them is not in
- *	the indexedMovies set, it is also returned.
+ *	child actor is not already in the indexedActors set (which holds nconsts of all actors already in the tree). If the movie linking them is not in
+ *	the indexedMovies set, it is also returned in matches.
  *
  *
  *	inputs:
@@ -139,12 +147,13 @@ exports.getChildActors = function(parentActors, indexedActors, indexedMovies) {
 				
 				movie[2]
 					.split(',')
-					.forEach(nconst => {
-						if (parentActors.has(nconst) && parentActor === null) {		// we only need to record one parent per movie
+					.forEach(nconst => {				
+						// we only need to record one parent per movie
+						if (parentActors.has(nconst) && parentActor === null) {
 							parentActor = nconst;
 						} else if (!indexedActors.has(nconst) && !this.matches.childActors.has(nconst)) {
 							children.push(nconst);
-						}
+						}		
 					});
 
 				if (parentActor !== null && children.length) {			
@@ -153,11 +162,14 @@ exports.getChildActors = function(parentActors, indexedActors, indexedMovies) {
 					}
 
 					children.forEach(child => {
-						this.matches.childActors.set(child, {
-							_id: Number(child.slice(2)),
-							movie_id: tconst,
-							parent_id: Number(parentActor.slice(2))
-						});
+						this.matches.childActors.set(
+							child,
+							{
+								_id: Number(child.slice(2)),
+								movie_id: tconst,
+								parent_id: Number(parentActor.slice(2))
+							}
+						);
 					});
 				}
 			}

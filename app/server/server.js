@@ -27,25 +27,23 @@ app.get('*', (req, res) => {
 // helper for /name and /nconst post requests
 function sendBaconPath(nconst, res) {
 	db.getBaconPath(nconst)
-		.then(path => {
-			
+		.then(path => {		
 			if (path.some(node => node.actor.imgUrl === null)) {
 				addImages(path, res);
 			} else {
 				res.status(200).json(path);
 			}
-		
 		})
-		.catch(error => res.sendStatus(500));
+		.catch(() => res.sendStatus(500));
 }
 
 
 // helper for sendBaconPath
-function addImages(path, res) {
+function addImages(pathToBacon, res) {
 	const names = [];
 	const nameToNconst = {};
 
-	path.forEach(node => {
+	pathToBacon.forEach(node => {
 		if (node.actor.imgUrl === null) {
 			names.push(node.actor.name);
 			nameToNconst[node.actor.name] = node.actor._id;
@@ -53,28 +51,26 @@ function addImages(path, res) {
 	});
 
 	getImages(names)
-		.then(imageUrls => {
+		.then(nameToImageUrls => {
 			const nconstToUrl = {};
 
-			for (let name in imageUrls) {
-				nconstToUrl[nameToNconst[name]] = imageUrls[name];
+			for (let name in nameToImageUrls) {
+				const nconst = nameToNconst[name];
+				nconstToUrl[nconst] = nameToImageUrls[name];
 			}
 
-			path.forEach(node => {
+			pathToBacon.forEach(node => {
 				if (node.actor.imgUrl === null) {
-					const urls = imageUrls[node.actor.name];
+					const urls = nameToImageUrls[node.actor.name];
 					node.actor.imgUrl = urls.imgUrl;
 					node.actor.imgInfo = urls.imgInfo;
 				}
 			});
 
 			db.addActorImages(nconstToUrl);
-			res.status(200).json(path);
+			res.status(200).json(pathToBacon);
 		})
-		.catch(error => {
-			console.log('getImages threw error:\n', error);
-			res.sendStatus(500);
-		});
+		.catch(() => res.sendStatus(500));
 }
 
 
@@ -89,17 +85,17 @@ app.post('/name', (req, res) => {
 	// as names are not guaranteed unique in our db we find all matches and respond according to the number of matches
 	db.getActorInfoByName(req.body.name)
 		.then(actors => {
-
 			if (!actors.length) {
 				res.sendStatus(404);
+			
 			} else if (actors.length == 1) {
 				sendBaconPath(actors[0]._id, res);		
+			
 			} else {
 				res.status(300).json(actors);	
 			}
-		
 		})
-		.catch(error => res.sendStatus(500));
+		.catch(() => res.sendStatus(500));
 });
 
 
@@ -113,15 +109,14 @@ app.post('/nconst', (req, res) => {
 
 	db.getActorInfoByNconst([req.body.nconst])
 		.then(result => {
-
 			if (!result.length) {
 				res.sendStatus(404);
+			
 			} else {
 				sendBaconPath(result[0]._id, res);
 			}
-		
 		})
-		.catch(error => res.sendStatus(500));
+		.catch(() => res.sendStatus(500));
 });
 
 

@@ -10,8 +10,8 @@ const tsv  = require('./tsvUtils');
 
 
 
-// Takes title.basics.tsv, which holds all movies/tv shows/episodes etc in the dataset, and output only non pornographic movie rows to movie.basics.tsv.
-// It resolves to a set of tconsts for such movies which we need to clean title.principals.tsv.
+// Takes title.basics.tsv, which holds all movies/tv shows/episodes etc in the dataset, and output only non pornographic feature film
+// rows to movie.basics.tsv. It resolves to a set of tconsts for such movies which we need to clean title.principals.tsv.
 function cleanBasics() {
 	const basicsInput = {
 		file: 'title.basics.tsv',
@@ -44,8 +44,8 @@ function cleanBasics() {
 
 
 
-// Cleans name.basics.tsv to name.tsv, preserving only rows where actor/actress is one of the professions
-// and filtering out everything but nconst name dob dod professions. It resolves to the set of all nconsts
+// Cleans name.basics.tsv to names.tsv, preserving only rows where actor/actress is one of the professions
+// and filtering out everything but nconst, name, dob - dod, and professions. It resolves to the set of all nconsts
 // of actors/actresses which we need for cleanPrincipals.
 function cleanNames() {
 	const namesInput = {
@@ -70,15 +70,17 @@ function cleanNames() {
 			const actor = row.match(/^(nm\d+)\t([^\t]+)\t([^\t]+\t[^\t]+)\t([^\t]+)\t[^\t\n]+\n$/);
 			
 			if (actor && (actor[4].includes('actor') || actor[4].includes('actress'))) {
-			
+				let birthDeath = 'null';
 				const [ dob, dod ] = actor[3].split('\t');
 				const jobs = actor[4].replace(/(,)|(_)/g, '$1 ');
 				
-				let birthDeath = 'null';
-
+				// IMDb uses \N to mark either unkown info, or in the case of the dod of someone still living, n/a
 				if (dob != '\\N') {
-					birthDeath = dob + ' - ';
-					birthDeath += dod == '\\N'  ? 'present' : dod;
+					if (dod != '\\N') {
+						birthDeath = dob + ' - ' + dod;
+					} else {
+						birthDeath = dob + ' - present';
+					}
 				}
 				
 				stream.write(`${actor[1]}\t${actor[2]}\t${birthDeath}\t${jobs}\n`);
@@ -92,7 +94,7 @@ function cleanNames() {
 
 
 // Given a set of tconsts that represent feature films and a set of nconsts that represent actors/actresses,
-// only output the rows of title.principals.tsv that represent a feature film and have at least one principal nconst
+// only output the rows of title.principals.tsv that represent a feature film and have at least one cast member
 // in the set of actors/actresses.
 function cleanPrincipals(tconsts, nconsts) {
 	const principalsInput = {
@@ -105,6 +107,8 @@ function cleanPrincipals(tconsts, nconsts) {
 	const principalsOutput = {
 		file: 'movie.principals.tsv',
 		cb(row, stream) {
+
+			// parantheses correspond to tconst and a comma separated list of principal cast member nconsts
 			const movie = row.match(/^(tt\d+)\t([^\t\n]+)\n$/);
 
 			if (movie && tconsts.has(movie[1])) {				
@@ -124,10 +128,11 @@ function cleanPrincipals(tconsts, nconsts) {
 
 
 // perform the actual cleaning
-Promise.all([ cleanBasics(), cleanNames() ])
-	.then(([ tconsts, nconsts ]) => {
-		console.log('cleaned basics and names');
-		return cleanPrincipals(tconsts, nconsts);
-	})
-	.then(() => console.log('cleaned names'));
+Promise.all([
+	cleanBasics(),
+	cleanNames()
+])
+	.then(([ tconsts, nconsts ]) => (
+		cleanPrincipals(tconsts, nconsts)
+	));
 
