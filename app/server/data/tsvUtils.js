@@ -17,22 +17,21 @@ const path = require('path');
  *	supplied to output's callback, as well as a reference to the WriteStream of the output file.
  *
  *	inputs:
- *	input: { file: str fileToTraverse, matches: no restriction, cb: function(str row) }
- *	output: { file: str fileToWriteTo, cb: function(str row, Object WriteStream) }
+ *		input - { file: str fileToTraverse, matches: no restriction, cb: function(str row) }
+ *		output - { file: str fileToWriteTo, cb: function(str row, Object WriteStream) }
  *
  *	return: a Promise resolving to input.matches
  *
 **/
 exports.traverseTSV = function(input, output) {
 	return new Promise((resolve, reject) => {
-		const inStream = fs.createReadStream(path.join(__dirname, 'data/' + input.file), 'utf8');
 		let outStream;
+		const inStream = fs.createReadStream(path.join(__dirname, 'data/' + input.file), 'utf8');
 		
 		if (output) {
 			outStream = fs.createWriteStream(path.join(__dirname, 'data/' + output.file), 'utf8');
 		}
-
-
+		
 		inStream.on('readable', () => {
 			let row = '';
 			let char = '';
@@ -42,63 +41,37 @@ exports.traverseTSV = function(input, output) {
 				
 				if (char == '\n') {
 					input.cb(row);
-					
-					if (output) {
-						output.cb(row, outStream);
-					}
-
+					output ? output.cb(row, outStream) : null;
 					row = '';
 				}
 			}
 		});
 
-
 		inStream.on('end', () => {
-			if (output) {
-				outStream.end();
-			}
-
+			output ? outStream.end() : null;
 			resolve(input.matches);
 		});
 	});
 };
 
 
-// regex for the rows in names.tsv, parentheses correspond to nconst, name, birth year, death year, professions
-const NAME_ROW = /^(nm\d{7})\t([^\t]+)\t([^\t]+)\t([^\t]+)\t([^\t\n]+)\n$/;
 
-
-// given a set of names to search for (exact match), return a map of str nconst => str name
-exports.getActorsNconsts = function(names) {
+// given a set of nconsts to search for, return a set of documents for the actors collection
+exports.getActorInfoByNconst = function(nconsts) {
 	return exports.traverseTSV({
 		file: 'names.tsv',
 		matches: new Map(),
 		cb(row) {
-			const actor = row.match(NAME_ROW);
-			
-			if (actor && names.has(actor[2])) {
-				this.matches.set(actor[1], actor[2]);
-			}
-		}
-	});
-};
-
-
-// given a set of nconsts to search for, return a map of str nconst => { name: str, dob: number, dod: number, jobs: str}
-exports.getActorNames = function(nconsts) {
-	return exports.traverseTSV({
-		file: 'names.tsv',
-		matches: new Map(),
-		cb(row) {
-			const actor = row.match(NAME_ROW);
+			// parentheses correspond to nconst, name, 'birth year - death year', professions
+			const actor = row.match(/^(nm\d+)\t([^\t]+)\t([^\t]+)\t([^\t\n]+)\n$/);
 
 			if (actor && nconsts.has(actor[1])) {
-				// if dob or dod is undefined by dataset, record it as 0
-				this.matches.set(actor[1], { 
-					name: actor[2],
-					dob: actor[3] == '\\N' ? 0 : Number(actor[3]),
-					dod: actor[4] == '\\N' ? 0 : Number(actor[4]),
-					jobs: actor[5]
+				this.matches.set(actor[1], {
+					birthDeath: actor[3] != 'null' ? actor[3] : '',
+					imgUrl: null,
+					imgInfo: null,
+					jobs: actor[4],
+					name: actor[2]
 				});
 			}
 		}
@@ -106,73 +79,86 @@ exports.getActorNames = function(nconsts) {
 };
 
 
-/**
- *
- *	This function is used by baconTree.js to get the costars of the parents set of nconsts, so long as they are not in alreadyIndexed.
- *	It searches movie.principals.tsv where each row has a tconst and corresponding comma separated list of the nconsts for principal cast.
- *
- *	inputs:
- *	parents: Set( str nconst)
- *	alreadyIndexed: Set( str nconst )
- *
- *	return: a Promise resolving to matches, where
- *	matches: { parents: Map(str childNconst => [ str parentNconst, str tconst]), children: Set(str costarNconst), movies: Set(str tconst)}
- *
-**/
-exports.getChildren = function(parents, alreadyIndexed) {
-	return exports.traverseTSV({
-		file: 'movie.principals.tsv',
-		matches: {
-			childToParent: new Map(),
-			children: new Set(),
-			movies: new Set()
-		},
-		cb(row) {
-			const movie = row.match(/^(tt\d{7})\t([^\t\n]+)\n$/);
 
-			if (movie) { 
-				const parentActors = [];
-				const children = [];
-				const actors = movie[2].split(',');
-				
-				actors.forEach(actor => {	
-					if (parents.has(actor)) {
-						parentActors.push(actor);
-					
-					} else if (!alreadyIndexed.has(actor)) {
-						children.push(actor);
-					}
-				});
-
-				if (parentActors.length && children.length) {
-					children.forEach(child => {
-						alreadyIndexed.add(child);
-						this.matches.childToParent.set(child, [ parentActors[0], movie[1] ]);
-						this.matches.children.add(child);
-						this.matches.movies.add(movie[1]);
-					});
-				}
-			}
-		}
-	});
-};
-
-
-// given a set of tconsts to search for, return a map of str tconst => { title: str, year: number }
-exports.getMoviesByTconsts = function(tconsts) {
+// given a set of tconsts to search for, return a set of documents for the movies collection
+exports.getMovieInfoByTconst = function(tconsts) {
 	return exports.traverseTSV({
 		file: 'movie.basics.tsv',
 		matches: new Map(),
 		cb(row) {
-			const movie = row.match(/^(tt\d{7})\t([^\t]+)\t([^\t\n]+)\n$/);
+			// parentheses correspond to tconst, title, year released
+			const movie = row.match(/^(tt\d+)\t([^\t]+)\t([^\t\n]+)\n$/);
 
 			if (movie && tconsts.has(movie[1])) {
-				// set year to 0 if dataset lacks that info				
 				this.matches.set(movie[1], {
 					title: movie[2],
-					year: movie[3] == '\\N' ? '0' : Number(movie[3])
+					year: movie[3] == '\\N' ? 0 : Number(movie[3])
 				});
 			} 
+		}
+	});
+};
+
+
+
+/**
+ *
+ *	This function is used to build our Bacon tree. It gets the all child actors of the parent actors specified by the parentActors set, so long as that
+ *	child actor is not already in the indexedActors set (this holds all nconsts of actors already in the tree). If the movie linking them is not in
+ *	the indexedMovies set, it is also returned.
+ *
+ *
+ *	inputs:
+ *		parentActors - Set( nconst)
+ *		indexedActors - Set( nconst )
+ *		indexedMovies - Set( tconst )
+ *
+ *	return: a Promise resolving to the object matches, where
+ *		matches.childActors - a set of documents to be added to collection childToParent
+ *		matches.movies - a set of tconsts of movies that need to be added to the movies collection
+ *
+**/
+exports.getChildActors = function(parentActors, indexedActors, indexedMovies) {
+	return exports.traverseTSV({
+		file: 'movie.principals.tsv',
+		matches: {
+			childActors: new Map(),
+			movies: new Set()
+		},
+		cb(row) {
+
+			// parentheses correspond to tconst, comma joined list of nconsts
+			const movie = row.match(/^(tt\d+)\t([^\t\n]+)\n$/);
+
+			if (movie && !indexedMovies.has(movie[1])) {	
+				let parentActor = null;
+				const tconst = movie[1];
+				const children = [];
+				
+				movie[2]
+					.split(',')
+					.forEach(nconst => {
+						if (parentActors.has(nconst) && parentActor === null) {		// we only need to record one parent per movie
+							parentActor = nconst;
+						} else if (!indexedActors.has(nconst)) {
+							children.push(nconst);
+						}
+					});
+
+				if (parentActor !== null && children.length) {			
+					if (!indexedMovies.has(tconst)) {
+						this.matches.movies.add(tconst);
+					}
+
+					children.forEach(child => {
+						indexedActors.add(child);
+						this.matches.childActors.set(child, {
+							movie_id: tconst,
+							parent_id: parentActor
+						});
+					});
+				}
+			}
 		}
 	});
 };

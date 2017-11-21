@@ -5,7 +5,7 @@
 **/
 
 
-const db = require('./db');
+const db = require('./dbController');
 
 
 /**
@@ -46,9 +46,6 @@ function getNamesTitles(path) {
 						imgUrl: actor.imgUrl,
 						imgInfo: actor.imgInfo,
 						jobs: actor.jobs
-							.split(',')
-							.sort((a,b) => b.length - a.length)
-							.join(',')
 					});
 				});
 

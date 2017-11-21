@@ -10,7 +10,7 @@ const express = require('express');
 const path = require('path');
 
 const baconPath = require('./baconController');
-const db = require('./db');
+const db = require('./dbController');
 const getImages = require('./imageFinder');
 
 const app = express();

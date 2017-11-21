@@ -59,13 +59,13 @@ function AppController($scope, $location, serverCalls) {
 	//
 	//-------------------------------------------------------------------
 
-	const URL_PARSER = /([a-z]+)\/?([a-zA-Z-]+)?([0-9]+)?$/;
+	const urlParser = /([a-z]+)\/?([a-zA-Z-]+)?([0-9]+)?$/;
 
 	let rerouteOnLoad = false;
 	
 	// reroute as appropriate on reload
 	if ($location.path() !== '/home') {
-		const url = $location.path().match(URL_PARSER);
+		const url = $location.path().match(urlParser);
 
 		if (url && url[1] == 'display' && url[3]) {
 			vm.search(Number(url[3]), true);
@@ -87,8 +87,8 @@ function AppController($scope, $location, serverCalls) {
 			return;
 		}
 
-		newUrl = newUrl.match(URL_PARSER);
-		prevUrl = prevUrl.match(URL_PARSER);
+		newUrl = newUrl.match(urlParser);
+		prevUrl = prevUrl.match(urlParser);
 
 		// prevent the user moving back/forward while a page is loading	
 		if (prevUrl && newUrl && prevUrl[1] == 'loading' && newUrl[1] == 'home' && !vm.serverError) {
