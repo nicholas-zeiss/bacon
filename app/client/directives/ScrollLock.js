@@ -11,7 +11,6 @@ import angular from 'angular';
 	angular
 		.module('app.scrollLock', [])
 		.directive('scrollLock', () => ($scope, $element, $attrs) => {
-			
 			$element.on('wheel', e => e.preventDefault());
 			const [ scopeName, lockName ] = $attrs.scrollLock.split('.');
 			

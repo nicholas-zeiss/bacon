@@ -87,10 +87,8 @@ app.post('/name', (req, res) => {
 		.then(actors => {
 			if (!actors.length) {
 				res.sendStatus(404);
-			
 			} else if (actors.length == 1) {
-				sendBaconPath(actors[0]._id, res);		
-			
+				sendBaconPath(actors[0]._id, res);					
 			} else {
 				res.status(300).json(actors);	
 			}
@@ -110,8 +108,7 @@ app.post('/nconst', (req, res) => {
 	db.getActorInfoByNconst([req.body.nconst])
 		.then(result => {
 			if (!result.length) {
-				res.sendStatus(404);
-			
+				res.sendStatus(404);			
 			} else {
 				sendBaconPath(result[0]._id, res);
 			}
@@ -120,6 +117,7 @@ app.post('/nconst', (req, res) => {
 });
 
 
-const port = process.argv[2] ? Number(process.argv[2]) : 4080;
+const port = process.argv[2] ? Number(process.argv[2]) : 8080;
+
 app.listen(port, () => console.log('bacon is listening to port ', port));
 

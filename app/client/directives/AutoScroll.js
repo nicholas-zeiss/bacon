@@ -13,8 +13,7 @@ import $ from 'jquery';
 (() => {
 	angular
 		.module('app.autoScroll', [])
-		.directive('autoScroll', [ '$timeout', $timeout => ($scope, $element, $attrs) => {
-			
+		.directive('autoScroll', ['$timeout', $timeout => ($scope, $element, $attrs) => {
 			const displayContainer = $('#' + $attrs.id);			// we use $.animate() on this element
 			const displayContent = $element[0].children[0];
 

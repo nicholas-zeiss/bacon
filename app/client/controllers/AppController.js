@@ -10,7 +10,7 @@
 function AppController($scope, $location, serverCalls) {	
 	const vm = this;
 	
-	vm.viewportWidth = document.getElementsByTagName('body')[0].clientWidth;
+	// vm.viewportWidth = document.getElementsByTagName('body')[0].clientWidth;
 
 	// app wide state
 	vm.pathToBacon = null;     // format [ actor1, movie1, ... , Kevin Bacon ]

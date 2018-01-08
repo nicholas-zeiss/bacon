@@ -10,8 +10,9 @@ import angular from 'angular';
 import ngRoute from 'angular-route';
 
 // components
-import './components/actorDetails';
 import './components/actorChoice';
+import './components/actorDetails';
+import './components/arrow';
 
 // controllers
 import AppController from './controllers/AppController';
@@ -19,16 +20,15 @@ import ChooseController from './controllers/ChooseController';
 import DisplayController from './controllers/DisplayController';
 import InputController from './controllers/InputController';
 
-// directives
-import './directives/Arrow';
-import './directives/AutoScroll';
-import './directives/Hide';
-import './directives/ScrollLock';
-
 // filters
 import './filters/DisplayHeader';
 import './filters/Error';
 import './filters/ImdbSearch';
+
+// directives
+import './directives/AutoScroll';
+import './directives/Hide';
+import './directives/ScrollLock';
 
 // services
 import './services/arrowDetails';
@@ -37,12 +37,12 @@ import './services/serverCalls';
 
 
 angular.module('app', [
-	'app.actorDetails',
 	'app.actorChoice',
+	'app.actorDetails',
+	'app.arrow',
 	'app.displayHeader',
 	'app.error',
 	'app.imdbSearch',
-	'app.arrow',
 	'app.autoScroll',
 	'app.hide',
 	'app.scrollLock',
@@ -65,6 +65,7 @@ angular.module('app', [
 		'$scope',
 		'$timeout',
 		'$window',
+		'arrowDetails',
 		'getNodeTypes',
 		DisplayController
 	])

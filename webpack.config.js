@@ -1,6 +1,5 @@
 
-
-let path = require('path');
+const path = require('path');
 
 console.log('creating bundle.js');
 
@@ -12,9 +11,9 @@ module.exports = {
 	},
 	module: {
 		loaders: [{
-	      test: /\.js$/,
-	      loaders: ['babel-loader?presets[]=es2015'],
-	      include: path.join(__dirname, 'app/client')
-	  }]
+			test: /\.js$/,
+			loaders: ['babel-loader?presets[]=es2015'],
+			include: path.join(__dirname, 'app/client')
+		}]
 	}
 };

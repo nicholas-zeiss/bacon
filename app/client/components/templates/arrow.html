@@ -1,0 +1,41 @@
+
+<svg version="1.1"
+	xmlns="http://www.w3.org/2000/svg"
+	ng-attr-width="{{ $ctrl.details.width }}"
+	ng-attr-height="{{ $ctrl.details.height }}"
+	ng-style="{{ $ctrl.details.style }}">
+
+	<line stroke="#272727"
+		stroke-linecap="butt"
+		stroke-width="7"
+		ng-attr-x1="{{ $ctrl.details.lineStart.x }}"
+		ng-attr-x2="{{ $ctrl.details.lineEnd.x }}"
+		ng-attr-y1="{{ $ctrl.details.lineStart.y }}"
+		ng-attr-y2="{{ $ctrl.details.lineEnd.y }}"/>
+
+	<polyline fill="none"
+		stroke="#272727"
+		stroke-linejoin="miter"
+		stroke-width="7"
+		ng-attr-points="{{ $ctrl.details.tipPoints }}"/>
+
+	<text style="fill: #272727; font-size: 12px;"
+		ng-attr-text-anchor="{{ $ctrl.details.year.anchor }}"
+		ng-attr-x="{{ $ctrl.details.year.x }}"
+		ng-attr-y="{{ $ctrl.details.year.y }}">
+
+		{{ $ctrl.movie.year != '0' ? $ctrl.movie.year : '' }}
+	</text>
+
+	<foreignObject ng-attr-height="{{ $ctrl.details.title.height }}"
+		ng-attr-width="{{ $ctrl.details.title.width }}"
+		ng-attr-x="{{ $ctrl.details.title.x }}"
+		ng-attr-y="{{ $ctrl.details.title.y }}">
+		
+		<p style="width: 100%; height: 100%; margin: 0; font-size: 12px; text-align: {{ $ctrl.details.title.align }}; overflow-wrap: break-word; color: #272727"
+			xmlns="http://www.w3.org/1999/xhtml">
+
+			{{ $ctrl.movie.title }}
+		</p>
+	</foreignObject>
+</svg>

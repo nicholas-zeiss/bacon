@@ -11,9 +11,9 @@
 
 
 
-function DisplayController($scope, $timeout, $window, getNodeTypes) {
+function DisplayController($scope, $timeout, $window, arrowDetails, getNodeTypes) {
 	const vm = this;
-
+	
 	vm.duration = 500;
 	vm.rows = [];
 	vm.userScrollLocked = true;
@@ -31,17 +31,23 @@ function DisplayController($scope, $timeout, $window, getNodeTypes) {
 
 		vm.rows[rowIndex] = vm.rows[rowIndex] || { hidden: true, nodes: [] };
 
-		const rowLength = vm.rows[rowIndex].nodes.push({
+		const rowNode = {
 			actorMovie: node,
 			hidden: true,
 			short: /short/i.test(nodeTypes[i]),
 			type: nodeTypes[i]
-		});
+		};
+
+		if (rowNode.type !== 'actor') {
+			rowNode.arrowDetails = arrowDetails(rowNode.type);
+		}
+
+		const rowLength = vm.rows[rowIndex].nodes.push(rowNode);
 
 		nodeToRowIndex[i] = rowIndex;
 		nodeToIndexInRow[i] = rowLength - 1;
 	});
-
+	
 	// make first actor node visible, initiating cascade, after a small delay to ensure image has loaded
 	timeouts.push($timeout(showNode.bind(null, 0), 100));
 
