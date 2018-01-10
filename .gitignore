@@ -7,5 +7,6 @@ node_modules/*
 app/dist/*
 
 app/server/dbLogin.js
+app/server/dbControllerAlt.js
 
 app/server/data/data/*
