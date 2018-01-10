@@ -59,14 +59,14 @@ function AppController($scope, $location, serverCalls) {
 	//
 	//-------------------------------------------------------------------
 
-	const urlParser = /([a-z]+)\/?([a-zA-Z-]+)?([0-9]+)?$/;
+	const urlParser = /(?:com\/)?([a-z]+)\/?([a-zA-Z-]+)?([0-9]+)?$/;
 
 	let rerouteOnLoad = false;
 	
 	// reroute as appropriate on reload
 	if ($location.path() !== '/home') {
 		const url = $location.path().match(urlParser);
-
+		
 		if (url && url[1] == 'display' && url[3]) {
 			vm.search(Number(url[3]), true);
 		
@@ -81,7 +81,6 @@ function AppController($scope, $location, serverCalls) {
 
 	// handles browser moving back/forward through history by prepping app state as appropriate
 	$scope.$on('$locationChangeStart', (event, newUrl, prevUrl) => {
-		
 		// ignore url change on page load
 		if (rerouteOnLoad) {
 			rerouteOnLoad = false;
