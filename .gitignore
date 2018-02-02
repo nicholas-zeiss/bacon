@@ -9,3 +9,4 @@ app/dist/*
 app/server/dbLogin.js
 
 app/server/data/data/*
+app/server/dbControllerAlt.js
