@@ -66,7 +66,6 @@ function buildDatabase(parentActors, indexedActors, indexedMovies, depth) {
 			db.addChildParent(childParentDocs);
 			db.addActorInfo(actorDocs);
 			db.addMovieInfo(movieDocs);
-		
 		})
 		.then(() => buildDatabase(childNconsts, indexedActors, indexedMovies, depth + 1))
 		.catch(err => console.log(err));
