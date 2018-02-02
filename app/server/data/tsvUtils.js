@@ -10,6 +10,9 @@ const fs = require('fs');
 const path = require('path');
 
 
+const parseConst = str => Number(str.slice(2));
+
+
 /**
  *
  *	This function lets us read a tsv file as well as optionally write an output file. It takes an input and optional output object.
@@ -65,15 +68,16 @@ exports.getActorInfoByNconst = function(nconsts) {
 
 			// parentheses correspond to nconst, name, 'birth year - death year', professions
 			const actor = row.match(/^(nm\d+)\t([^\t]+)\t([^\t]+)\t([^\t\n]+)\n$/);
+			const nconst = actor ? parseConst(actor[1]) : null;
 
-			if (actor && nconsts.has(actor[1])) {		
+			if (actor && nconsts.has(nconst)) {		
 				this.matches.set(
-					actor[1],
+					nconst,
 					{
-						_id: Number(actor[1].slice(2)),
+						_id: nconst,
 						birthDeath: actor[3] != 'null' ? actor[3] : '',
-						imgUrl: null,
-						imgInfo: null,
+						imgUrl: '',
+						imgInfo: '',
 						jobs: actor[4],
 						name: actor[2]
 					}
@@ -94,12 +98,13 @@ exports.getMovieInfoByTconst = function(tconsts) {
 
 			// parentheses correspond to tconst, title, year released
 			const movie = row.match(/^(tt\d+)\t([^\t]+)\t([^\t\n]+)\n$/);
+			const tconst = movie ? parseConst(movie[1]) : null;
 
-			if (movie && tconsts.has(movie[1])) {			
+			if (movie && tconsts.has(tconst)) {			
 				this.matches.set(
-					movie[1],
+					tconst,
 					{
-						_id: Number(movie[1].slice(2)),
+						_id: tconst,
 						title: movie[2],
 						year: movie[3] == '\\N' ? 0 : Number(movie[3])
 					}
@@ -113,22 +118,19 @@ exports.getMovieInfoByTconst = function(tconsts) {
 
 /**
  *
- *	This function is used to build our Bacon tree. It gets the all child actors of the parent actors specified by the parentActors set, so long as that
+ *	This function is used to build our Bacon tree. It gets the all child actors of the parent actors in the parents map, so long as that
  *	child actor is not already in the indexedActors set (which holds nconsts of all actors already in the tree). If the movie linking them is not in
  *	the indexedMovies set, it is also returned in matches.
  *
- *
- *	inputs:
- *		parentActors - Set( nconst)
- *		indexedActors - Set( nconst )
- *		indexedMovies - Set( tconst )
+ *	The parents map maps an actor by their nconst to their "bacon path", the array that will eventually become their "parents" attribute
+ *	in their document in the actors collection. See dbController.js for more info.
  *
  *	return: a Promise resolving to the object matches, where
- *		matches.childActors - a set of documents to be added to collection childToParent
+ *		matches.childActors - a map of nconsts to bacon paths
  *		matches.movies - a set of tconsts of movies that need to be added to the movies collection
  *
 **/
-exports.getChildActors = function(parentActors, indexedActors, indexedMovies) {
+exports.getChildActors = function(parents, indexedActors, indexedMovies) {
 	return exports.traverseTSV({
 		file: 'movie.principals.tsv',
 		matches: {
@@ -139,36 +141,34 @@ exports.getChildActors = function(parentActors, indexedActors, indexedMovies) {
 
 			// parentheses correspond to tconst, comma joined list of nconsts
 			const movie = row.match(/^(tt\d+)\t([^\t\n]+)\n$/);
+			const tconst = movie ? parseConst(movie[1]) : null;
 
-			if (movie && !indexedMovies.has(movie[1])) {	
-				let parentActor = null;
-				const tconst = movie[1];
+			if (movie && !indexedMovies.has(tconst)) {	
+				let parent = null;
 				const children = [];
 				
 				movie[2]
 					.split(',')
-					.forEach(nconst => {				
+					.forEach(nconst => {
+						nconst = parseConst(nconst);
+
 						// we only need to record one parent per movie
-						if (parentActors.has(nconst) && parentActor === null) {
-							parentActor = nconst;
+						if (parent === null && parents.has(nconst)) {
+							parent = nconst;
 						} else if (!indexedActors.has(nconst) && !this.matches.childActors.has(nconst)) {
 							children.push(nconst);
-						}		
+						}
 					});
 
-				if (parentActor !== null && children.length) {			
-					if (!indexedMovies.has(tconst)) {
-						this.matches.movies.add(tconst);
-					}
+				if (parent !== null && children.length) {
+					this.matches.movies.add(tconst);
 
-					children.forEach(child => {
+					const path = parents.get(parent);
+
+					children.forEach(nconst => {
 						this.matches.childActors.set(
-							child,
-							{
-								_id: Number(child.slice(2)),
-								movie_id: tconst,
-								parent_id: Number(parentActor.slice(2))
-							}
+							nconst,
+							[[parent, tconst], ...path]
 						);
 					});
 				}
