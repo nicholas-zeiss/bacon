@@ -13,66 +13,74 @@ const tsv = require('./tsvUtils');
 const db = require('../dbController');
 
 
-// indexedActors and indexedMovies are sets of nconsts and tconsts, respectively, of actors/movies
-// already added to the db which should be ignored
-function buildDatabase(parentActors, indexedActors, indexedMovies, depth) {
+function getInfo({ actors, movies }) {
+	return Promise.all([
+		actors,
+		tsv.getActorInfoByNconst(actors),
+		tsv.getMovieInfoByTconst(movies)
+	]);
+}
+
+
+function getValidConsts(indexed, actors, actorInfo, movieInfo) {
+	const nconsts = [];
+	const tconsts = [];
+
+	for (let [ nconst, path ] of actors) {
+		const tconst = path[0][1];
+
+		// ensure that for every child actor we add, we have corresponding actor info and movie info
+		if (actorInfo.has(nconst) && (movieInfo.has(tconst) || indexed.has(tconst))) {		
+			nconsts.push(nconst);
+
+			if (!indexed.has(tconst)) {
+				tconsts.push(tconst);
+				indexed.add(tconst);
+			}
+		}
+	}
+
+	return [nconsts, tconsts];
+}
+
+
+function genActorDocs(nconsts, paths, actorInfo) {
+	return nconsts.map(nconst => {
+		const doc = actorInfo.get(nconst);
+		doc.parents = paths.get(nconst);
+
+		return doc;
+	});
+}
+
+
+// parents is a map of nconsts to their bacon path arrays (the eventual parent attribute of the actor documents).
+// It holds the actors whose children we are currently searching for. indexedActors and indexedMovies are sets 
+// of nconsts and tconsts, respectively, of actors/movie already added to the db which should be ignored.
+function buildDatabase(parents, indexedActors, indexedMovies, depth) {
 	if (depth == 7) {
 		return;
 	}
 	
-	const childNconsts = new Set();
+	tsv.getChildren(parents, indexedActors, indexedMovies)
+		.then(getInfo)
+		.then((...info) => {
+			const [ nconsts, tconsts ] = getValidConsts(indexedMovies, ...info);
 
-	tsv.getChildActors(parentActors, indexedActors, indexedMovies)
-		.then(result => {
-
-			result.childActors
-				.forEach((val, nconst) => {
-					childNconsts.add(nconst);
-				});
-
-			return Promise.all([
-				result.childActors,
-				tsv.getActorInfoByNconst(childNconsts),
-				tsv.getMovieInfoByTconst(result.movies)
-			]);
-		})
-		.then(([ childToParent, actorInfo, movieInfo ]) => {
-			// documents to add to our db
-			const childParentDocs = [];
-			const actorDocs = [];
-			const movieDocs = [];
-
-			for (let [ nconst, { _id, movie_id, parent_id }] of childToParent) {
-				
-				// ensure that for every child actor we add, we have corresponding actor info and movie info
-				if (actorInfo.has(nconst) && (movieInfo.has(movie_id) || indexedMovies.has(movie_id))) {		
-					indexedActors.add(nconst);
-					
-					actorDocs.push(actorInfo.get(nconst));
-					
-					childParentDocs.push({
-						_id,
-						parent_id,
-						movie_id: Number(movie_id.slice(2))		// convert from str prefixed with tt
-					});
-
-					if (!indexedMovies.has(movie_id)) {
-						indexedMovies.add(movie_id);
-						movieDocs.push(movieInfo.get(movie_id));
-					}
-				}
-			}
+			nconsts.forEach(nconst => indexedActors.add(nconst));
 			
-			db.addChildParent(childParentDocs);
-			db.addActorInfo(actorDocs);
-			db.addMovieInfo(movieDocs);
+			const actorDocs = genActorDocs(nconsts, ...info);
+			const movieDocs = tconsts.map(tconst => info[2].get(tconst));
+
+			db.addActorsMovies(actorDocs, movieDocs);
+
+			buildDatabase(info[0], indexedActors, indexedMovies, depth + 1);
 		})
-		.then(() => buildDatabase(childNconsts, indexedActors, indexedMovies, depth + 1))
 		.catch(err => console.log(err));
 }
 
 
-// clear db and generate Bacon tree. 0000102 is the nconst for Kevin Bacon.
+// clear db and generate Bacon tree. 102 is the nconst for Kevin Bacon.
 db.resetDb()
-	.then(() => buildDatabase(new Set([ 'nm0000102' ]), new Set([ 'nm0000102' ]), new Set(), 1));
+	.then(() => buildDatabase(new Map([[ 102, [] ]]), new Set([ 102 ]), new Set(), 1));
 

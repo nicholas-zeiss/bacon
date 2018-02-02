@@ -126,15 +126,15 @@ exports.getMovieInfoByTconst = function(tconsts) {
  *	in their document in the actors collection. See dbController.js for more info.
  *
  *	return: a Promise resolving to the object matches, where
- *		matches.childActors - a map of nconsts to bacon paths
+ *		matches.children - a map of nconsts to bacon paths
  *		matches.movies - a set of tconsts of movies that need to be added to the movies collection
  *
 **/
-exports.getChildActors = function(parents, indexedActors, indexedMovies) {
+exports.getChildren = function(parents, indexedActors, indexedMovies) {
 	return exports.traverseTSV({
 		file: 'movie.principals.tsv',
 		matches: {
-			childActors: new Map(),
+			children: new Map(),
 			movies: new Set()
 		},
 		cb(row) {
@@ -155,7 +155,7 @@ exports.getChildActors = function(parents, indexedActors, indexedMovies) {
 						// we only need to record one parent per movie
 						if (parent === null && parents.has(nconst)) {
 							parent = nconst;
-						} else if (!indexedActors.has(nconst) && !this.matches.childActors.has(nconst)) {
+						} else if (!indexedActors.has(nconst) && !this.matches.children.has(nconst)) {
 							children.push(nconst);
 						}
 					});
@@ -166,7 +166,7 @@ exports.getChildActors = function(parents, indexedActors, indexedMovies) {
 					const path = parents.get(parent);
 
 					children.forEach(nconst => {
-						this.matches.childActors.set(
+						this.matches.children.set(
 							nconst,
 							[[parent, tconst], ...path]
 						);
