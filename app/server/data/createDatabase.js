@@ -13,10 +13,10 @@ const tsv = require('./tsvUtils');
 const db = require('../dbController');
 
 
-function getInfo({ actors, movies }) {
+function getInfo({ children, movies }) {
 	return Promise.all([
-		actors,
-		tsv.getActorInfoByNconst(actors),
+		children,
+		tsv.getActorInfoByNconst(children),
 		tsv.getMovieInfoByTconst(movies)
 	]);
 }
@@ -58,13 +58,13 @@ function genActorDocs(nconsts, paths, actorInfo) {
 // It holds the actors whose children we are currently searching for. indexedActors and indexedMovies are sets 
 // of nconsts and tconsts, respectively, of actors/movie already added to the db which should be ignored.
 function buildDatabase(parents, indexedActors, indexedMovies, depth) {
-	if (depth == 7) {
+	if (depth === 7) {
 		return;
 	}
 	
 	tsv.getChildren(parents, indexedActors, indexedMovies)
 		.then(getInfo)
-		.then((...info) => {
+		.then((info) => {
 			const [ nconsts, tconsts ] = getValidConsts(indexedMovies, ...info);
 
 			nconsts.forEach(nconst => indexedActors.add(nconst));
@@ -73,7 +73,7 @@ function buildDatabase(parents, indexedActors, indexedMovies, depth) {
 			const movieDocs = tconsts.map(tconst => info[2].get(tconst));
 
 			db.addActorsMovies(actorDocs, movieDocs);
-
+			console.log(`finished pass, added ${actorDocs.length} actors and ${movieDocs.length} movies`);
 			buildDatabase(info[0], indexedActors, indexedMovies, depth + 1);
 		})
 		.catch(err => console.log(err));
