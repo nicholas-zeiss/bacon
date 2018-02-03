@@ -96,7 +96,7 @@ function addMovieInfo(movies, db) {
 }
 
 
-function getActorsByName(names, db) {
+function getActorsByName(name, db) {
 	return db.collection('actors')
 		.find({ $text: { $search: `"${name}"` }})
 		.toArray()
@@ -209,10 +209,10 @@ exports.getBaconPath = actor => (
 		});
 
 		Promise.all([
-			getActorsByNconsts(nconsts),
-			getMoviesByTconsts(tconsts)
+			getActorsByNconsts(nconsts, db),
+			getMoviesByTconsts(tconsts, db)
 		])
-			.then((parents, movies) => {
+			.then(([ parents, movies ]) => {
 				const baconPath = generatePath(actor, parents, movies);
 				success(db, resolve, baconPath);
 			})
