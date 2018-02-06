@@ -10,6 +10,7 @@ const express = require('express');
 const path = require('path');
 
 const db = require('./dbController');
+const getImages = require('./imageFinder');
 
 const app = express();
 
@@ -23,25 +24,62 @@ app.get('*', (req, res) => {
 });
 
 
+// helper for /name and /nconst post requests
+function sendBaconPath(actor, res) {
+	db.getBaconPath(actor)
+		.then(path => {		
+			if (path.some(node => node.actor.imgUrl === null)) {
+				addImages(path, res);
+			} else {
+				res.status(200).json(path);
+			}
+		})
+		.catch(() => res.sendStatus(500));
+}
+
+
+// helper for sendBaconPath
+function addImages(pathToBacon, res) {
+	const names = new Set();
+
+	pathToBacon.forEach(node => {
+		if (node.actor.imgUrl === null) {
+			names.add(node.actor.name);
+		}
+	});
+
+	getImages([...names])
+		.then(nameToImageUrls => {
+			pathToBacon.forEach(node => {
+				if (node.actor.imgUrl === null) {
+					const urls = nameToImageUrls[node.actor.name];
+
+					node.actor.imgUrl = urls.imgUrl;
+					node.actor.imgInfo = urls.imgInfo;
+				}
+			});
+
+			res.status(200).json(pathToBacon);
+		})
+		.catch(() => res.sendStatus(500));
+}
+
+
 // posts to name are requests for the path between name and Kevin Bacon, find one if one exists
-// and send it, or send an appropriate error
+// and send it, send an appropriate error if no match is found, or send choices if multiple actors
+// with that name are found
 app.post('/name', (req, res) => {
 	if (!req.body || !req.body.name || (typeof req.body.name != 'string')) {
 		res.sendStatus(400);
 		return;
 	}
 
-	// as names are not guaranteed unique in our db we find all matches and respond according to the number of matches
 	db.getActorsByName(req.body.name)
 		.then(actors => {
 			if (!actors.length) {
 				res.sendStatus(404);
-			
-			} else if (actors.length == 1) {
-				db.getBaconPath(actors[0])
-					.then(path => res.status(200).json(path))	
-					.catch(() => res.sendStatus(500));
-
+			} else if (actors.length === 1) {
+				sendBaconPath(actors[0]);
 			} else {
 				res.status(300).json(actors);	
 			}
@@ -62,11 +100,8 @@ app.post('/nconst', (req, res) => {
 		.then(actors => {
 			if (!actors.length) {
 				res.sendStatus(404);
-			
 			} else {
-				db.getBaconPath(actors[0])
-					.then(path => res.status(200).json(path))	
-					.catch(() => res.sendStatus(500));
+				sendBaconPath(actors[0]);
 			}
 		})
 		.catch(() => res.sendStatus(500));
