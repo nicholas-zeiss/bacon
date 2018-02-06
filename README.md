@@ -22,7 +22,7 @@ $ cd bacon/
 $ npm i
 ```
 
-To continue seeting up the application, you will first need a valid Amazon Web Services account with which to download the IMDb dataset. Ensure that your credentials are saved
+To continue setting up the application, you will first need a valid Amazon Web Services account with which to download the IMDb dataset. Ensure that your credentials are saved
 in your [shared credentials file](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/loading-node-credentials-shared.html).
 
 With that setup, add the directory to hold the dataset, download it, and unpack it with:
@@ -37,12 +37,12 @@ Next we'll extract the relevant information from this data into new files to spe
 $ node app/server/data/cleanDataset.js
 ```
 
-Before continuing, ensure that you have setup a MongoDB database to hold the data we will create. I recommend that you create a local database for this purpose to speed up the process; you can then export it to any database you choose. You will want to create a file app/server/dbLogin.js and export from it a URL string connecting to this database. With that setup, we can now use our IMDb dataset to create the Mongo database with:
+Before continuing, ensure that you have setup a MongoDB database to hold the data we will create. I recommend that you create a local database for this purpose to speed up the process; you can then export it to any MongoDB instance you choose. You will want to create a file app/server/dbLogin.js and export from it a URL string connecting to this database. With that setup, we can now use our IMDb dataset to create the database with:
 ```
 $ node app/server/data/createDatabase.js
 ```
 
-Then, if desired, one can add images for each actor that will be displayed on the front-end to the database. Images are found on an actor's [Wikipedia](https://www.wikipedia.org/) page and then the direct URL/description page are found on [Wikimedia Commons](https://commons.wikimedia.org/wiki/Main_Page). Appropriate attribution information of the image will be displayed on the front-end.
+Then, if desired, one can add images for each actor that will be displayed on the front-end to the database. Images are found on an actor's [Wikipedia](https://www.wikipedia.org/) page and then the direct URL/description page are found on [Wikimedia Commons](https://commons.wikimedia.org/wiki/Main_Page). Appropriate attribution information of the image will be stored and displayed on the front-end.
 
 This is an optional step that both takes a long time to complete and greatly increases the size of the database; if you choose to skip it the images will still be found and sent to the front-end on each search for an actor. However, this greatly increases the response time of the server. If you do wish to complete the step note that you can terminate the process at anytime and any images already found will be preserved.
 
@@ -51,10 +51,10 @@ If you choose to do so, add images to the database with:
 $ node app/server/data/addImages.js
 ```
 
+Your database will now be ready to go! To start running the app use:
+```
+$ npm start
+```
 
+The app will now be running on your localhost on port 4080.
 
-
-
-setup dbLogin before creating db
-
-node app/server/data/cleanData.js
