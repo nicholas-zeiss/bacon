@@ -12,13 +12,13 @@
  *	Collection formats:
  *
  *   i. actors - {
- *			  _id: int nconst,       -  their numerical index as specified in the IMDb dataset
- *			  name: str,				     -  name of the actor
- *			  birthDeath: str,       -  '' if no info, 'birthYear - deathYear' or 'birthYear - present' otherwise
- *        jobs: str, 						 -  top three professions according to IMDb joined by ', '
- *        imgUrl: str,					 -  url to the image found of the actor (empty string if no image could be found)
- * 				imgInfo: str 					 -  url to the wikimedia commons page for the image (empty string if no image could be found)
- *				parents: [ 						 -  array of nconst/tconst of parent, grandparent, etc in path to Kevin Bacon. Empty if actor is Kevin Bacon.
+ *			  _id: int nconst,       					-  their numerical index as specified in the IMDb dataset
+ *			  name: str,				     					-  name of the actor
+ *			  birthDeath: str,       					-  '' if no info, 'birthYear - deathYear' or 'birthYear - present' otherwise
+ *        jobs: str, 						 					-  top three professions according to IMDb joined by ', '
+ *        imgUrl: null | str,		 					-  url to the image found of the actor (null if not yet generated, empty string if no image could be found)
+ * 				imgInfo: null | str, 	 					-  url to the wikimedia commons page for the image (null if not yet generated, empty string if no image could be found)
+ *				parents: [ 						 					-  array of nconst/tconst of parent, grandparent, etc in path to Kevin Bacon. Empty if actor is Kevin Bacon.
  *					[						         
  *						int nconst,		- nconst of this actors parent
  *						int tconst    - tconst of movie linking them
@@ -29,9 +29,9 @@
  *
  *
  *   ii. movies - {
- *			  _id: int tconst,     	 -  numerical index as specified in the IMDb dataset
- *			  title: str,				     -  primary title of the movie
- *        year: int              -  year the movie was released (0 if not in dataset)
+ *			  _id: int tconst,     	 					-  numerical index as specified in the IMDb dataset
+ *			  title: str,				     					-  primary title of the movie
+ *        year: int              					-  year the movie was released (0 if not in dataset)
  *		  }
  *
 **/
@@ -167,6 +167,9 @@ function generatePath(actor, parents, movies) {
  *					DB INTERFACE
  *
 **/
+
+exports.connectToDb = connectToDb;
+
 
 exports.addActorsMovies = (actors, movies) => (
 	connectToDb((db, resolve, reject) => {

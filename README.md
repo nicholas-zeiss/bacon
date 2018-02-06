@@ -23,10 +23,9 @@ The code responsible for doing the actual heavy lifting and solving a sudoku boa
 
 setup your aws credentials
 create app/server/data/data
-node app/server/data/getData.js
+node app/server/data/getDataset.js
 unzip
 
+setup dbLogin before creating db
 
 node app/server/data/cleanData.js
-
-setup dbLogin before creating db
