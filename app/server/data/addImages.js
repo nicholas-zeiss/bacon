@@ -34,7 +34,7 @@ const processBatch = (db, batch)  => {
 			for (let name in nameToImg) {
 				const img = nameToImg[name];
 				const id = nameToID[name];
-				updates.push(() => updateActor(db, id, img));
+				updates.push(updateActor(db, id, img));
 			}
 
 			return Promise.all(updates);
