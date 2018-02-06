@@ -29,6 +29,7 @@ function sendBaconPath(actor, res) {
 	db.getBaconPath(actor)
 		.then(path => {		
 			if (path.some(node => node.actor.imgUrl === null)) {
+				console.log('adding images');
 				addImages(path, res);
 			} else {
 				res.status(200).json(path);
@@ -58,7 +59,7 @@ function addImages(pathToBacon, res) {
 					node.actor.imgInfo = urls.imgInfo;
 				}
 			});
-
+			console.log('sending path');
 			res.status(200).json(pathToBacon);
 		})
 		.catch(() => res.sendStatus(500));
@@ -79,7 +80,7 @@ app.post('/name', (req, res) => {
 			if (!actors.length) {
 				res.sendStatus(404);
 			} else if (actors.length === 1) {
-				sendBaconPath(actors[0]);
+				sendBaconPath(actors[0], res);
 			} else {
 				res.status(300).json(actors);	
 			}
@@ -101,7 +102,7 @@ app.post('/nconst', (req, res) => {
 			if (!actors.length) {
 				res.sendStatus(404);
 			} else {
-				sendBaconPath(actors[0]);
+				sendBaconPath(actors[0], res);
 			}
 		})
 		.catch(() => res.sendStatus(500));
