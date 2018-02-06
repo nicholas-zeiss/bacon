@@ -18,7 +18,8 @@ function DisplayController($scope, $timeout, $window, getNodeTypes) {
 	vm.rows = [];
 	vm.userScrollLocked = true;
 
-	const device = $window.innerWidth < 800 ? 'small' : 'medium';
+	// const device = $window.innerWidth < 800 ? 'small' : 'medium';
+	const device = 'medium';
 	const nodeToRowIndex = [];
 	const nodeToIndexInRow = [];
 	const nodeTypes = getNodeTypes(device, $scope.app.pathToBacon.length);
