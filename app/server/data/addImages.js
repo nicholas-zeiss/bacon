@@ -9,7 +9,7 @@
 **/
 
 const database = require('../dbController');
-const getImages = require('./imageFinder');
+const getImages = require('../imageFinder');
 
 const BATCH_SIZE = 10;
 
