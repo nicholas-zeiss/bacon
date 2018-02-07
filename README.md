@@ -29,4 +29,3 @@ unzip
 
 node app/server/data/cleanData.js
 
-setup dbLogin before creating db
