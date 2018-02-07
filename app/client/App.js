@@ -102,5 +102,10 @@ angular.module('app', [
 			requireBase: true,
 			rewriteLinks: true
 		});
+	}])
+	.config(['$compileProvider', $compileProvider => {
+		$compileProvider.commentDirectivesEnabled(false);
+		$compileProvider.cssClassDirectivesEnabled(false);
+		$compileProvider.debugInfoEnabled(false);
 	}]);
 
