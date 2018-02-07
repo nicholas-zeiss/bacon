@@ -1,6 +1,6 @@
 /**
  *
- *  This module sets up the server for our web app using express
+ *  This module sets up the server for our web app using express and the utilities in baconController.js, db.js, and imageFinder.js
  *
 **/
 
@@ -25,11 +25,10 @@ app.get('*', (req, res) => {
 
 
 // helper for /name and /nconst post requests
-function sendBaconPath(actor, res) {
-	db.getBaconPath(actor)
+function sendBaconPath(nconst, res) {
+	db.getBaconPath(nconst)
 		.then(path => {		
 			if (path.some(node => node.actor.imgUrl === null)) {
-				console.log('adding images');
 				addImages(path, res);
 			} else {
 				res.status(200).json(path);
@@ -41,25 +40,34 @@ function sendBaconPath(actor, res) {
 
 // helper for sendBaconPath
 function addImages(pathToBacon, res) {
-	const names = new Set();
+	const names = [];
+	const nameToNconst = {};
 
 	pathToBacon.forEach(node => {
 		if (node.actor.imgUrl === null) {
-			names.add(node.actor.name);
+			names.push(node.actor.name);
+			nameToNconst[node.actor.name] = node.actor._id;
 		}
 	});
 
-	getImages([...names])
+	getImages(names)
 		.then(nameToImageUrls => {
+			const nconstToUrl = {};
+
+			for (let name in nameToImageUrls) {
+				const nconst = nameToNconst[name];
+				nconstToUrl[nconst] = nameToImageUrls[name];
+			}
+
 			pathToBacon.forEach(node => {
 				if (node.actor.imgUrl === null) {
 					const urls = nameToImageUrls[node.actor.name];
-
 					node.actor.imgUrl = urls.imgUrl;
 					node.actor.imgInfo = urls.imgInfo;
 				}
 			});
-			console.log('sending path');
+
+			db.addActorImages(nconstToUrl);
 			res.status(200).json(pathToBacon);
 		})
 		.catch(() => res.sendStatus(500));
@@ -67,20 +75,20 @@ function addImages(pathToBacon, res) {
 
 
 // posts to name are requests for the path between name and Kevin Bacon, find one if one exists
-// and send it, send an appropriate error if no match is found, or send choices if multiple actors
-// with that name are found
+// and send it, or send an appropriate error
 app.post('/name', (req, res) => {
 	if (!req.body || !req.body.name || (typeof req.body.name != 'string')) {
 		res.sendStatus(400);
 		return;
 	}
 
-	db.getActorsByName(req.body.name)
+	// as names are not guaranteed unique in our db we find all matches and respond according to the number of matches
+	db.getActorInfoByName(req.body.name)
 		.then(actors => {
 			if (!actors.length) {
 				res.sendStatus(404);
-			} else if (actors.length === 1) {
-				sendBaconPath(actors[0], res);
+			} else if (actors.length == 1) {
+				sendBaconPath(actors[0]._id, res);					
 			} else {
 				res.status(300).json(actors);	
 			}
@@ -97,19 +105,12 @@ app.post('/nconst', (req, res) => {
 		return;
 	}
 
-<<<<<<< HEAD
 	db.getActorInfoByNconst([req.body.nconst])
 		.then(result => {
 			if (!result.length) {
 				res.sendStatus(404);			
-=======
-	db.getActorsByNconsts([req.body.nconst])
-		.then(actors => {
-			if (!actors.length) {
-				res.sendStatus(404);
->>>>>>> database
 			} else {
-				sendBaconPath(actors[0], res);
+				sendBaconPath(result[0]._id, res);
 			}
 		})
 		.catch(() => res.sendStatus(500));

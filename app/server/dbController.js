@@ -5,33 +5,34 @@
  *	Note: the IMDb dataset indexes actors by a number referred to as nconst and movies by a number referred to as tconst.
  *		We use those indices for our database as well.
  *
- *  Our database is composed of 2 collections:
- *		actors - indexed by name, holds general information about the actors and the nconsts of the actors linking them to Kevin Bacon
+ *  Our database is composed of 3 collections:
+ *		actors - indexed by name, holds general information about the actors
  *  	movies - holds general information about the movies
+ *		childToParent - links a child actor to his parent actor and the movie linking them
  *
  *	Collection formats:
  *
  *   i. actors - {
- *			  _id: int nconst,       					-  their numerical index as specified in the IMDb dataset
- *			  name: str,				     					-  name of the actor
- *			  birthDeath: str,       					-  '' if no info, 'birthYear - deathYear' or 'birthYear - present' otherwise
- *        jobs: str, 						 					-  top three professions according to IMDb joined by ', '
- *        imgUrl: null | str,		 					-  url to the image found of the actor (null if not yet generated, empty string if no image could be found)
- * 				imgInfo: null | str, 	 					-  url to the wikimedia commons page for the image (null if not yet generated, empty string if no image could be found)
- *				parents: [ 						 					-  array of nconst/tconst of parent, grandparent, etc in path to Kevin Bacon. Empty if actor is Kevin Bacon.
- *					[						         
- *						int nconst,		- nconst of this actors parent
- *						int tconst    - tconst of movie linking them
- *					 ],
- *					...
- *				]
+ *			  _id: nconst (int),     -  their numerical index as specified in the IMDb dataset
+ *			  name: str,				     -  name of the actor
+ *			  birthDeath: str,       -  '' if no info, 'birthYear - deathYear' or 'birthYear - present' otherwise
+ *        jobs: str, 						 -  top three professions according to IMDb joined by ', '
+ *        imgUrl: str,					 -  url to the image generated for them (null if image not yet generated, empty string if no image could be found)
+ * 				imgInfo: str 					 -  url to the wikimedia commons page for the image (null if image not yet generated, empty string if no image could be found)
  *		  }
  *
  *
  *   ii. movies - {
- *			  _id: int tconst,     	 					-  numerical index as specified in the IMDb dataset
- *			  title: str,				     					-  primary title of the movie
- *        year: int              					-  year the movie was released (0 if not in dataset)
+ *			  _id: tconst (int),     -  numerical index as specified in the IMDb dataset
+ *			  title: str,				     -  primary title of the movie
+ *        year: int              -  year the movie was released (0 if not in dataset)
+ *		  }
+ *
+ *
+ *   iii. childToParent - {
+ *			  _id: nconst (int),     		-  numerical index of child actor as specified in the IMDb dataset
+ *			  movie_id: tconst (int), 	-  tconst of the movie linking child and parent
+ *        parent_id: nconst(int)    -  numerical index of parent actor as specified in the IMDb dataset
  *		  }
  *
 **/
@@ -49,19 +50,18 @@ const KevinBaconInfo = {
 	birthDeath: '1958 - present',
 	jobs: 'actor, producer, soundtrack',
 	imgUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Kevinbacongfdl.PNG/400px-Kevinbacongfdl.PNG',
-	imgInfo: 'https://commons.wikimedia.org/wiki/File:Kevinbacongfdl.PNG',
-	parents: []
+	imgInfo: 'https://commons.wikimedia.org/wiki/File:Kevinbacongfdl.PNG'
 };
 
+function success(db, resolve, result) {
+	db.close(false, resolve.bind(null, result));
+}
 
+function failure(db, reject, error) {
+	console.log('Error in db controller:\n', error.message);
+	db.close(false, reject.bind(null, error));
+}
 
-
-
-/**
- *
- *					UTILS FOR CRUD OPERATIONS
- *
-**/
 
 // Connects to the database and executes a callback. It returns a promise that resolves/rejects according to the callback.
 function connectToDb(cb) {
@@ -74,184 +74,252 @@ function connectToDb(cb) {
 }
 
 
-function success(db, resolve, result) {
-	db.close(false, resolve.bind(null, result));
+function resetDb() {
+	return connectToDb((db, resolve, reject) => {		
+		db.dropDatabase()
+			.then(() => {		
+				db.collection('actors').createIndex({ name: 'text' });
+				db.collection('childToParent');
+				db.collection('movies');
+
+				db.collection('actors')
+					.insertOne(KevinBaconInfo)
+					.then(success.bind(null, db, resolve))
+					.catch(failure.bind(null, db, reject));
+			})
+			.catch(failure.bind(null, db, reject));	
+	});
 }
 
 
-function failure(db, reject, error) {
-	db.close(false, reject.bind(null, error));
+function resetImages() {
+	return connectToDb((db, resolve, reject) => {		
+		db.collection('actors')
+			.updateMany(
+				{ _id: { $ne: 102 }},
+				{ $set: { imgUrl: null, imgInfo: null }}
+			)
+			.then(success.bind(null, db, resolve))
+			.catch(failure.bind(null, db, reject));	
+	});
 }
 
 
-function addActorInfo(actors, db) {
-	return db.collection('actors')
-		.insertMany(actors, { ordered: false });
+/**
+ *
+ *		SECTION - CREATE
+ *
+ *		 i. addActorImages   		-  add image urls to documents specified by nconst in actors
+ *		ii. addActorInfo  			-  add documents to actors collection
+ *   iii. addChildParent			-  add documents to an childToParent
+ *    iv. addMovieInfo			  -  add documents to movies collection
+ *
+**/
+
+function addActorImages(nconstToUrl) {
+	return connectToDb((db, resolve, reject) => {		
+		const updates = [];
+
+		for (let nconst in nconstToUrl) {
+			updates.push(db.collection('actors')
+				.updateOne(
+					{ _id: Number(nconst) },
+					{ $set: {
+						imgUrl: nconstToUrl[nconst].imgUrl,
+						imgInfo: nconstToUrl[nconst].imgInfo 
+					}}
+				)
+			);
+		}
+
+		Promise.all(updates)
+			.then(success.bind(null, db, resolve))
+			.catch(failure.bind(null, db, reject));
+	});
 }
 
 
-function addMovieInfo(movies, db) {
-	return db.collection('movies')
-		.insertMany(movies, { ordered: false });
+function addActorInfo(documents) {
+	return connectToDb((db, resolve, reject) => {		
+		db.collection('actors')
+			.insertMany(documents, { ordered: false })
+			.then(success.bind(null, db, resolve))
+			.catch(failure.bind(null, db, reject));	
+	});
 }
 
 
-function getActorsByName(name, db) {
-	return db.collection('actors')
-		.find({ $text: { $search: `"${name}"` }})
-		.toArray()
-		.then(array => (
-			array.filter(actor => (
+function addChildParent(documents) {
+	return connectToDb((db, resolve, reject) => {		
+		db.collection('childToParent')
+			.insertMany(documents, { ordered: false })
+			.then(success.bind(null, db, resolve))
+			.catch(failure.bind(null, db, reject));	
+	});
+}
+
+
+function addMovieInfo(documents) {
+	return connectToDb((db, resolve, reject) => {	
+		db.collection('movies')
+			.insertMany(documents, { ordered: false })
+			.then(success.bind(null, db, resolve))
+			.catch(failure.bind(null, db, reject));
+	});
+}
+
+
+
+/**
+ *
+ *		 SECTION - GET
+ *
+ *			i. getActorInfoByName  			-  retreive all documents in collection actors that match the given name (case insensitive)
+ *		 ii. getActorInfoByNconst     -  retreive all documents in collection actors whose nconst is in the supplied array
+ *     iv. getMovieInfo			 				-  retreive all documents in collection movies whose tconst is in the supplied array
+ *
+**/
+
+function getActorInfoByName(name) {
+	return connectToDb((db, resolve, reject) => {
+		
+		// Searches actors collection for any documents where name contains the name argument, case insensitive.
+		// As this includes actors whose name may have additional text before or after the name argument, we conduct
+		// an additional filter.
+
+		db.collection('actors')
+			.find({ $text: { $search: `"${name}"` }})
+			.toArray()
+			.then(array => array.filter(actor => (
 				actor.name.toLowerCase() == name.toLowerCase()
-			))
+			)))
+			.then(success.bind(null, db, resolve))
+			.catch(failure.bind(null, db, reject));
+	}); 
+}
+
+
+function getActorInfoByNconst(nconsts) {
+	return connectToDb((db, resolve, reject) => {	
+		db.collection('actors')
+			.find({  _id: { $in: nconsts }})
+			.toArray()
+			.then(success.bind(null, db, resolve))
+			.catch(failure.bind(null, db, reject));
+	});
+}
+
+
+function getMovieInfo(tconsts) {
+	return connectToDb((db, resolve, reject) => {	
+		db.collection('movies')
+			.find({ _id: { $in: tconsts }})
+			.toArray()
+			.then(success.bind(null, db, resolve))
+			.catch(failure.bind(null, db, reject));
+	});
+}
+
+
+/**
+ *
+ *		SECTION - Bacon Path
+ *		
+ *		This section contains the function we use to actually find a path from an actor to Kevin Bacon,
+ *		along with some helper functions for it.	
+ *			
+**/
+
+// given a nconst to start at this resolves to the path to bacon where every step on the path
+// is a parent actor nconst and movie nconst
+function findParents(nconst, db, path = []) {
+	return db.collection('childToParent')
+		.findOne({ _id: nconst })
+		.then(result => {			
+			path.push({
+				actor: result._id,
+				movie: result.movie_id
+			});
+
+			if (result.parent_id == 102) {
+				return path;
+			} else {
+				return findParents(result.parent_id, db, path);
+			}
+		});
+}
+
+
+// given an array of nconsts find the actor info for each from the actors collecton
+function findActorInfo(nconsts, db) {
+	return db.collection('actors')
+		.find({ _id: { $in: nconsts }})
+		.toArray()
+		.then(info => (
+			info.reduce((info, actor) => (
+				Object.assign(info, { [actor._id]: actor })
+			), {})
 		));
 }
 
 
-function getActorsByNconsts(nconsts, db) {
-	return db.collection('actors')
-		.find({  _id: { $in: nconsts }})
-		.toArray();
-}
-
-
-function getMoviesByTconsts(tconsts, db) {
+// given an array of tconsts find the movie info for each from the movies collection
+function findMovieInfo(tconsts, db) {
 	return db.collection('movies')
 		.find({ _id: { $in: tconsts }})
-		.toArray();
+		.toArray()
+		.then(info => (
+			info.reduce((info, movie) => (
+				Object.assign(info, { [movie._id]: movie })
+			), {})
+		));
 }
 
+// Function that puts it all together and gives us the full path. Note that
+// we assume nconst is a valid actor id, we verify this elsewhere.
+function getBaconPath(nconst) {
+	return connectToDb((db, resolve, reject) => {
 
+		findParents(nconst, db)
+			.then(pathToBacon => {		
+				const nconsts = [];
+				const tconsts = [];
 
+				pathToBacon.forEach(node => {
+					nconsts.push(node.actor);
+					tconsts.push(node.movie);
+				});
 
-
-/**
- *
- *					UTILS FOR PARSING PATH TO BACON
- *
-**/
-
-function mapDocuments(documents) {
-	return documents.reduce((map, doc) => (
-		Object.assign(map, { [doc._id]: doc })
-	), {});
-}
-
-
-// Takes the actor document of the start of the path to Bacon and arrays of the actor/movie
-// documents of their ancestors. Returns an array of objects holding an actor and the movie linking
-// them to their parent.
-function generatePath(actor, parents, movies) {
-	parents = mapDocuments(parents);
-	movies = mapDocuments(movies);
-
-	let currActor = { actor };
-	const pathToBacon = [];
-
-	actor.parents.forEach(([ nconst, tconst ]) => {
-		currActor.movie = movies[tconst];
-		pathToBacon.push(currActor);
-		currActor = { actor: parents[nconst] };
+				return Promise.all([
+					pathToBacon,
+					findActorInfo(nconsts, db),
+					findMovieInfo(tconsts, db)
+				]);
+			})
+			.then(([ pathToBacon, actorInfo, movieInfo ]) => (
+				pathToBacon
+					.map(node => ({
+						actor: actorInfo[node.actor],
+						movie: movieInfo[node.movie]
+					}))
+					.concat({ actor: KevinBaconInfo, movie: null })
+			))
+			.then(success.bind(null, db, resolve))
+			.catch(failure.bind(null, db, reject));
 	});
-
-	// currActor is now Kevin Bacon, who has no parent thus no movie linking to his parent
-	currActor.movie = null;
-	pathToBacon.push(currActor);
-
-	return pathToBacon;
 }
 
 
-/**
- *
- *					DB INTERFACE
- *
-**/
-
-
-exports.connectToDb = connectToDb;
-
-
-exports.addActorsMovies = (actors, movies) => (
-	connectToDb((db, resolve, reject) => {
-		Promise.all([
-			addActorInfo(actors, db),
-			addMovieInfo(movies, db)
-		])
-			.then(success.bind(null, db, resolve))
-			.catch(failure.bind(null, db, reject));
-	})
-);
-
-
-exports.createTextIndex = () => (
-	connectToDb((db, resolve, reject) => {
-		db.collection('actors')
-			.createIndex({ name: 'text' })
-			.then(success.bind(null, db, resolve))
-			.catch(failure.bind(null, db, reject));
-	})
-);
-
-
-exports.getActorsByName = name => (	
-	connectToDb((db, resolve, reject) => {
-		getActorsByName(name, db)
-			.then(success.bind(null, db, resolve))
-			.catch(failure.bind(null, db, reject));
-	}) 
-);
-
-
-exports.getActorsByNconsts = nconsts => (	
-	connectToDb((db, resolve, reject) => {
-		getActorsByNconsts(nconsts, db)
-			.then(success.bind(null, db, resolve))
-			.catch(failure.bind(null, db, reject));
-	}) 
-);
-
-
-exports.getBaconPath = actor => (
-	connectToDb((db, resolve, reject) => {
-		const nconsts = [];
-		const tconsts = [];
-
-		actor.parents.forEach(([ nconst, tconst ]) => {
-			nconsts.push(nconst);
-			tconsts.push(tconst);
-		});
-
-		Promise.all([
-			getActorsByNconsts(nconsts, db),
-			getMoviesByTconsts(tconsts, db)
-		])
-			.then(([ parents, movies ]) => {
-				const baconPath = generatePath(actor, parents, movies);
-				success(db, resolve, baconPath);
-			})
-			.catch(failure.bind(null, db, reject));
-	})
-);
-
-
-exports.resetDb = () => (
-	connectToDb((db, resolve, reject) => {		
-		db.dropDatabase()
-			.then(() => {
-				Promise.all([
-					() => db.collection('actors').createIndex({ name: 'text' }),
-					() => db.collection('movies')
-				])
-					.then(() => {
-						db.collection('actors')
-							.insertOne(KevinBaconInfo)
-							.then(success.bind(null, db, resolve))
-							.catch(failure.bind(null, db, reject));
-					})
-					.catch(failure.bind(null, db, reject));
-			})
-			.catch(failure.bind(null, db, reject));
-	})
-);
+module.exports = {
+	resetDb,
+	resetImages,
+	addActorInfo,
+	addActorImages,
+	addMovieInfo,
+	addChildParent,
+	getActorInfoByName,
+	getActorInfoByNconst,
+	getMovieInfo,
+	getBaconPath
+};
 
