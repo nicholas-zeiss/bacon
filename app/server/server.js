@@ -10,7 +10,6 @@ const express = require('express');
 const path = require('path');
 
 const db = require('./dbController');
-const getImages = require('./imageFinder');
 
 const app = express();
 
@@ -67,10 +66,7 @@ function addImages(pathToBacon, res) {
 				}
 			});
 
-<<<<<<< HEAD
 			db.addActorImages(nconstToUrl);
-=======
->>>>>>> parent of 89c74cf... fixed small bug in server
 			res.status(200).json(pathToBacon);
 		})
 		.catch(() => res.sendStatus(500));
