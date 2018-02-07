@@ -29,7 +29,6 @@ function sendBaconPath(nconst, res) {
 	db.getBaconPath(nconst)
 		.then(path => {		
 			if (path.some(node => node.actor.imgUrl === null)) {
-				console.log('adding images');
 				addImages(path, res);
 			} else {
 				res.status(200).json(path);
@@ -68,7 +67,10 @@ function addImages(pathToBacon, res) {
 				}
 			});
 
+<<<<<<< HEAD
 			db.addActorImages(nconstToUrl);
+=======
+>>>>>>> parent of 89c74cf... fixed small bug in server
 			res.status(200).json(pathToBacon);
 		})
 		.catch(() => res.sendStatus(500));
@@ -89,7 +91,7 @@ app.post('/name', (req, res) => {
 			if (!actors.length) {
 				res.sendStatus(404);
 			} else if (actors.length == 1) {
-				sendBaconPath(actors[0]._id, res);					
+				sendBaconPath(actors[0]._id, res);
 			} else {
 				res.status(300).json(actors);	
 			}
