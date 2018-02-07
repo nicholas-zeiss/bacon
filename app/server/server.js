@@ -29,7 +29,6 @@ function sendBaconPath(actor, res) {
 	db.getBaconPath(actor)
 		.then(path => {		
 			if (path.some(node => node.actor.imgUrl === null)) {
-				console.log('adding images');
 				addImages(path, res);
 			} else {
 				res.status(200).json(path);
