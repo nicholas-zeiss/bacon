@@ -72,8 +72,8 @@ exports.getActorInfoByNconst = function(nconsts) {
 					{
 						_id: Number(actor[1].slice(2)),
 						birthDeath: actor[3] != 'null' ? actor[3] : '',
-						imgUrl: null,
-						imgInfo: null,
+						imgUrl: '',
+						imgInfo: '',
 						jobs: actor[4],
 						name: actor[2]
 					}

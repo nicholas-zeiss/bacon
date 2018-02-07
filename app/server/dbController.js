@@ -13,16 +13,33 @@
  *	Collection formats:
  *
  *   i. actors - {
+<<<<<<< HEAD
  *			  _id: nconst (int),     -  their numerical index as specified in the IMDb dataset
  *			  name: str,				     -  name of the actor
  *			  birthDeath: str,       -  '' if no info, 'birthYear - deathYear' or 'birthYear - present' otherwise
  *        jobs: str, 						 -  top three professions according to IMDb joined by ', '
  *        imgUrl: str,					 -  url to the image generated for them (null if image not yet generated, empty string if no image could be found)
  * 				imgInfo: str 					 -  url to the wikimedia commons page for the image (null if image not yet generated, empty string if no image could be found)
+=======
+ *			  _id: int nconst,       -  their numerical index as specified in the IMDb dataset
+ *			  name: str,				     -  name of the actor
+ *			  birthDeath: str,       -  '' if no info, 'birthYear - deathYear' or 'birthYear - present' otherwise
+ *        jobs: str, 						 -  top three professions according to IMDb joined by ', '
+ *        imgUrl: str,					 -  url to the image found of the actor (empty string if no image could be found)
+ * 				imgInfo: str 					 -  url to the wikimedia commons page for the image (empty string if no image could be found)
+ *				parents: [ 						 -  array of nconst/tconst of parent, grandparent, etc in path to Kevin Bacon. Empty if actor is Kevin Bacon.
+ *					[						         
+ *						int nconst,		- nconst of this actors parent
+ *						int tconst    - tconst of movie linking them
+ *					 ],
+ *					...
+ *				]
+>>>>>>> parent of def213b... changed img data in actor collection to default to null
  *		  }
  *
  *
  *   ii. movies - {
+<<<<<<< HEAD
  *			  _id: tconst (int),     -  numerical index as specified in the IMDb dataset
  *			  title: str,				     -  primary title of the movie
  *        year: int              -  year the movie was released (0 if not in dataset)
@@ -33,6 +50,11 @@
  *			  _id: nconst (int),     		-  numerical index of child actor as specified in the IMDb dataset
  *			  movie_id: tconst (int), 	-  tconst of the movie linking child and parent
  *        parent_id: nconst(int)    -  numerical index of parent actor as specified in the IMDb dataset
+=======
+ *			  _id: int tconst,     	 -  numerical index as specified in the IMDb dataset
+ *			  title: str,				     -  primary title of the movie
+ *        year: int              -  year the movie was released (0 if not in dataset)
+>>>>>>> parent of def213b... changed img data in actor collection to default to null
  *		  }
  *
 **/
