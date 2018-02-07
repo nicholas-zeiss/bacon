@@ -56,5 +56,5 @@ Your database will now be ready to go! To start running the app use:
 $ npm start
 ```
 
-The app will now be running on your localhost on port 4080.
+The app will now be running on your localhost on port 8080.
 
