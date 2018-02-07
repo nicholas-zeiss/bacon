@@ -42,6 +42,9 @@ function AppController($scope, $location, serverCalls) {
 
 	// user clicked the reset button in either the choose or display views
 	vm.resetApp = function() {
+		vm.inputDisabled = false;
+		vm.serverError = null;
+		
 		$location.path('/home');
 	};
 
