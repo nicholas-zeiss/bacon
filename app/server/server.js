@@ -10,6 +10,7 @@ const express = require('express');
 const path = require('path');
 
 const db = require('./dbController');
+const getImages = require('./imageFinder');
 
 const app = express();
 
@@ -107,7 +108,7 @@ app.post('/nconst', (req, res) => {
 	db.getActorInfoByNconst([req.body.nconst])
 		.then(result => {
 			if (!result.length) {
-				res.sendStatus(404);			
+				res.sendStatus(404);
 			} else {
 				sendBaconPath(result[0]._id, res);
 			}
