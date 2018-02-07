@@ -184,6 +184,16 @@ exports.addActorsMovies = (actors, movies) => (
 );
 
 
+exports.createTextIndex = () => (
+	connectToDb((db, resolve, reject) => {
+		db.collection('actors')
+			.createIndex({ name: 'text' })
+			.then(success.bind(null, db, resolve))
+			.catch(failure.bind(null, db, reject));
+	})
+);
+
+
 exports.getActorsByName = name => (	
 	connectToDb((db, resolve, reject) => {
 		getActorsByName(name, db)

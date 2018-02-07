@@ -82,5 +82,6 @@ function buildDatabase(parents, indexedActors, indexedMovies, depth) {
 
 // clear db and generate Bacon tree. 102 is the nconst for Kevin Bacon.
 db.resetDb()
-	.then(() => buildDatabase(new Map([[ 102, [] ]]), new Set([ 102 ]), new Set(), 1));
+	.then(() => buildDatabase(new Map([[ 102, [] ]]), new Set([ 102 ]), new Set(), 1))
+	.then(() => db.createTexIndex());
 
